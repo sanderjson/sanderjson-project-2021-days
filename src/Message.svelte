@@ -17,16 +17,16 @@
   .bg {
     display: flex;
     background: white;
-    width: 240px;
+    width: 220px;
     justify-content: center;
     align-items: center;
-    padding: 2rem 3rem;
+    padding: 1rem 2rem;
     border-radius: 0.4em;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   }
 
   .current-day {
-    font-size: 6rem;
+    font-size: 5rem;
     margin: 0;
     padding: 0;
     text-align: center;
@@ -34,7 +34,7 @@
     width: 100%;
   }
   .current-num {
-    font-size: 12rem;
+    font-size: 10rem;
     margin: 0;
     padding: 0;
     line-height: 0.618;
@@ -44,7 +44,8 @@
   }
 
   .message-body {
-    padding-block-start: 4rem;
+    padding-block-start: 2rem;
+    color: #7A7A7A;
   }
 </style>
 
@@ -57,7 +58,7 @@
       <p class="message-body">
         You said it takes 21 days to make or break a habit. On January 4, 2021
         you will have quit smoking. We all know you can do anything you put your
-        mind to. Check back here tomorrow.
+        mind to.
       </p>
     </section>
   </div>
