@@ -25,10 +25,12 @@
   let scale = "@rand(1,2)";
 </script>
 
-<style>
-  /* :global(css-doodle) {
-    margin: auto;
-  } */
+<style global>
+  /* purgecss start ignore */
+  @tailwind base;
+  @tailwind components;
+  /* purgecss end ignore */
+  @tailwind utilities;
 </style>
 
 <!-- <css-doodle bind:this={cssDoodle} /> -->
