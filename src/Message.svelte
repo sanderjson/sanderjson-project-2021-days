@@ -33,6 +33,7 @@
     text-transform: uppercase;
     width: 100%;
   }
+
   .current-num {
     font-size: 10rem;
     margin: 0;
@@ -54,7 +55,7 @@
     <section>
       <h1 class="message-header">Hey Cassy!</h1>
       <div class="current-day">day</div>
-      <div class="current-num">4</div>
+      <div class="current-num">5</div>
       <p class="message-body">
         You said it takes 21 days to make or break a habit. On January 4, 2021
         you will have quit smoking. We all know you can do anything you put your
