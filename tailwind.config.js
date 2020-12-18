@@ -1,4 +1,5 @@
 module.exports = {
+	purge: ["./src/**/*.svelte"],
 	theme: {
 		extend: {
 			fontSize: {
@@ -8,4 +9,6 @@ module.exports = {
 			},
 		},
 	},
+	variants: {},
+	plugins: [],
 };
