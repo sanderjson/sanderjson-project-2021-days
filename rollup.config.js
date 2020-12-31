@@ -5,6 +5,7 @@ import livereload from "rollup-plugin-livereload";
 import { terser } from "rollup-plugin-terser";
 import css from "rollup-plugin-css-only";
 import sveltePreprocess from "svelte-preprocess";
+import replace from "@rollup/plugin-replace";
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -55,6 +56,16 @@ export default {
 				dev: !production,
 			},
 			preprocess,
+		}),
+		replace({
+			FOO: "bar",
+
+			// 2 level deep object should be stringify
+			process: JSON.stringify({
+				env: {
+					isProd: production,
+				},
+			}),
 		}),
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
