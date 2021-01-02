@@ -1,6 +1,8 @@
 <script>
-  import ButtonPassword from "../components/ButtonPassword.svelte";
   import ContentWrapper from "../components/ContentWrapper.svelte";
+  import AppHeader from "../components/AppHeader.svelte";
+  import TwentyTwentyOne from "../assets/2021.svelte";
+
   import { push, pop, replace } from "svelte-spa-router";
   import {
     tempIsUserDefined,
@@ -61,23 +63,10 @@
   };
 </script>
 
-<div
-  class="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6
-  lg:px-8">
-  <div class="sm:mx-auto sm:w-full sm:max-w-md">
-    <img
-      class="mx-auto h-12 w-auto"
-      src="https://tailwindui.com/img/logos/workflow-mark-indigo-600.svg"
-      alt="Workflow" />
-    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
-      2021 Day Challenge
-    </h2>
-    <div class="mt-2 text-center text-sm text-gray-600 max-w">
-      <p class="font-medium text-indigo-600 hover:text-indigo-500">
-        The year your someday became a reality
-      </p>
-    </div>
-  </div>
+<div class="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+  <AppHeader>
+    <TwentyTwentyOne />
+  </AppHeader>
 
   <ContentWrapper>
     <form class="space-y-6" on:submit|preventDefault={handleSignIn}>
