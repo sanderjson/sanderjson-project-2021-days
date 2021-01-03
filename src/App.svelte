@@ -1,6 +1,8 @@
 <script>
   import Router from "svelte-spa-router";
   import routes from "./routes";
+  import { replace } from "svelte-spa-router";
+
   import {
     tempIsUserDefined,
     tempUserDetails,
@@ -22,7 +24,7 @@
       // console.log("temporary user active");
     } else {
       // console.log("no user defined directing to /#start");
-      push("/start");
+      replace("/start");
     }
   };
 

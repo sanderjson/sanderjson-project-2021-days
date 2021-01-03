@@ -37,13 +37,12 @@
   </AppHeader>
 
   <ContentWrapper>
-    <div class="text-lg max-w-prose mx-auto">
-      <h1 class="text-xl text-gray-500 leading-8">
-        It has been suggested that it takes twenty-one days to make or break a
-        habit.
-      </h1>
-    </div>
-    <div class="mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
+    <h1 class="text-xl text-gray-700 leading-8">
+      It has been suggested that it takes twenty-one days to make or break a
+      habit.
+    </h1>
+    <div
+      class=" space-y-6 mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
       <p>
         This simple app can help you track progress.
         <a class="underline" href="/signup">Click here</a>
