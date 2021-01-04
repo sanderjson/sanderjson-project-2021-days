@@ -14,7 +14,7 @@
   export let digits;
 
   onMount(() => {
-    console.log("Counter has mounted");
+    console.log("digits:", digits);
   });
 </script>
 

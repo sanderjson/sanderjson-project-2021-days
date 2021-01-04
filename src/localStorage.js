@@ -1,8 +1,4 @@
-import {
-	writable,
-	readable,
-	derived,
-} from "svelte-persistent-store/dist/local";
+import { writable } from "svelte-persistent-store/dist/local";
 
 const LSuserAuthData = {
 	email: null,

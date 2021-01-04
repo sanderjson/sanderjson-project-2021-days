@@ -8,7 +8,6 @@
     activeUserDetails
   } from "./stores.js";
   import {
-    LSuserAuth,
     LSuserDetails,
     LSisUserDefined
   } from "./localStorage.js";
@@ -17,12 +16,12 @@
   const setActiveUser = () => {
     if ($LSisUserDefined) {
       $activeUserDetails = $LSuserDetails;
-      replace("/");
+      // replace("/");
 
       // console.log("local storage user active");
     } else if ($tempIsUserDefined) {
       $activeUserDetails = $tempUserDetails;
-      replace("/");
+      // replace("/");
 
       // console.log("temporary user active");
     } else {

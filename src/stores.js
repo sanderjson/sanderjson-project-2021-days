@@ -1,7 +1,5 @@
 import { readable, writable } from "svelte/store";
 
-export const errMessage = writable(null);
-
 const tempUserDetailsData = {
 	name: "",
 	habit: "",
@@ -47,3 +45,4 @@ export const activeUserDetails = writable(activeUserDetailsData);
 
 export const tempIsUserDefined = writable(false);
 export const isLocalStorage = readable(fnIsLocalStorage);
+export const errMessage = writable(null);
