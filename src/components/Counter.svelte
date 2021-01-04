@@ -9,17 +9,19 @@
   import Seven from "../svg/seven.svelte";
   import Eight from "../svg/eight.svelte";
   import Nine from "../svg/nine.svelte";
-  import { onMount } from "svelte";
+  // import { onMount } from "svelte";
 
   export let digits;
 
-  onMount(() => {
-    console.log("digits:", digits);
-  });
+  // onMount(() => {
+  // console.log("digits:", digits);
+  // });
 </script>
 
 <div class="flex items-stretch space-x-1">
-  <span style="width: min-content; min-width: 50%; max-height: 154px" class="">
+  <span
+    style="width: min-content; min-width: 50%; max-height: 154px"
+    class="flex justify-center">
     {#if digits.first == '0' || digits.first == 'N'}
       <Zero />
     {:else if digits.first == '1'}
@@ -42,7 +44,9 @@
       <Nine />
     {/if}
   </span>
-  <span style="width: min-content; min-width: 50%; max-height: 154px" class="">
+  <span
+    style="width: min-content; min-width: 50%; max-height: 154px"
+    class="flex justify-center">
     {#if digits.second == '0' || digits.first == 'a'}
       <Zero />
     {:else if digits.second == '1'}

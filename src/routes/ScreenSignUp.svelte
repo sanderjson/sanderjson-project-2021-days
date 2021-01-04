@@ -80,15 +80,15 @@
           push(`#/error`);
         } else {
           if ($isLocalStorage()) {
-            console.log("signup before LSuserAuth", $LSuserAuth);
-            console.log("signup before LSuserDetails", $LSuserDetails);
-            console.log("signup before LSisUserDefined", $LSisUserDefined);
+            // console.log("signup before LSuserAuth", $LSuserAuth);
+            // console.log("signup before LSuserDetails", $LSuserDetails);
+            // console.log("signup before LSisUserDefined", $LSisUserDefined);
             LSuserAuth.set(res.userAuth);
             LSuserDetails.set(res.userDetails);
             LSisUserDefined.set(true);
-            console.log("signup after LSuserAuth", $LSuserAuth);
-            console.log("signup after LSuserDetails", $LSuserDetails);
-            console.log("signup after LSisUserDefined", $LSisUserDefined);
+            // console.log("signup after LSuserAuth", $LSuserAuth);
+            // console.log("signup after LSuserDetails", $LSuserDetails);
+            // console.log("signup after LSisUserDefined", $LSisUserDefined);
             // console.log("local storage is enabled");
           } else {
             tempUserDetails.set(res.userDetails);
