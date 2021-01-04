@@ -18,7 +18,13 @@
   });
 </script>
 
-<div class="flex">
+<style>
+  .svg-wrap {
+    max-height: 154.9px;
+  }
+</style>
+
+<div class="svg-wrap flex">
   {#if digits.first == '0' || digits.first == 'N'}
     <Zero />
   {:else if digits.first == '1'}

@@ -2,7 +2,9 @@
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeader from "../components/AppHeader.svelte";
   import TwentyTwentyOne from "../svg/2021.svelte";
+
   import { push } from "svelte-spa-router";
+  import { onMount } from "svelte";
   import {
     tempIsUserDefined,
     tempUserDetails,
@@ -64,6 +66,11 @@
         push(`#/error`);
       });
   };
+
+  onMount(() => {
+    tempIsUserDefined.set(false);
+    LSisUserDefined.set(false);
+  });
 </script>
 
 <AppHeader>

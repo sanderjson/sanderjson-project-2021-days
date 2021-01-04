@@ -108,6 +108,9 @@
   };
 
   onMount(() => {
+    tempIsUserDefined.set(false);
+    LSisUserDefined.set(false);
+
     let dateStart = new Date();
     let dateEnd = new Date();
     dateEnd.setDate(dateEnd.getDate() + 20);

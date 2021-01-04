@@ -89,10 +89,6 @@ var app = (function () {
             slot.p(slot_context, slot_changes);
         }
     }
-    function set_store_value(store, ret, value = ret) {
-        store.set(value);
-        return ret;
-    }
 
     function append(target, node) {
         target.appendChild(node);
@@ -2690,7 +2686,7 @@ var app = (function () {
     const { console: console_1$1 } = globals;
     const file$c = "src/components/Counter.svelte";
 
-    // (40:32) 
+    // (45:32) 
     function create_if_block_19(ctx) {
     	let nine;
     	let current;
@@ -2722,14 +2718,14 @@ var app = (function () {
     		block,
     		id: create_if_block_19.name,
     		type: "if",
-    		source: "(40:32) ",
+    		source: "(45:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (38:32) 
+    // (43:32) 
     function create_if_block_18(ctx) {
     	let eight;
     	let current;
@@ -2761,14 +2757,14 @@ var app = (function () {
     		block,
     		id: create_if_block_18.name,
     		type: "if",
-    		source: "(38:32) ",
+    		source: "(43:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (36:32) 
+    // (41:32) 
     function create_if_block_17(ctx) {
     	let seven;
     	let current;
@@ -2800,14 +2796,14 @@ var app = (function () {
     		block,
     		id: create_if_block_17.name,
     		type: "if",
-    		source: "(36:32) ",
+    		source: "(41:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (34:32) 
+    // (39:32) 
     function create_if_block_16(ctx) {
     	let six;
     	let current;
@@ -2839,14 +2835,14 @@ var app = (function () {
     		block,
     		id: create_if_block_16.name,
     		type: "if",
-    		source: "(34:32) ",
+    		source: "(39:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (32:32) 
+    // (37:32) 
     function create_if_block_15(ctx) {
     	let five;
     	let current;
@@ -2878,14 +2874,14 @@ var app = (function () {
     		block,
     		id: create_if_block_15.name,
     		type: "if",
-    		source: "(32:32) ",
+    		source: "(37:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (30:32) 
+    // (35:32) 
     function create_if_block_14(ctx) {
     	let four;
     	let current;
@@ -2917,14 +2913,14 @@ var app = (function () {
     		block,
     		id: create_if_block_14.name,
     		type: "if",
-    		source: "(30:32) ",
+    		source: "(35:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (28:32) 
+    // (33:32) 
     function create_if_block_13(ctx) {
     	let three;
     	let current;
@@ -2956,14 +2952,14 @@ var app = (function () {
     		block,
     		id: create_if_block_13.name,
     		type: "if",
-    		source: "(28:32) ",
+    		source: "(33:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (26:32) 
+    // (31:32) 
     function create_if_block_12(ctx) {
     	let two;
     	let current;
@@ -2995,14 +2991,14 @@ var app = (function () {
     		block,
     		id: create_if_block_12.name,
     		type: "if",
-    		source: "(26:32) ",
+    		source: "(31:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (24:32) 
+    // (29:32) 
     function create_if_block_11(ctx) {
     	let one;
     	let current;
@@ -3034,14 +3030,14 @@ var app = (function () {
     		block,
     		id: create_if_block_11.name,
     		type: "if",
-    		source: "(24:32) ",
+    		source: "(29:32) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (22:2) {#if digits.first == '0'}
+    // (27:2) {#if digits.first == '0' || digits.first == 'N'}
     function create_if_block_10(ctx) {
     	let zero;
     	let current;
@@ -3073,14 +3069,14 @@ var app = (function () {
     		block,
     		id: create_if_block_10.name,
     		type: "if",
-    		source: "(22:2) {#if digits.first == '0'}",
+    		source: "(27:2) {#if digits.first == '0' || digits.first == 'N'}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (61:33) 
+    // (66:33) 
     function create_if_block_9(ctx) {
     	let nine;
     	let current;
@@ -3112,14 +3108,14 @@ var app = (function () {
     		block,
     		id: create_if_block_9.name,
     		type: "if",
-    		source: "(61:33) ",
+    		source: "(66:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (59:33) 
+    // (64:33) 
     function create_if_block_8(ctx) {
     	let eight;
     	let current;
@@ -3151,14 +3147,14 @@ var app = (function () {
     		block,
     		id: create_if_block_8.name,
     		type: "if",
-    		source: "(59:33) ",
+    		source: "(64:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (57:33) 
+    // (62:33) 
     function create_if_block_7(ctx) {
     	let seven;
     	let current;
@@ -3190,14 +3186,14 @@ var app = (function () {
     		block,
     		id: create_if_block_7.name,
     		type: "if",
-    		source: "(57:33) ",
+    		source: "(62:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (55:33) 
+    // (60:33) 
     function create_if_block_6(ctx) {
     	let six;
     	let current;
@@ -3229,14 +3225,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6.name,
     		type: "if",
-    		source: "(55:33) ",
+    		source: "(60:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (53:33) 
+    // (58:33) 
     function create_if_block_5(ctx) {
     	let five;
     	let current;
@@ -3268,14 +3264,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(53:33) ",
+    		source: "(58:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (51:33) 
+    // (56:33) 
     function create_if_block_4(ctx) {
     	let four;
     	let current;
@@ -3307,14 +3303,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(51:33) ",
+    		source: "(56:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (49:33) 
+    // (54:33) 
     function create_if_block_3(ctx) {
     	let three;
     	let current;
@@ -3346,14 +3342,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(49:33) ",
+    		source: "(54:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (47:33) 
+    // (52:33) 
     function create_if_block_2(ctx) {
     	let two;
     	let current;
@@ -3385,14 +3381,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(47:33) ",
+    		source: "(52:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (45:33) 
+    // (50:33) 
     function create_if_block_1(ctx) {
     	let one;
     	let current;
@@ -3424,14 +3420,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(45:33) ",
+    		source: "(50:33) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (43:2) {#if digits.second == '0'}
+    // (48:2) {#if digits.second == '0' || digits.first == 'a'}
     function create_if_block$1(ctx) {
     	let zero;
     	let current;
@@ -3463,7 +3459,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(43:2) {#if digits.second == '0'}",
+    		source: "(48:2) {#if digits.second == '0' || digits.first == 'a'}",
     		ctx
     	});
 
@@ -3495,7 +3491,7 @@ var app = (function () {
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
-    		if (/*digits*/ ctx[0].first == "0") return 0;
+    		if (/*digits*/ ctx[0].first == "0" || /*digits*/ ctx[0].first == "N") return 0;
     		if (/*digits*/ ctx[0].first == "1") return 1;
     		if (/*digits*/ ctx[0].first == "2") return 2;
     		if (/*digits*/ ctx[0].first == "3") return 3;
@@ -3528,7 +3524,7 @@ var app = (function () {
     	const if_blocks_1 = [];
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*digits*/ ctx[0].second == "0") return 0;
+    		if (/*digits*/ ctx[0].second == "0" || /*digits*/ ctx[0].first == "a") return 0;
     		if (/*digits*/ ctx[0].second == "1") return 1;
     		if (/*digits*/ ctx[0].second == "2") return 2;
     		if (/*digits*/ ctx[0].second == "3") return 3;
@@ -3551,8 +3547,8 @@ var app = (function () {
     			if (if_block0) if_block0.c();
     			t = space();
     			if (if_block1) if_block1.c();
-    			attr_dev(div, "class", "flex");
-    			add_location(div, file$c, 20, 0, 553);
+    			attr_dev(div, "class", "svg-wrap flex svelte-rhxoxd");
+    			add_location(div, file$c, 25, 0, 660);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3676,7 +3672,7 @@ var app = (function () {
     	let { digits } = $$props;
 
     	onMount(() => {
-    		console.log("Counter has mounted");
+    		console.log("digits:", digits);
     	});
 
     	const writable_props = ["digits"];
@@ -3744,8 +3740,6 @@ var app = (function () {
     	}
     }
 
-    const errMessage = writable(null);
-
     const tempUserDetailsData = {
     	name: "",
     	habit: "",
@@ -3791,6 +3785,7 @@ var app = (function () {
 
     const tempIsUserDefined = writable(false);
     const isLocalStorage = readable(fnIsLocalStorage);
+    const errMessage = writable(null);
 
     /* src/routes/ScreenUser.svelte generated by Svelte v3.31.0 */
     const file$d = "src/routes/ScreenUser.svelte";
@@ -4372,9 +4367,11 @@ var app = (function () {
     const LSisUserDefined = writable$1("isUserDefined", false);
 
     /* src/routes/ScreenStart.svelte generated by Svelte v3.31.0 */
+
+    const { console: console_1$2 } = globals;
     const file$f = "src/routes/ScreenStart.svelte";
 
-    // (65:0) <AppHeader>
+    // (76:0) <AppHeader>
     function create_default_slot_1$1(ctx) {
     	let twentytwentyone;
     	let current;
@@ -4406,14 +4403,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$1.name,
     		type: "slot",
-    		source: "(65:0) <AppHeader>",
+    		source: "(76:0) <AppHeader>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (69:0) <ContentWrapper>
+    // (80:0) <ContentWrapper>
     function create_default_slot$1(ctx) {
     	let form;
     	let div1;
@@ -4492,62 +4489,62 @@ var app = (function () {
     			span2.textContent = "Learn More";
     			attr_dev(label0, "for", "email");
     			attr_dev(label0, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label0, file$f, 71, 6, 1827);
+    			add_location(label0, file$f, 82, 6, 2321);
     			attr_dev(input0, "id", "email");
     			attr_dev(input0, "name", "email");
     			attr_dev(input0, "type", "email");
     			attr_dev(input0, "autocomplete", "email");
     			input0.required = true;
     			attr_dev(input0, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm");
-    			add_location(input0, file$f, 75, 8, 1965);
+    			add_location(input0, file$f, 86, 8, 2459);
     			attr_dev(div0, "class", "mt-1");
-    			add_location(div0, file$f, 74, 6, 1938);
-    			add_location(div1, file$f, 70, 4, 1815);
+    			add_location(div0, file$f, 85, 6, 2432);
+    			add_location(div1, file$f, 81, 4, 2309);
     			attr_dev(label1, "for", "password");
     			attr_dev(label1, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label1, file$f, 89, 6, 2389);
+    			add_location(label1, file$f, 100, 6, 2883);
     			attr_dev(input1, "id", "password");
     			attr_dev(input1, "name", "password");
     			attr_dev(input1, "type", "password");
     			attr_dev(input1, "autocomplete", "password");
     			input1.required = true;
     			attr_dev(input1, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm");
-    			add_location(input1, file$f, 93, 8, 2525);
+    			add_location(input1, file$f, 104, 8, 3019);
     			attr_dev(div2, "class", "mt-1");
-    			add_location(div2, file$f, 92, 6, 2498);
-    			add_location(div3, file$f, 88, 4, 2377);
+    			add_location(div2, file$f, 103, 6, 2992);
+    			add_location(div3, file$f, 99, 4, 2871);
     			attr_dev(button, "type", "submit");
     			attr_dev(button, "class", "w-full flex justify-center py-2 px-4 border border-transparent\n        rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600\n        hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2\n        focus:ring-indigo-500");
-    			add_location(button, file$f, 107, 6, 2964);
-    			add_location(div4, file$f, 106, 4, 2952);
+    			add_location(button, file$f, 118, 6, 3458);
+    			add_location(div4, file$f, 117, 4, 3446);
     			attr_dev(form, "class", "space-y-6");
-    			add_location(form, file$f, 69, 2, 1746);
+    			add_location(form, file$f, 80, 2, 2240);
     			attr_dev(div5, "class", "w-full border-t border-gray-300");
-    			add_location(div5, file$f, 121, 8, 3423);
+    			add_location(div5, file$f, 132, 8, 3917);
     			attr_dev(div6, "class", "absolute inset-0 flex items-center");
-    			add_location(div6, file$f, 120, 6, 3366);
+    			add_location(div6, file$f, 131, 6, 3860);
     			attr_dev(span0, "class", "px-2 bg-white text-gray-500");
-    			add_location(span0, file$f, 124, 8, 3549);
+    			add_location(span0, file$f, 135, 8, 4043);
     			attr_dev(div7, "class", "relative flex justify-center text-sm");
-    			add_location(div7, file$f, 123, 6, 3490);
+    			add_location(div7, file$f, 134, 6, 3984);
     			attr_dev(div8, "class", "relative");
-    			add_location(div8, file$f, 119, 4, 3337);
+    			add_location(div8, file$f, 130, 4, 3831);
     			attr_dev(span1, "class", "");
-    			add_location(span1, file$f, 135, 10, 3918);
+    			add_location(span1, file$f, 146, 10, 4412);
     			attr_dev(a0, "href", "#/signup");
     			attr_dev(a0, "class", "w-full inline-flex justify-center py-2 px-4 border\n          border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n          text-gray-500 hover:bg-gray-50");
-    			add_location(a0, file$f, 130, 8, 3692);
-    			add_location(div9, file$f, 129, 6, 3678);
+    			add_location(a0, file$f, 141, 8, 4186);
+    			add_location(div9, file$f, 140, 6, 4172);
     			attr_dev(span2, "class", "");
-    			add_location(span2, file$f, 145, 10, 4220);
+    			add_location(span2, file$f, 156, 10, 4714);
     			attr_dev(a1, "href", "#/about");
     			attr_dev(a1, "class", "w-full inline-flex justify-center py-2 px-4 border\n          border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n          text-gray-500 hover:bg-gray-50");
-    			add_location(a1, file$f, 140, 8, 3995);
-    			add_location(div10, file$f, 139, 6, 3981);
+    			add_location(a1, file$f, 151, 8, 4489);
+    			add_location(div10, file$f, 150, 6, 4475);
     			attr_dev(div11, "class", "mt-6 grid grid-cols-2 gap-3");
-    			add_location(div11, file$f, 128, 4, 3630);
+    			add_location(div11, file$f, 139, 4, 4124);
     			attr_dev(div12, "class", "mt-6");
-    			add_location(div12, file$f, 118, 2, 3314);
+    			add_location(div12, file$f, 129, 2, 3808);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -4617,7 +4614,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$1.name,
     		type: "slot",
-    		source: "(69:0) <ContentWrapper>",
+    		source: "(80:0) <ContentWrapper>",
     		ctx
     	});
 
@@ -4664,14 +4661,14 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const appheader_changes = {};
 
-    			if (dirty & /*$$scope*/ 32) {
+    			if (dirty & /*$$scope*/ 256) {
     				appheader_changes.$$scope = { dirty, ctx };
     			}
 
     			appheader.$set(appheader_changes);
     			const contentwrapper_changes = {};
 
-    			if (dirty & /*$$scope, userTemp*/ 33) {
+    			if (dirty & /*$$scope, userTemp*/ 257) {
     				contentwrapper_changes.$$scope = { dirty, ctx };
     			}
 
@@ -4708,8 +4705,17 @@ var app = (function () {
 
     function instance$g($$self, $$props, $$invalidate) {
     	let $isLocalStorage;
+    	let $LSuserAuth;
+    	let $LSuserDetails;
+    	let $LSisUserDefined;
     	validate_store(isLocalStorage, "isLocalStorage");
     	component_subscribe($$self, isLocalStorage, $$value => $$invalidate(4, $isLocalStorage = $$value));
+    	validate_store(LSuserAuth, "LSuserAuth");
+    	component_subscribe($$self, LSuserAuth, $$value => $$invalidate(5, $LSuserAuth = $$value));
+    	validate_store(LSuserDetails, "LSuserDetails");
+    	component_subscribe($$self, LSuserDetails, $$value => $$invalidate(6, $LSuserDetails = $$value));
+    	validate_store(LSisUserDefined, "LSisUserDefined");
+    	component_subscribe($$self, LSisUserDefined, $$value => $$invalidate(7, $LSisUserDefined = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ScreenStart", slots, []);
     	let userTemp = { email: "", password: "" };
@@ -4729,27 +4735,38 @@ var app = (function () {
     		const postData = await fetch(fetchURL, fetchOptions).then(res => res.json()).then(res => {
     			if (res.Error) {
     				errMessage.set(res.Error);
-    				replace(`#/error`);
+    				push(`#/error`);
     			} else {
     				if ($isLocalStorage()) {
+    					console.log("start before LSuserAuth", $LSuserAuth);
+    					console.log("start before LSuserDetails", $LSuserDetails);
+    					console.log("start before LSisUserDefined", $LSisUserDefined);
     					LSuserAuth.set(res.userAuth);
     					LSuserDetails.set(res.userDetails);
     					LSisUserDefined.set(true);
+    					console.log("start after LSuserAuth", $LSuserAuth);
+    					console.log("start after LSuserDetails", $LSuserDetails);
+    					console.log("start after LSisUserDefined", $LSisUserDefined);
     				} else {
     					tempUserDetails.set(res.userDetails); // console.log("local storage is enabled");
     					tempIsUserDefined.set(true);
     				} // console.log("local storage is not available");
     			}
-    		}).then(() => replace("/")).catch(err => {
+    		}).catch(err => {
     			errMessage.set(res.Error);
-    			replace(`#/error`);
+    			push(`#/error`);
     		});
     	};
+
+    	onMount(() => {
+    		tempIsUserDefined.set(false);
+    		LSisUserDefined.set(false);
+    	});
 
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ScreenStart> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$2.warn(`<ScreenStart> was created with unknown prop '${key}'`);
     	});
 
     	function input0_input_handler() {
@@ -4767,8 +4784,7 @@ var app = (function () {
     		AppHeader,
     		TwentyTwentyOne: _2021,
     		push,
-    		pop,
-    		replace,
+    		onMount,
     		tempIsUserDefined,
     		tempUserDetails,
     		isLocalStorage,
@@ -4778,7 +4794,10 @@ var app = (function () {
     		LSuserDetails,
     		userTemp,
     		handleSignIn,
-    		$isLocalStorage
+    		$isLocalStorage,
+    		$LSuserAuth,
+    		$LSuserDetails,
+    		$LSisUserDefined
     	});
 
     	$$self.$inject_state = $$props => {
@@ -4807,15 +4826,17 @@ var app = (function () {
     }
 
     /* src/routes/ScreenSignUp.svelte generated by Svelte v3.31.0 */
+
+    const { console: console_1$3 } = globals;
     const file$g = "src/routes/ScreenSignUp.svelte";
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[11] = list[i];
+    	child_ctx[14] = list[i];
     	return child_ctx;
     }
 
-    // (117:0) <AppHeader>
+    // (125:0) <AppHeader>
     function create_default_slot_1$2(ctx) {
     	let twentytwentyone;
     	let current;
@@ -4847,14 +4868,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$2.name,
     		type: "slot",
-    		source: "(117:0) <AppHeader>",
+    		source: "(125:0) <AppHeader>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (217:51) {:else}
+    // (225:51) {:else}
     function create_else_block$1(ctx) {
     	let t;
 
@@ -4874,14 +4895,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(217:51) {:else}",
+    		source: "(225:51) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (217:10) {#if userTemp.habitType}
+    // (225:10) {#if userTemp.habitType}
     function create_if_block$2(ctx) {
     	let t;
 
@@ -4901,14 +4922,14 @@ var app = (function () {
     		block,
     		id: create_if_block$2.name,
     		type: "if",
-    		source: "(217:10) {#if userTemp.habitType}",
+    		source: "(225:10) {#if userTemp.habitType}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (232:10) {#each contentHabitsInfo as habit}
+    // (240:10) {#each contentHabitsInfo as habit}
     function create_each_block(ctx) {
     	let div2;
     	let div0;
@@ -4919,11 +4940,11 @@ var app = (function () {
     	let t0;
     	let div1;
     	let label;
-    	let t1_value = /*habit*/ ctx[11].title + "";
+    	let t1_value = /*habit*/ ctx[14].title + "";
     	let t1;
     	let t2;
     	let p;
-    	let t3_value = /*habit*/ ctx[11].content + "";
+    	let t3_value = /*habit*/ ctx[14].content + "";
     	let t3;
     	let t4;
     	let mounted;
@@ -4942,25 +4963,25 @@ var app = (function () {
     			p = element("p");
     			t3 = text(t3_value);
     			t4 = space();
-    			input.__value = input_value_value = /*habit*/ ctx[11].type;
+    			input.__value = input_value_value = /*habit*/ ctx[14].type;
     			input.value = input.__value;
-    			attr_dev(input, "id", input_id_value = /*habit*/ ctx[11].type);
-    			attr_dev(input, "name", input_name_value = /*habit*/ ctx[11].type);
+    			attr_dev(input, "id", input_id_value = /*habit*/ ctx[14].type);
+    			attr_dev(input, "name", input_name_value = /*habit*/ ctx[14].type);
     			attr_dev(input, "type", "checkbox");
     			attr_dev(input, "class", "focus:ring-indigo-500 h-4 w-4 text-indigo-600\n                  border-gray-300 rounded");
     			/*$$binding_groups*/ ctx[9][0].push(input);
-    			add_location(input, file$g, 234, 16, 7293);
+    			add_location(input, file$g, 242, 16, 7744);
     			attr_dev(div0, "class", "flex items-center h-5");
-    			add_location(div0, file$g, 233, 14, 7241);
+    			add_location(div0, file$g, 241, 14, 7692);
     			attr_dev(label, "for", "comments");
     			attr_dev(label, "class", "font-medium text-gray-700");
-    			add_location(label, file$g, 244, 16, 7690);
+    			add_location(label, file$g, 252, 16, 8141);
     			attr_dev(p, "class", "text-gray-500");
-    			add_location(p, file$g, 247, 16, 7820);
+    			add_location(p, file$g, 255, 16, 8271);
     			attr_dev(div1, "class", "ml-3 text-sm");
-    			add_location(div1, file$g, 243, 14, 7647);
+    			add_location(div1, file$g, 251, 14, 8098);
     			attr_dev(div2, "class", "relative flex items-start");
-    			add_location(div2, file$g, 232, 12, 7187);
+    			add_location(div2, file$g, 240, 12, 7638);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div2, anchor);
@@ -4998,14 +5019,14 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(232:10) {#each contentHabitsInfo as habit}",
+    		source: "(240:10) {#each contentHabitsInfo as habit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (121:0) <ContentWrapper>
+    // (129:0) <ContentWrapper>
     function create_default_slot$2(ctx) {
     	let form;
     	let div1;
@@ -5132,90 +5153,90 @@ var app = (function () {
     			button1.textContent = "Sign Up";
     			attr_dev(label0, "for", "email");
     			attr_dev(label0, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label0, file$g, 123, 6, 3394);
+    			add_location(label0, file$g, 131, 6, 3845);
     			attr_dev(input0, "id", "name");
     			attr_dev(input0, "name", "name");
     			attr_dev(input0, "type", "name");
     			attr_dev(input0, "autocomplete", "name");
     			input0.required = true;
     			attr_dev(input0, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm");
-    			add_location(input0, file$g, 127, 8, 3523);
+    			add_location(input0, file$g, 135, 8, 3974);
     			attr_dev(div0, "class", "mt-1");
-    			add_location(div0, file$g, 126, 6, 3496);
-    			add_location(div1, file$g, 122, 4, 3382);
+    			add_location(div0, file$g, 134, 6, 3947);
+    			add_location(div1, file$g, 130, 4, 3833);
     			attr_dev(label1, "for", "email");
     			attr_dev(label1, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label1, file$g, 141, 6, 3942);
+    			add_location(label1, file$g, 149, 6, 4393);
     			attr_dev(input1, "id", "email");
     			attr_dev(input1, "name", "email");
     			attr_dev(input1, "type", "email");
     			attr_dev(input1, "autocomplete", "email");
     			input1.required = true;
     			attr_dev(input1, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm");
-    			add_location(input1, file$g, 145, 8, 4080);
+    			add_location(input1, file$g, 153, 8, 4531);
     			attr_dev(div2, "class", "mt-1");
-    			add_location(div2, file$g, 144, 6, 4053);
-    			add_location(div3, file$g, 140, 4, 3930);
+    			add_location(div2, file$g, 152, 6, 4504);
+    			add_location(div3, file$g, 148, 4, 4381);
     			attr_dev(label2, "for", "password");
     			attr_dev(label2, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label2, file$g, 159, 6, 4504);
+    			add_location(label2, file$g, 167, 6, 4955);
     			attr_dev(input2, "id", "password");
     			attr_dev(input2, "name", "password");
     			attr_dev(input2, "type", "password");
     			attr_dev(input2, "autocomplete", "password");
     			input2.required = true;
     			attr_dev(input2, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm");
-    			add_location(input2, file$g, 163, 8, 4640);
+    			add_location(input2, file$g, 171, 8, 5091);
     			attr_dev(div4, "class", "mt-1");
-    			add_location(div4, file$g, 162, 6, 4613);
-    			add_location(div5, file$g, 158, 4, 4492);
+    			add_location(div4, file$g, 170, 6, 5064);
+    			add_location(div5, file$g, 166, 4, 4943);
     			attr_dev(label3, "for", "password");
     			attr_dev(label3, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label3, file$g, 177, 6, 5079);
+    			add_location(label3, file$g, 185, 6, 5530);
     			attr_dev(input3, "id", "habit");
     			attr_dev(input3, "name", "habit");
     			attr_dev(input3, "type", "habit");
     			attr_dev(input3, "autocomplete", "habit");
     			input3.required = true;
     			attr_dev(input3, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm");
-    			add_location(input3, file$g, 181, 8, 5212);
+    			add_location(input3, file$g, 189, 8, 5663);
     			attr_dev(div6, "class", "mt-1");
-    			add_location(div6, file$g, 180, 6, 5185);
-    			add_location(div7, file$g, 176, 4, 5067);
+    			add_location(div6, file$g, 188, 6, 5636);
+    			add_location(div7, file$g, 184, 4, 5518);
     			attr_dev(span0, "class", "sr-only");
-    			add_location(span0, file$g, 206, 8, 6182);
+    			add_location(span0, file$g, 214, 8, 6633);
     			attr_dev(span1, "aria-hidden", "true");
     			attr_dev(span1, "class", "translate-x-5 inline-block h-5 w-5 rounded-full bg-white shadow\n          transform ring-0 transition ease-in-out duration-200");
     			toggle_class(span1, "translate-x-5", /*userTemp*/ ctx[0].habitType);
-    			add_location(span1, file$g, 208, 8, 6290);
+    			add_location(span1, file$g, 216, 8, 6741);
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "aria-pressed", "false");
     			attr_dev(button0, "aria-labelledby", "toggleLabel");
     			attr_dev(button0, "class", "bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11 border-2\n        border-transparent rounded-full cursor-pointer transition-colors\n        ease-in-out duration-200 focus:outline-none focus:ring-2\n        focus:ring-offset-2 focus:ring-indigo-500");
     			toggle_class(button0, "bg-indigo-600", /*userTemp*/ ctx[0].habitType);
-    			add_location(button0, file$g, 196, 6, 5717);
+    			add_location(button0, file$g, 204, 6, 6168);
     			attr_dev(span2, "class", "text-sm font-medium text-gray-900");
-    			add_location(span2, file$g, 215, 8, 6591);
+    			add_location(span2, file$g, 223, 8, 7042);
     			attr_dev(span3, "class", "ml-3");
     			attr_dev(span3, "id", "toggleLabel");
-    			add_location(span3, file$g, 214, 6, 6546);
+    			add_location(span3, file$g, 222, 6, 6997);
     			attr_dev(div8, "class", "flex items-center");
-    			add_location(div8, file$g, 194, 4, 5624);
+    			add_location(div8, file$g, 202, 4, 6075);
     			attr_dev(span4, "class", "text-sm text-gray-500");
-    			add_location(span4, file$g, 227, 10, 6997);
+    			add_location(span4, file$g, 235, 10, 7448);
     			attr_dev(legend, "class", "block text-sm font-medium text-gray-700");
-    			add_location(legend, file$g, 225, 8, 6905);
+    			add_location(legend, file$g, 233, 8, 7356);
     			attr_dev(div9, "class", "mt-4 space-y-4");
-    			add_location(div9, file$g, 230, 8, 7101);
-    			add_location(fieldset, file$g, 224, 6, 6886);
+    			add_location(div9, file$g, 238, 8, 7552);
+    			add_location(fieldset, file$g, 232, 6, 7337);
     			attr_dev(div10, "class", "mt-6");
-    			add_location(div10, file$g, 223, 4, 6861);
+    			add_location(div10, file$g, 231, 4, 7312);
     			attr_dev(button1, "type", "submit");
     			attr_dev(button1, "class", "w-full flex justify-center py-2 px-4 border border-transparent\n        rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600\n        hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2\n        focus:ring-indigo-500");
-    			add_location(button1, file$g, 256, 6, 7984);
-    			add_location(div11, file$g, 255, 4, 7972);
+    			add_location(button1, file$g, 264, 6, 8435);
+    			add_location(div11, file$g, 263, 4, 8423);
     			attr_dev(form, "class", "space-y-6");
-    			add_location(form, file$g, 121, 2, 3313);
+    			add_location(form, file$g, 129, 2, 3764);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -5359,7 +5380,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$2.name,
     		type: "slot",
-    		source: "(121:0) <ContentWrapper>",
+    		source: "(129:0) <ContentWrapper>",
     		ctx
     	});
 
@@ -5406,14 +5427,14 @@ var app = (function () {
     		p: function update(ctx, [dirty]) {
     			const appheader_changes = {};
 
-    			if (dirty & /*$$scope*/ 16384) {
+    			if (dirty & /*$$scope*/ 131072) {
     				appheader_changes.$$scope = { dirty, ctx };
     			}
 
     			appheader.$set(appheader_changes);
     			const contentwrapper_changes = {};
 
-    			if (dirty & /*$$scope, userTemp*/ 16385) {
+    			if (dirty & /*$$scope, userTemp*/ 131073) {
     				contentwrapper_changes.$$scope = { dirty, ctx };
     			}
 
@@ -5450,8 +5471,17 @@ var app = (function () {
 
     function instance$h($$self, $$props, $$invalidate) {
     	let $isLocalStorage;
+    	let $LSuserAuth;
+    	let $LSuserDetails;
+    	let $LSisUserDefined;
     	validate_store(isLocalStorage, "isLocalStorage");
     	component_subscribe($$self, isLocalStorage, $$value => $$invalidate(10, $isLocalStorage = $$value));
+    	validate_store(LSuserAuth, "LSuserAuth");
+    	component_subscribe($$self, LSuserAuth, $$value => $$invalidate(11, $LSuserAuth = $$value));
+    	validate_store(LSuserDetails, "LSuserDetails");
+    	component_subscribe($$self, LSuserDetails, $$value => $$invalidate(12, $LSuserDetails = $$value));
+    	validate_store(LSisUserDefined, "LSisUserDefined");
+    	component_subscribe($$self, LSisUserDefined, $$value => $$invalidate(13, $LSisUserDefined = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ScreenSignUp", slots, []);
 
@@ -5507,20 +5537,26 @@ var app = (function () {
     		const postData = await fetch(fetchURL, fetchOptions).then(res => res.json()).then(res => {
     			if (res.Error) {
     				errMessage.set(res.Error);
-    				replace(`#/error`);
+    				push(`#/error`);
     			} else {
     				if ($isLocalStorage()) {
+    					console.log("signup before LSuserAuth", $LSuserAuth);
+    					console.log("signup before LSuserDetails", $LSuserDetails);
+    					console.log("signup before LSisUserDefined", $LSisUserDefined);
     					LSuserAuth.set(res.userAuth);
     					LSuserDetails.set(res.userDetails);
     					LSisUserDefined.set(true);
+    					console.log("signup after LSuserAuth", $LSuserAuth);
+    					console.log("signup after LSuserDetails", $LSuserDetails);
+    					console.log("signup after LSisUserDefined", $LSisUserDefined);
     				} else {
     					tempUserDetails.set(res.userDetails); // console.log("local storage is enabled");
     					tempIsUserDefined.set(true);
     				} // console.log("local storage is not available");
     			}
-    		}).then(() => replace("/")).catch(err => {
+    		}).catch(err => {
     			errMessage.set(res.Error);
-    			replace(`#/error`);
+    			push(`#/error`);
     		});
     	};
 
@@ -5529,6 +5565,8 @@ var app = (function () {
     	};
 
     	onMount(() => {
+    		tempIsUserDefined.set(false);
+    		LSisUserDefined.set(false);
     		let dateStart = new Date();
     		let dateEnd = new Date();
     		dateEnd.setDate(dateEnd.getDate() + 20);
@@ -5540,7 +5578,7 @@ var app = (function () {
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<ScreenSignUp> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$3.warn(`<ScreenSignUp> was created with unknown prop '${key}'`);
     	});
 
     	const $$binding_groups = [[]];
@@ -5574,7 +5612,7 @@ var app = (function () {
     		ContentWrapper,
     		AppHeader,
     		TwentyTwentyOne: _2021,
-    		replace,
+    		push,
     		onMount,
     		tempIsUserDefined,
     		tempUserDetails,
@@ -5587,7 +5625,10 @@ var app = (function () {
     		userTemp,
     		handleSignUp,
     		handleToggleHabitType,
-    		$isLocalStorage
+    		$isLocalStorage,
+    		$LSuserAuth,
+    		$LSuserDetails,
+    		$LSisUserDefined
     	});
 
     	$$self.$inject_state = $$props => {
@@ -6242,10 +6283,10 @@ var app = (function () {
     			div0 = element("div");
     			create_component(router.$$.fragment);
     			attr_dev(div0, "class", "flex flex-col justify-center py-12 sm:px-6 lg:px-8");
-    			add_location(div0, file$k, 46, 2, 1204);
+    			add_location(div0, file$k, 41, 2, 1071);
     			attr_dev(div1, "class", "bg bg-repeat h-screen w-screen overflow-x-hidden relative");
     			set_style(div1, "background-image", "url(/static/subtle-bg/greek-vase.png)");
-    			add_location(div1, file$k, 43, 0, 1062);
+    			add_location(div1, file$k, 38, 0, 929);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -6285,29 +6326,26 @@ var app = (function () {
 
     function instance$l($$self, $$props, $$invalidate) {
     	let $LSisUserDefined;
-    	let $activeUserDetails;
     	let $LSuserDetails;
     	let $tempIsUserDefined;
     	let $tempUserDetails;
     	validate_store(LSisUserDefined, "LSisUserDefined");
-    	component_subscribe($$self, LSisUserDefined, $$value => $$invalidate(1, $LSisUserDefined = $$value));
-    	validate_store(activeUserDetails, "activeUserDetails");
-    	component_subscribe($$self, activeUserDetails, $$value => $$invalidate(2, $activeUserDetails = $$value));
+    	component_subscribe($$self, LSisUserDefined, $$value => $$invalidate(0, $LSisUserDefined = $$value));
     	validate_store(LSuserDetails, "LSuserDetails");
-    	component_subscribe($$self, LSuserDetails, $$value => $$invalidate(3, $LSuserDetails = $$value));
+    	component_subscribe($$self, LSuserDetails, $$value => $$invalidate(2, $LSuserDetails = $$value));
     	validate_store(tempIsUserDefined, "tempIsUserDefined");
-    	component_subscribe($$self, tempIsUserDefined, $$value => $$invalidate(4, $tempIsUserDefined = $$value));
+    	component_subscribe($$self, tempIsUserDefined, $$value => $$invalidate(1, $tempIsUserDefined = $$value));
     	validate_store(tempUserDetails, "tempUserDetails");
-    	component_subscribe($$self, tempUserDetails, $$value => $$invalidate(0, $tempUserDetails = $$value));
+    	component_subscribe($$self, tempUserDetails, $$value => $$invalidate(3, $tempUserDetails = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
 
     	const setActiveUser = () => {
     		if ($LSisUserDefined) {
-    			set_store_value(activeUserDetails, $activeUserDetails = $LSuserDetails, $activeUserDetails);
+    			activeUserDetails.set($LSuserDetails);
     			replace("/");
     		} else if ($tempIsUserDefined) {
-    			set_store_value(activeUserDetails, $activeUserDetails = $tempUserDetails, $activeUserDetails); // console.log("local storage user active");
+    			activeUserDetails.set($tempUserDetails); // console.log("local storage user active");
     			replace("/");
     		} else {
     			// console.log("no user defined directing to /#start");
@@ -6317,9 +6355,7 @@ var app = (function () {
 
     	onMount(() => {
     		setActiveUser();
-    	}); // console.log("LSuserAuth", $LSuserAuth);
-    	// console.log("LSuserDetails", $LSuserDetails);
-    	// console.log("LSisUserDefined", $LSisUserDefined);
+    	});
 
     	const writable_props = [];
 
@@ -6334,25 +6370,25 @@ var app = (function () {
     		tempIsUserDefined,
     		tempUserDetails,
     		activeUserDetails,
-    		LSuserAuth,
     		LSuserDetails,
     		LSisUserDefined,
     		onMount,
     		setActiveUser,
     		$LSisUserDefined,
-    		$activeUserDetails,
     		$LSuserDetails,
     		$tempIsUserDefined,
     		$tempUserDetails
     	});
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*$tempUserDetails*/ 1) {
-    			 $tempUserDetails ? setActiveUser() : "";
+    		if ($$self.$$.dirty & /*$LSisUserDefined, $tempIsUserDefined*/ 3) {
+    			 $LSisUserDefined == true || $tempIsUserDefined == true
+    			? setActiveUser()
+    			: "";
     		}
     	};
 
-    	return [$tempUserDetails];
+    	return [$LSisUserDefined, $tempIsUserDefined];
     }
 
     class App extends SvelteComponentDev {
