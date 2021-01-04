@@ -18,53 +18,51 @@
   });
 </script>
 
-<style>
-  .svg-wrap {
-    max-height: 154.9px;
-  }
-</style>
-
-<div class="svg-wrap flex">
-  {#if digits.first == '0' || digits.first == 'N'}
-    <Zero />
-  {:else if digits.first == '1'}
-    <One />
-  {:else if digits.first == '2'}
-    <Two />
-  {:else if digits.first == '3'}
-    <Three />
-  {:else if digits.first == '4'}
-    <Four />
-  {:else if digits.first == '5'}
-    <Five />
-  {:else if digits.first == '6'}
-    <Six />
-  {:else if digits.first == '7'}
-    <Seven />
-  {:else if digits.first == '8'}
-    <Eight />
-  {:else if digits.first == '9'}
-    <Nine />
-  {/if}
-  {#if digits.second == '0' || digits.first == 'a'}
-    <Zero />
-  {:else if digits.second == '1'}
-    <One />
-  {:else if digits.second == '2'}
-    <Two />
-  {:else if digits.second == '3'}
-    <Three />
-  {:else if digits.second == '4'}
-    <Four />
-  {:else if digits.second == '5'}
-    <Five />
-  {:else if digits.second == '6'}
-    <Six />
-  {:else if digits.second == '7'}
-    <Seven />
-  {:else if digits.second == '8'}
-    <Eight />
-  {:else if digits.second == '9'}
-    <Nine />
-  {/if}
+<div class="flex items-stretch space-x-1">
+  <span style="width: min-content; min-width: 50%; max-height: 154px" class="">
+    {#if digits.first == '0' || digits.first == 'N'}
+      <Zero />
+    {:else if digits.first == '1'}
+      <One />
+    {:else if digits.first == '2'}
+      <Two />
+    {:else if digits.first == '3'}
+      <Three />
+    {:else if digits.first == '4'}
+      <Four />
+    {:else if digits.first == '5'}
+      <Five />
+    {:else if digits.first == '6'}
+      <Six />
+    {:else if digits.first == '7'}
+      <Seven />
+    {:else if digits.first == '8'}
+      <Eight />
+    {:else if digits.first == '9'}
+      <Nine />
+    {/if}
+  </span>
+  <span style="width: min-content; min-width: 50%; max-height: 154px" class="">
+    {#if digits.second == '0' || digits.first == 'a'}
+      <Zero />
+    {:else if digits.second == '1'}
+      <One />
+    {:else if digits.second == '2'}
+      <Two />
+    {:else if digits.second == '3'}
+      <Three />
+    {:else if digits.second == '4'}
+      <Four />
+    {:else if digits.second == '5'}
+      <Five />
+    {:else if digits.second == '6'}
+      <Six />
+    {:else if digits.second == '7'}
+      <Seven />
+    {:else if digits.second == '8'}
+      <Eight />
+    {:else if digits.second == '9'}
+      <Nine />
+    {/if}
+  </span>
 </div>
