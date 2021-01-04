@@ -7,20 +7,17 @@
     tempUserDetails,
     activeUserDetails
   } from "./stores.js";
-  import {
-    LSuserDetails,
-    LSisUserDefined
-  } from "./localStorage.js";
+  import { LSuserDetails, LSisUserDefined } from "./localStorage.js";
   import { onMount } from "svelte";
 
   const setActiveUser = () => {
     if ($LSisUserDefined) {
-      $activeUserDetails = $LSuserDetails;
+      $activeUserDetails.set($LSuserDetails);
       // replace("/");
 
       // console.log("local storage user active");
     } else if ($tempIsUserDefined) {
-      $activeUserDetails = $tempUserDetails;
+      $activeUserDetails.set($tempUserDetails);
       // replace("/");
 
       // console.log("temporary user active");
