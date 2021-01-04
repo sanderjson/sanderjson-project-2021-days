@@ -42,15 +42,15 @@
           push(`#/error`);
         } else {
           if ($isLocalStorage()) {
-            console.log("before LSuserAuth", $LSuserAuth);
-            console.log("before LSuserDetails", $LSuserDetails);
-            console.log("before LSisUserDefined", $LSisUserDefined);
+            console.log("start before LSuserAuth", $LSuserAuth);
+            console.log("start before LSuserDetails", $LSuserDetails);
+            console.log("start before LSisUserDefined", $LSisUserDefined);
             LSuserAuth.set(res.userAuth);
             LSuserDetails.set(res.userDetails);
             LSisUserDefined.set(true);
-            console.log("after LSuserAuth", $LSuserAuth);
-            console.log("after LSuserDetails", $LSuserDetails);
-            console.log("after LSisUserDefined", $LSisUserDefined);
+            console.log("start after LSuserAuth", $LSuserAuth);
+            console.log("start after LSuserDetails", $LSuserDetails);
+            console.log("start after LSisUserDefined", $LSisUserDefined);
             // console.log("local storage is enabled");
           } else {
             tempUserDetails.set(res.userDetails);
