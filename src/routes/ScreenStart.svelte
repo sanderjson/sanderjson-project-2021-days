@@ -2,8 +2,7 @@
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeader from "../components/AppHeader.svelte";
   import TwentyTwentyOne from "../svg/2021.svelte";
-
-  import { push, pop, replace } from "svelte-spa-router";
+  import { push } from "svelte-spa-router";
   import {
     tempIsUserDefined,
     tempUserDetails,
@@ -40,12 +39,18 @@
       .then(res => {
         if (res.Error) {
           errMessage.set(res.Error);
-          replace(`#/error`);
+          push(`#/error`);
         } else {
           if ($isLocalStorage()) {
+            console.log("before LSuserAuth", LSuserAuth);
+            console.log("before LSuserDetails", LSuserDetails);
+            console.log("before LSisUserDefined", LSisUserDefined);
             LSuserAuth.set(res.userAuth);
             LSuserDetails.set(res.userDetails);
             LSisUserDefined.set(true);
+            console.log("after LSuserAuth", LSuserAuth);
+            console.log("after LSuserDetails", LSuserDetails);
+            console.log("after LSisUserDefined", LSisUserDefined);
             // console.log("local storage is enabled");
           } else {
             tempUserDetails.set(res.userDetails);
@@ -54,10 +59,10 @@
           }
         }
       })
-      .then(() => replace("/"))
+      .then(() => push("/"))
       .catch(err => {
         errMessage.set(res.Error);
-        replace(`#/error`);
+        push(`#/error`);
       });
   };
 </script>
