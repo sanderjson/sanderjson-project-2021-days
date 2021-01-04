@@ -97,7 +97,6 @@
           }
         }
       })
-      .then(() => push("/"))
       .catch(err => {
         errMessage.set(res.Error);
         push(`#/error`);

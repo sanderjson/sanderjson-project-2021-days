@@ -13,12 +13,12 @@
   const setActiveUser = () => {
     if ($LSisUserDefined) {
       activeUserDetails.set($LSuserDetails);
-      // replace("/");
+      replace("/");
 
       // console.log("local storage user active");
     } else if ($tempIsUserDefined) {
       activeUserDetails.set($tempUserDetails);
-      // replace("/");
+      replace("/");
 
       // console.log("temporary user active");
     } else {
@@ -29,12 +29,11 @@
 
   onMount(() => {
     setActiveUser();
-    // console.log("LSuserAuth", $LSuserAuth);
-    // console.log("LSuserDetails", $LSuserDetails);
-    // console.log("LSisUserDefined", $LSisUserDefined);
   });
 
-  $: $tempUserDetails ? setActiveUser() : "";
+  $: $LSisUserDefined == true || $tempIsUserDefined == true
+    ? setActiveUser()
+    : "";
 </script>
 
 <div

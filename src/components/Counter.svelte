@@ -19,7 +19,7 @@
 </script>
 
 <div class="flex">
-  {#if digits.first == '0'}
+  {#if digits.first == '0' || digits.first == 'N'}
     <Zero />
   {:else if digits.first == '1'}
     <One />
@@ -40,7 +40,7 @@
   {:else if digits.first == '9'}
     <Nine />
   {/if}
-  {#if digits.second == '0'}
+  {#if digits.second == '0' || digits.first == 'a'}
     <Zero />
   {:else if digits.second == '1'}
     <One />
