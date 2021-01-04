@@ -91,7 +91,7 @@
           }
         }
       })
-      .then(() => replace("/"))
+      .then(() => replace(""))
       .catch(err => {
         errMessage.set(res.Error);
         replace(`#/error`);

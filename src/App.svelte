@@ -12,12 +12,12 @@
 
   const setActiveUser = () => {
     if ($LSisUserDefined) {
-      $activeUserDetails.set($LSuserDetails);
+      activeUserDetails.set($LSuserDetails);
       // replace("/");
 
       // console.log("local storage user active");
     } else if ($tempIsUserDefined) {
-      $activeUserDetails.set($tempUserDetails);
+      activeUserDetails.set($tempUserDetails);
       // replace("/");
 
       // console.log("temporary user active");
