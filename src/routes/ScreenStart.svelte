@@ -1,7 +1,7 @@
 <script>
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeader from "../components/AppHeader.svelte";
-  import TwentyTwentyOne from "../assets/2021.svelte";
+  import TwentyTwentyOne from "../svg/2021.svelte";
 
   import { push, pop, replace } from "svelte-spa-router";
   import {

@@ -1,14 +1,14 @@
 <script>
-  import Zero from "../assets/zero.svelte";
-  import One from "../assets/one.svelte";
-  import Two from "../assets/two.svelte";
-  import Three from "../assets/three.svelte";
-  import Four from "../assets/four.svelte";
-  import Five from "../assets/five.svelte";
-  import Six from "../assets/six.svelte";
-  import Seven from "../assets/seven.svelte";
-  import Eight from "../assets/eight.svelte";
-  import Nine from "../assets/nine.svelte";
+  import Zero from "../svg/zero.svelte";
+  import One from "../svg/one.svelte";
+  import Two from "../svg/two.svelte";
+  import Three from "../svg/three.svelte";
+  import Four from "../svg/four.svelte";
+  import Five from "../svg/five.svelte";
+  import Six from "../svg/six.svelte";
+  import Seven from "../svg/seven.svelte";
+  import Eight from "../svg/eight.svelte";
+  import Nine from "../svg/nine.svelte";
   import { onMount } from "svelte";
 
   export let digits;

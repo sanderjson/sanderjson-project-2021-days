@@ -1,7 +1,7 @@
 <script>
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeader from "../components/AppHeader.svelte";
-  import Error from "../assets/error.svelte";
+  import Error from "../svg/error.svelte";
   import { errMessage } from "../stores.js";
 </script>
 

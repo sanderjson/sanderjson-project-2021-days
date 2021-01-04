@@ -3,11 +3,6 @@
   import AppHeader from "../components/AppHeader.svelte";
   import Counter from "../components/Counter.svelte";
   import { activeUserDetails } from "../stores.js";
-  import {
-    LSisUserDefined,
-    LSuserAuth,
-    LSuserDetails
-  } from "../localStorage.js";
 
   export let params;
 

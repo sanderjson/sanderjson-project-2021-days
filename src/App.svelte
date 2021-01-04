@@ -17,9 +17,13 @@
   const setActiveUser = () => {
     if ($LSisUserDefined) {
       $activeUserDetails = $LSuserDetails;
+      replace("/");
+
       // console.log("local storage user active");
     } else if ($tempIsUserDefined) {
       $activeUserDetails = $tempUserDetails;
+      replace("/");
+
       // console.log("temporary user active");
     } else {
       // console.log("no user defined directing to /#start");
