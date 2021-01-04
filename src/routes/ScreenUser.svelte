@@ -2,9 +2,6 @@
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeader from "../components/AppHeader.svelte";
   import Counter from "../components/Counter.svelte";
-
-  import { push, pop, replace } from "svelte-spa-router";
-  import { onMount } from "svelte";
   import { activeUserDetails } from "../stores.js";
   import {
     LSisUserDefined,
@@ -14,70 +11,51 @@
 
   export let params;
 
-  let dateStart;
-  let diff;
-  let daysIn;
-  let dateEnd;
-  let dateCurrent;
-
-  const calTimeLeft = () => {
-    let diff = dateEnd - dateCurrent;
-    return diff;
-  };
-
   const calDaysIn = (dateStart, dateToday) => {
-    let diff = dateToday - dateStart;
-    diff = (diff / 1000 / 3600 / 24 + 1).toFixed(0);
-    diff = diff.toString().split("");
+    let timeDiff = dateToday - dateStart;
+    timeDiff = (timeDiff / 1000 / 3600 / 24 + 1).toFixed(0);
+    timeDiff = timeDiff.toString().split("");
     // console.log("diff", diff);
-    if (diff.length == 1) {
-      return { first: 0, second: diff[0] };
+    if (timeDiff.length == 1) {
+      return { first: 0, second: timeDiff[0] };
     } else {
-      return { first: diff[0], second: diff[1] };
+      return { first: timeDiff[0], second: timeDiff[1] };
     }
   };
 
-  dateStart = new Date($activeUserDetails.habitDateStartUTCString).getTime();
-  dateEnd = new Date($activeUserDetails.habitDateEndUTCString).getTime();
-  dateCurrent = new Date().getTime();
-  daysIn = calDaysIn(dateStart, dateCurrent);
-
-  let counter = new Date().getTime();
   const update = setInterval(() => {
-    counter++;
+    dateCurrent++;
   }, 1000);
 
-  let updateTime = dateEnd - counter;
-  $: updateTime = dateEnd - counter;
+  let dateStart = new Date(
+    $activeUserDetails.habitDateStartUTCString
+  ).getTime();
+  let dateEnd = new Date($activeUserDetails.habitDateEndUTCString).getTime();
+  let dateCurrent = new Date().getTime();
+  let daysIn = calDaysIn(dateStart, dateCurrent);
+  let updateTime = dateEnd - dateCurrent;
+
+  $: updateTime = dateEnd - dateCurrent;
+  $: daysIn = calDaysIn(dateStart, dateCurrent);
 </script>
 
-<div class="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-  <AppHeader>
-    <Counter digits={daysIn} />
-  </AppHeader>
+<AppHeader>
+  <Counter digits={daysIn} />
+</AppHeader>
 
-  <ContentWrapper>
-    <div class="space-y-6">
-      <div class="text-sm font-bold text-gray-700">
-        Hey {$activeUserDetails.name}!
-      </div>
-      <p class="text-sm font-medium text-gray-500 ">
-        You have challenged yourself to {$activeUserDetails.habitType ? 'start' : 'kick'}
-        {$activeUserDetails.habit}. You made this decision here {$activeUserDetails.habitDateStartUTCString}.
-      </p>
-      <p class="text-sm font-medium text-gray-500 ">
-        By {$activeUserDetails.habitDateEndUTCString} you will have achieved
-        your twenty-one day goal.
-      </p>
-      <div class="mt-2 text-center text-gray-300">{updateTime} seconds</div>
-
-    </div>
-  </ContentWrapper>
-
-</div>
-
-<svelte:head>
-  <script defer src="https://unpkg.com/css-doodle@0.8.5/css-doodle.min.js">
-
-  </script>
-</svelte:head>
+<ContentWrapper>
+  <div class="space-y-6">
+    <p class="text-sm font-bold text-gray-700">
+      Hey {$activeUserDetails.name}!
+    </p>
+    <p class="text-sm font-medium text-gray-500 ">
+      You have challenged yourself to {$activeUserDetails.habitType ? 'start' : 'kick'}
+      {$activeUserDetails.habit}. You made this decision here {$activeUserDetails.habitDateStartUTCString}.
+    </p>
+    <p class="text-sm font-medium text-gray-500 ">
+      By {$activeUserDetails.habitDateEndUTCString} you will have achieved your
+      twenty-one day goal.
+    </p>
+    <div class="text-center text-gray-300">{updateTime} seconds</div>
+  </div>
+</ContentWrapper>

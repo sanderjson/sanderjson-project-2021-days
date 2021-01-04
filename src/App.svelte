@@ -2,7 +2,6 @@
   import Router from "svelte-spa-router";
   import routes from "./routes";
   import { replace } from "svelte-spa-router";
-
   import {
     tempIsUserDefined,
     tempUserDetails,
@@ -41,5 +40,8 @@
 <div
   class="bg bg-repeat h-screen w-screen overflow-x-hidden relative"
   style="background-image: url(/static/subtle-bg/greek-vase.png)">
-  <Router {routes} />
+  <div class="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+
+    <Router {routes} />
+  </div>
 </div>
