@@ -9,8 +9,13 @@
   import Seven from "../assets/seven.svelte";
   import Eight from "../assets/eight.svelte";
   import Nine from "../assets/nine.svelte";
+  import { onMount } from "svelte";
 
   export let digits;
+
+  onMount(() => {
+    console.log("Counter has mounted");
+  });
 </script>
 
 <div class="flex">

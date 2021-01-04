@@ -119,7 +119,6 @@
 </AppHeader>
 
 <ContentWrapper>
-
   <form class="space-y-6" on:submit|preventDefault={handleSignUp}>
     <div>
       <label for="email" class="block text-sm font-medium text-gray-700">
@@ -193,7 +192,6 @@
       </div>
     </div>
 
-    <!-- toggle -->
     <div class="flex items-center">
       <!-- On: "bg-indigo-600", Off: "bg-gray-200" -->
       <button
@@ -266,5 +264,4 @@
       </button>
     </div>
   </form>
-
 </ContentWrapper>
