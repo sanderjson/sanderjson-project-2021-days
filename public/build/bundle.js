@@ -4761,7 +4761,7 @@ var app = (function () {
     				} // console.log("local storage is not available");
     			}
     		}).catch(err => {
-    			errMessage.set(res.Error);
+    			errMessage.set(err.Error);
     			push(`#/error`);
     		});
     	};

@@ -62,7 +62,7 @@
         }
       })
       .catch(err => {
-        errMessage.set(res.Error);
+        errMessage.set(err.Error);
         push(`#/error`);
       });
   };
