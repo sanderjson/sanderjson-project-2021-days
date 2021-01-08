@@ -29,8 +29,11 @@
 
   onMount(() => {
     setActiveUser();
+    // for dev clear local storage
+    // localStorage.clear();
   });
 
+  // live listener for signin
   $: $LSisUserDefined == true || $tempIsUserDefined == true
     ? setActiveUser()
     : "";
@@ -40,7 +43,6 @@
   class="bg bg-repeat h-screen w-screen overflow-x-hidden relative"
   style="background-image: url(/static/subtle-bg/greek-vase.png)">
   <div class="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-
     <Router {routes} />
   </div>
 </div>

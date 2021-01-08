@@ -36,34 +36,40 @@
       })
     };
 
+    const handleErrors = res => {
+      // console.log("initial res", res);
+      if (!res.ok) {
+        return res.text().then(text => {
+          throw text;
+        });
+      }
+      return res.json();
+    };
+
     const postData = await fetch(fetchURL, fetchOptions)
-      .then(res => res.json())
+      .then(handleErrors)
       .then(res => {
-        if (res.Error) {
-          errMessage.set(res.Error);
-          push(`#/error`);
+        // console.log("res from json case", res);
+        if ($isLocalStorage()) {
+          // console.log("start before LSuserAuth", $LSuserAuth);
+          // console.log("start before LSuserDetails", $LSuserDetails);
+          // console.log("start before LSisUserDefined", $LSisUserDefined);
+          LSuserAuth.set(res.userAuth);
+          LSuserDetails.set(res.userDetails);
+          LSisUserDefined.set(true);
+          // console.log("start after LSuserAuth", $LSuserAuth);
+          // console.log("start after LSuserDetails", $LSuserDetails);
+          // console.log("start after LSisUserDefined", $LSisUserDefined);
+          // console.log("local storage is enabled");
         } else {
-          if ($isLocalStorage()) {
-            // console.log("start before LSuserAuth", $LSuserAuth);
-            // console.log("start before LSuserDetails", $LSuserDetails);
-            // console.log("start before LSisUserDefined", $LSisUserDefined);
-            LSuserAuth.set(res.userAuth);
-            LSuserDetails.set(res.userDetails);
-            LSisUserDefined.set(true);
-            // console.log("start after LSuserAuth", $LSuserAuth);
-            // console.log("start after LSuserDetails", $LSuserDetails);
-            // console.log("start after LSisUserDefined", $LSisUserDefined);
-            // console.log("local storage is enabled");
-          } else {
-            tempUserDetails.set(res.userDetails);
-            tempIsUserDefined.set(true);
-            // console.log("local storage is not available");
-          }
+          tempUserDetails.set(res.userDetails);
+          tempIsUserDefined.set(true);
+          // console.log("local storage is not available");
         }
       })
       .catch(err => {
-        errMessage.set(err.Error);
-        push(`#/error`);
+        errMessage.set(err);
+        push(`/error`);
       });
   };
 
