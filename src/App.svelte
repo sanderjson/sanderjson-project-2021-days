@@ -1,48 +1,56 @@
 <script>
+  import { onDestroy } from "svelte";
   import Router from "svelte-spa-router";
-  import routes from "./routes";
   import { replace } from "svelte-spa-router";
+  import routes from "./routes";
   import {
-    tempIsUserDefined,
-    tempUserDetails,
-    activeUserDetails
+    getIsLocalStorage,
+    isLocalStorage,
+    isActiveUserLive,
+    isNewActiveUserHabit,
+    activeUserAuth,
+    activeUserId,
+    activeUserDetails,
+    activeUserHabits
   } from "./stores.js";
-  import { LSuserDetails, LSisUserDefined } from "./localStorage.js";
-  import { onMount } from "svelte";
+  import {
+    LSisUserDefined,
+    LSuserAuth,
+    LSuserDetails,
+    LSactiveHabits
+  } from "./localStorage.js";
 
-  const setActiveUser = () => {
-    if ($LSisUserDefined) {
-      activeUserDetails.set($LSuserDetails);
-      replace("/");
+  // loads user profile from local storage
+  isLocalStorage.set($getIsLocalStorage());
+  if ($isLocalStorage && $LSisUserDefined) {
+    console.log("writing activeUser from LS");
+    activeUserId.set($LSuserDetails.userId);
+    activeUserDetails.set($LSuserDetails);
+    activeUserHabits.set($LSactiveHabits);
+    replace("/");
+  }
 
-      // console.log("local storage user active");
-    } else if ($tempIsUserDefined) {
-      activeUserDetails.set($tempUserDetails);
-      replace("/");
-
-      // console.log("temporary user active");
-    } else {
-      // console.log("no user defined directing to /#start");
-      replace("/start");
+  const updateLocalStorage = () => {
+    if ($isLocalStorage) {
+      LSuserAuth.set($activeUserAuth);
+      LSuserDetails.set($activeUserDetails);
+      LSactiveHabits.set($activeUserHabits);
+      LSisUserDefined.set(true);
     }
+    isNewActiveUserHabit.set(false);
+    replace("/");
   };
 
-  onMount(() => {
-    setActiveUser();
-    // for dev clear local storage
-    // localStorage.clear();
-  });
+  $: $isActiveUserLive == true ? updateLocalStorage() : "";
+  $: $isNewActiveUserHabit == true ? updateLocalStorage() : "";
 
-  // live listener for signin
-  $: $LSisUserDefined == true || $tempIsUserDefined == true
-    ? setActiveUser()
-    : "";
+  onDestroy(() => {
+    isActiveUserLive.set(false);
+  });
 </script>
 
 <div
-  class="bg bg-repeat h-screen w-screen overflow-x-hidden relative"
+  class="bg-repeat h-screen w-screen overflow-x-hidden relative"
   style="background-image: url(/static/subtle-bg/greek-vase.png)">
-  <div class="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-    <Router {routes} />
-  </div>
+  <Router {routes} />
 </div>

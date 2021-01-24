@@ -18,10 +18,16 @@
   // });
 </script>
 
-<div class="flex items-stretch space-x-1">
+<style>
+  /* :global(.counter-svg svg) {
+    fill: red;
+  } */
+</style>
+
+<div class="counter-svg flex items-stretch space-x-1">
   <span
     style="width: min-content; min-width: 50%; max-height: 154px"
-    class="flex justify-center">
+    class="flex text-right justify-center">
     {#if digits.first == '0' || digits.first == 'N'}
       <Zero />
     {:else if digits.first == '1'}
@@ -46,7 +52,7 @@
   </span>
   <span
     style="width: min-content; min-width: 50%; max-height: 154px"
-    class="flex justify-center">
+    class="flex text-left justify-center">
     {#if digits.second == '0' || digits.first == 'a'}
       <Zero />
     {:else if digits.second == '1'}

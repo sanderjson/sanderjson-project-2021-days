@@ -17,7 +17,7 @@
     class=" space-y-6 mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
     <p>
       This simple app can help you track progress.
-      <a class="underline" href="/signup">Click here</a>
+      <a class="underline" href="#/signup">Click here</a>
       to visit the signup page, and create an account with your details.
     </p>
     <p class="mt-2">

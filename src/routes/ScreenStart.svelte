@@ -6,24 +6,33 @@
   import { push } from "svelte-spa-router";
   import { onMount } from "svelte";
   import {
-    tempIsUserDefined,
-    tempUserDetails,
+    errMessage, 
+    API_ENDPOINT,
     isLocalStorage,
-    errMessage
+    getUserHabitBlank,
+    activeUserAuth,
+    activeUserId,
+    activeUserDetails,
+    activeUserHabits,
+    isActiveUserLive
   } from "../stores.js";
   import {
     LSisUserDefined,
     LSuserAuth,
-    LSuserDetails
+    LSuserDetails,
+    LSactiveHabits
   } from "../localStorage.js";
+
   let userTemp = {
     email: "",
     password: ""
   };
 
+  // let blankUser = $getUserHabitBlank();
+  // let blankHabit = $getUserHabitBlank();
+
   const handleSignIn = async () => {
-    const fetchURL =
-      "https://sanderjson-pr-2021-days.builtwithdark.com/signInUser";
+    const fetchURL = $API_ENDPOINT + "/signInUser";
 
     const fetchOptions = {
       method: "POST",
@@ -37,7 +46,6 @@
     };
 
     const handleErrors = res => {
-      // console.log("initial res", res);
       if (!res.ok) {
         return res.text().then(text => {
           throw text;
@@ -49,33 +57,39 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        // console.log("res from json case", res);
-        if ($isLocalStorage()) {
-          // console.log("start before LSuserAuth", $LSuserAuth);
-          // console.log("start before LSuserDetails", $LSuserDetails);
-          // console.log("start before LSisUserDefined", $LSisUserDefined);
-          LSuserAuth.set(res.userAuth);
-          LSuserDetails.set(res.userDetails);
-          LSisUserDefined.set(true);
-          // console.log("start after LSuserAuth", $LSuserAuth);
-          // console.log("start after LSuserDetails", $LSuserDetails);
-          // console.log("start after LSisUserDefined", $LSisUserDefined);
-          // console.log("local storage is enabled");
-        } else {
-          tempUserDetails.set(res.userDetails);
-          tempIsUserDefined.set(true);
-          // console.log("local storage is not available");
-        }
+        console.log("res from start", res);
+        let activeHabitsClean = res.userActiveHabits.map(habit => {
+          if (habit == null) {
+            return $getUserHabitBlank();
+          }
+          return habit;
+        });
+        activeUserAuth.set(res.userAuth);
+        activeUserDetails.set(res.userDetails);
+        activeUserId.set(res.userDetails.userId);
+        activeUserHabits.set(activeHabitsClean);
+        isActiveUserLive.set(true);
       })
       .catch(err => {
+        console.clear();
         errMessage.set(err);
         push(`/error`);
       });
   };
 
   onMount(() => {
-    tempIsUserDefined.set(false);
-    LSisUserDefined.set(false);
+    // clean all local storage on start screen
+    if ($isLocalStorage) {
+      LSuserAuth.set(null);
+      LSuserDetails.set(null);
+      LSactiveHabits.set([null, null, null]);
+      LSisUserDefined.set(false);
+    }
+    activeUserAuth.set(null);
+    activeUserId.set(null);
+    activeUserDetails.set(null);
+    activeUserHabits.set([null, null, null]);
+    isActiveUserLive.set(false);
   });
 </script>
 
@@ -99,7 +113,7 @@
           bind:value={userTemp.email}
           class="appearance-none block w-full px-3 py-2 border border-gray-300
           rounded-md shadow-sm placeholder-gray-400 focus:outline-none
-          focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
       </div>
     </div>
 
@@ -117,7 +131,7 @@
           bind:value={userTemp.password}
           class="appearance-none block w-full px-3 py-2 border border-gray-300
           rounded-md shadow-sm placeholder-gray-400 focus:outline-none
-          focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm" />
+          focus:ring-blue-500 focus:border-blue-500 sm:text-sm" />
       </div>
     </div>
 
@@ -125,9 +139,9 @@
       <button
         type="submit"
         class="w-full flex justify-center py-2 px-4 border border-transparent
-        rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600
-        hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2
-        focus:ring-indigo-500">
+        rounded-md shadow-sm text-sm font-medium text-white bg-blue-600
+        hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2
+        focus:ring-blue-500">
         Sign in
       </button>
     </div>

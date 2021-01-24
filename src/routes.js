@@ -3,14 +3,21 @@ import ScreenStart from "./routes/ScreenStart.svelte";
 import ScreenSignUp from "./routes/ScreenSignUp.svelte";
 import ScreenAbout from "./routes/ScreenAbout.svelte";
 import ScreenError from "./routes/ScreenError.svelte";
+import ScreenHome from "./routes/ScreenHome.svelte";
+import ScreenHabitAddOrEdit from "./routes/ScreenHabitAddOrEdit.svelte";
+import ScreenHabitHistory from "./routes/ScreenHabitHistory.svelte";
 
 export default {
-	"/": ScreenUser,
+	"/": ScreenHome,
+
 	"/start": ScreenStart,
 	"/signup": ScreenSignUp,
 	"/about": ScreenAbout,
 	"/error": ScreenError,
 	// "/user/:id": ScreenUser,
+	"/add": ScreenHabitAddOrEdit,
+	"/edit": ScreenHabitAddOrEdit,
+	"/history": ScreenHabitHistory,
 
 	// Using named parameters, with last being optional
 	// "/author/:first/:last?": Author,

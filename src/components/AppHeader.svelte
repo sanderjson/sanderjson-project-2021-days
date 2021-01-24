@@ -1,4 +1,8 @@
-<div class="sm:mx-auto sm:w-full sm:max-w-md">
+<script>
+  import { fade } from "svelte/transition";
+</script>
+
+<div in:fade local class="sm:mx-auto sm:w-full sm:max-w-md">
   <div class="mx-auto w-48 sm:w-64">
     <slot />
   </div>
@@ -6,7 +10,7 @@
     2021 Habit Challenge
   </h2>
   <div class="mt-2 text-center text-sm text-gray-600 max-w">
-    <p class="font-medium text-indigo-600 hover:text-indigo-500">
+    <p class="font-medium text-blue-600 hover:text-blue-500">
       Take twenty-one days to make a habit
     </p>
   </div>
