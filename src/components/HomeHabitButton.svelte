@@ -1,5 +1,11 @@
 <script>
-  import { currentActiveHabit } from "../stores.js";
+  import {
+    currentActiveHabit,
+    errMessage,
+    API_ENDPOINT,
+    activeUserHabits,
+    isNewActiveUserHabit
+  } from "../stores.js";
   import { push } from "svelte-spa-router";
 
   export let habit;
@@ -42,6 +48,53 @@
   let dateEnd = new Date(habit.detailDateEndUTCString).getTime();
   let dateCurrent = new Date().getTime();
   let timeRemaining = getTimeRemaining(dateEnd, dateCurrent);
+
+  // const handleHabitCheck = val => {
+  //   console.log(val);
+  // };
+
+  const handleHabitCheck = async val => {
+    const fetchURL = $API_ENDPOINT + "/addHabitCheck";
+    const fetchOptions = {
+      method: "POST",
+      headers: {
+        "content-type": "application/json"
+      },
+
+      body: JSON.stringify({
+        checkDate: new Date(),
+        checkIsOk: val,
+        habitId: habit.adminHabitId
+      })
+    };
+
+    const handleErrors = res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          throw text;
+        });
+      }
+      return res.json();
+    };
+
+    const postData = await fetch(fetchURL, fetchOptions)
+      .then(handleErrors)
+      .then(res => {
+        // res.check = {
+        // date: "",
+        // isOk: bool
+        // }
+        let newHabitData = $activeUserHabits;
+        newHabitData[$currentActiveHabit] = res;
+        activeUserHabits.set(newHabitData);
+        isNewActiveUserHabit.set(true);
+      })
+      .catch(err => {
+        console.clear();
+        errMessage.set(err);
+        push(`/error`);
+      });
+  };
 
   $: updateTime = dateEnd - dateCurrent;
   $: timeRemaining = getTimeRemaining(dateEnd, dateCurrent);
@@ -97,7 +150,7 @@
     {:else if $currentActiveHabit === i}
       <div class="py-1 flex justify-center items-center space-x-2">
         <button
-          on:click={() => console.log('OK habit: ', i)}
+          on:click={() => handleHabitCheck(true)}
           class="flex justify-center items-center focus:ring-1 outline-none
           focus:ring-offset-1 focus:ring-green-500 focus:outline-none
           transition-colors duration-75">
@@ -105,7 +158,7 @@
           <i class="bg-green-100 far fa-2x fa-check-square" />
         </button>
         <button
-          on:click={() => console.log('!OK habit: ', i)}
+          on:click={() => handleHabitCheck(false)}
           class="flex justify-center items-center focus:ring-1 outline-none
           focus:ring-offset-1 focus:ring-red-500 focus:outline-none
           transition-colors duration-75">

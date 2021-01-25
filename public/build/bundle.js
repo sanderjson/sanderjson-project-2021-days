@@ -4055,7 +4055,7 @@ var app = (function () {
     const { console: console_1$3 } = globals;
     const file$8 = "src/components/HomeHabitButton.svelte";
 
-    // (67:46) {:else}
+    // (120:46) {:else}
     function create_else_block_2(ctx) {
     	let t;
 
@@ -4076,14 +4076,14 @@ var app = (function () {
     		block,
     		id: create_else_block_2.name,
     		type: "else",
-    		source: "(67:46) {:else}",
+    		source: "(120:46) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (67:38) 
+    // (120:38) 
     function create_if_block_5(ctx) {
     	let t;
 
@@ -4104,14 +4104,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(67:38) ",
+    		source: "(120:38) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (65:8) {#if habit.adminIsActive && habit.detailDuration > 1}
+    // (118:8) {#if habit.adminIsActive && habit.detailDuration > 1}
     function create_if_block_4(ctx) {
     	let t0_value = /*habit*/ ctx[0].detailDuration + "";
     	let t0;
@@ -4139,14 +4139,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(65:8) {#if habit.adminIsActive && habit.detailDuration > 1}",
+    		source: "(118:8) {#if habit.adminIsActive && habit.detailDuration > 1}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (73:6) {:else}
+    // (126:6) {:else}
     function create_else_block_1(ctx) {
     	let div;
 
@@ -4155,7 +4155,7 @@ var app = (function () {
     			div = element("div");
     			div.textContent = "+";
     			attr_dev(div, "class", "mt-1 text-6xl font-bold text-center text-blue-900");
-    			add_location(div, file$8, 73, 8, 2282);
+    			add_location(div, file$8, 126, 8, 3456);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4170,14 +4170,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(73:6) {:else}",
+    		source: "(126:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (69:6) {#if habit.adminIsActive}
+    // (122:6) {#if habit.adminIsActive}
     function create_if_block_3(ctx) {
     	let div;
     	let t_value = /*habit*/ ctx[0].detailCode + "";
@@ -4188,7 +4188,7 @@ var app = (function () {
     			div = element("div");
     			t = text(t_value);
     			attr_dev(div, "class", "mt-1 text-6xl font-extrabold text-center text-blue-900");
-    			add_location(div, file$8, 69, 8, 2147);
+    			add_location(div, file$8, 122, 8, 3321);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4206,14 +4206,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(69:6) {#if habit.adminIsActive}",
+    		source: "(122:6) {#if habit.adminIsActive}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:48) {:else}
+    // (130:48) {:else}
     function create_else_block$1(ctx) {
     	let t;
 
@@ -4234,14 +4234,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(77:48) {:else}",
+    		source: "(130:48) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:8) {#if habit.adminIsActive}
+    // (130:8) {#if habit.adminIsActive}
     function create_if_block_2(ctx) {
     	let t;
 
@@ -4264,14 +4264,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(77:8) {#if habit.adminIsActive}",
+    		source: "(130:8) {#if habit.adminIsActive}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (97:40) 
+    // (150:40) 
     function create_if_block_1(ctx) {
     	let div;
     	let button0;
@@ -4291,15 +4291,15 @@ var app = (function () {
     			button1 = element("button");
     			i1 = element("i");
     			attr_dev(i0, "class", "bg-green-100 far fa-2x fa-check-square");
-    			add_location(i0, file$8, 104, 10, 3629);
+    			add_location(i0, file$8, 157, 10, 4797);
     			attr_dev(button0, "class", "flex justify-center items-center focus:ring-1 outline-none\n          focus:ring-offset-1 focus:ring-green-500 focus:outline-none\n          transition-colors duration-75");
-    			add_location(button0, file$8, 98, 8, 3332);
+    			add_location(button0, file$8, 151, 8, 4506);
     			attr_dev(i1, "class", "bg-red-100 far fa-2x fa-window-close");
-    			add_location(i1, file$8, 111, 10, 3969);
+    			add_location(i1, file$8, 164, 10, 5131);
     			attr_dev(button1, "class", "flex justify-center items-center focus:ring-1 outline-none\n          focus:ring-offset-1 focus:ring-red-500 focus:outline-none\n          transition-colors duration-75");
-    			add_location(button1, file$8, 106, 8, 3708);
+    			add_location(button1, file$8, 159, 8, 4876);
     			attr_dev(div, "class", "py-1 flex justify-center items-center space-x-2");
-    			add_location(div, file$8, 97, 6, 3262);
+    			add_location(div, file$8, 150, 6, 4436);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4311,8 +4311,8 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*click_handler*/ ctx[7], false, false, false),
-    					listen_dev(button1, "click", /*click_handler_1*/ ctx[8], false, false, false)
+    					listen_dev(button0, "click", /*click_handler*/ ctx[8], false, false, false),
+    					listen_dev(button1, "click", /*click_handler_1*/ ctx[9], false, false, false)
     				];
 
     				mounted = true;
@@ -4330,14 +4330,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(97:40) ",
+    		source: "(150:40) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (82:4) {#if !habit.adminIsActive && $currentActiveHabit === i}
+    // (135:4) {#if !habit.adminIsActive && $currentActiveHabit === i}
     function create_if_block$1(ctx) {
     	let div;
     	let button;
@@ -4352,12 +4352,12 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "ADD";
     			attr_dev(span, "class", "border-2 rounded-sm border-black bg-green-100 p-1 text-xs\n            font-extrabold align-middle");
-    			add_location(span, file$8, 89, 10, 3025);
+    			add_location(span, file$8, 142, 10, 4199);
     			set_style(button, "height", "32px");
     			attr_dev(button, "class", "flex justify-center items-center focus:ring-1 outline-none\n          focus:ring-offset-1 focus:ring-green-500 focus:outline-none\n          transition-colors duration-75");
-    			add_location(button, file$8, 83, 8, 2752);
+    			add_location(button, file$8, 136, 8, 3926);
     			attr_dev(div, "class", "py-1 flex justify-center items-center space-x-2");
-    			add_location(div, file$8, 82, 6, 2682);
+    			add_location(div, file$8, 135, 6, 3856);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4381,7 +4381,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(82:4) {#if !habit.adminIsActive && $currentActiveHabit === i}",
+    		source: "(135:4) {#if !habit.adminIsActive && $currentActiveHabit === i}",
     		ctx
     	});
 
@@ -4450,18 +4450,18 @@ var app = (function () {
     			div3 = element("div");
     			if (if_block3) if_block3.c();
     			attr_dev(div0, "class", "uppercase font-extrabold text-gray-900 text-xs text-left");
-    			add_location(div0, file$8, 63, 6, 1861);
+    			add_location(div0, file$8, 116, 6, 3035);
     			attr_dev(div1, "class", "mt-2 text-sm font-bold text-center text-gray-500 uppercase");
-    			add_location(div1, file$8, 75, 6, 2371);
+    			add_location(div1, file$8, 128, 6, 3545);
     			attr_dev(div2, "class", "flex flex-col mx-auto");
-    			add_location(div2, file$8, 62, 4, 1819);
+    			add_location(div2, file$8, 115, 4, 2993);
     			attr_dev(button, "class", "bg-white py-1 px-2 border-2 border-blue-100 shadow rounded-sm\n    hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700\n    focus:outline-none transition-colors duration-75 svelte-1xv7hhk");
     			toggle_class(button, "selected", /*$currentActiveHabit*/ ctx[3] === /*i*/ ctx[1] || /*$currentActiveHabit*/ ctx[3] === null && !/*habit*/ ctx[0].adminIsActive);
-    			add_location(button, file$8, 56, 2, 1472);
+    			add_location(button, file$8, 109, 2, 2646);
     			attr_dev(div3, "class", "bg-white mt-2 shadow rounded-sm sm:rounded-lg sm:px-10");
-    			add_location(div3, file$8, 80, 2, 2547);
+    			add_location(div3, file$8, 133, 2, 3721);
     			attr_dev(div4, "class", "flex flex-col");
-    			add_location(div4, file$8, 55, 0, 1442);
+    			add_location(div4, file$8, 108, 0, 2616);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -4569,7 +4569,13 @@ var app = (function () {
 
     function instance$9($$self, $$props, $$invalidate) {
     	let updateTime;
+    	let $API_ENDPOINT;
+    	let $activeUserHabits;
     	let $currentActiveHabit;
+    	validate_store(API_ENDPOINT, "API_ENDPOINT");
+    	component_subscribe($$self, API_ENDPOINT, $$value => $$invalidate(10, $API_ENDPOINT = $$value));
+    	validate_store(activeUserHabits, "activeUserHabits");
+    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(11, $activeUserHabits = $$value));
     	validate_store(currentActiveHabit, "currentActiveHabit");
     	component_subscribe($$self, currentActiveHabit, $$value => $$invalidate(3, $currentActiveHabit = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
@@ -4587,7 +4593,7 @@ var app = (function () {
 
     	const update = setInterval(
     		() => {
-    			$$invalidate(6, dateCurrent++, dateCurrent);
+    			$$invalidate(7, dateCurrent++, dateCurrent);
     		},
     		1000
     	);
@@ -4619,14 +4625,58 @@ var app = (function () {
     	let dateEnd = new Date(habit.detailDateEndUTCString).getTime();
     	let dateCurrent = new Date().getTime();
     	let timeRemaining = getTimeRemaining(dateEnd, dateCurrent);
+
+    	// const handleHabitCheck = val => {
+    	//   console.log(val);
+    	// };
+    	const handleHabitCheck = async val => {
+    		const fetchURL = $API_ENDPOINT + "/addHabitCheck";
+
+    		const fetchOptions = {
+    			method: "POST",
+    			headers: { "content-type": "application/json" },
+    			body: JSON.stringify({
+    				checkDate: new Date(),
+    				checkIsOk: val,
+    				habitId: habit.adminHabitId
+    			})
+    		};
+
+    		const handleErrors = res => {
+    			if (!res.ok) {
+    				return res.text().then(text => {
+    					throw text;
+    				});
+    			}
+
+    			return res.json();
+    		};
+
+    		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
+    			// res.check = {
+    			// date: "",
+    			// isOk: bool
+    			// }
+    			let newHabitData = $activeUserHabits;
+
+    			newHabitData[$currentActiveHabit] = res;
+    			activeUserHabits.set(newHabitData);
+    			isNewActiveUserHabit.set(true);
+    		}).catch(err => {
+    			console.clear();
+    			errMessage.set(err);
+    			push(`/error`);
+    		});
+    	};
+
     	const writable_props = ["habit", "i"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$3.warn(`<HomeHabitButton> was created with unknown prop '${key}'`);
     	});
 
-    	const click_handler = () => console.log("OK habit: ", i);
-    	const click_handler_1 = () => console.log("!OK habit: ", i);
+    	const click_handler = () => handleHabitCheck(true);
+    	const click_handler_1 = () => handleHabitCheck(false);
 
     	$$self.$$set = $$props => {
     		if ("habit" in $$props) $$invalidate(0, habit = $$props.habit);
@@ -4635,6 +4685,10 @@ var app = (function () {
 
     	$$self.$capture_state = () => ({
     		currentActiveHabit,
+    		errMessage,
+    		API_ENDPOINT,
+    		activeUserHabits,
+    		isNewActiveUserHabit,
     		push,
     		habit,
     		i,
@@ -4646,16 +4700,19 @@ var app = (function () {
     		dateEnd,
     		dateCurrent,
     		timeRemaining,
-    		updateTime,
-    		$currentActiveHabit
+    		handleHabitCheck,
+    		$API_ENDPOINT,
+    		$activeUserHabits,
+    		$currentActiveHabit,
+    		updateTime
     	});
 
     	$$self.$inject_state = $$props => {
     		if ("habit" in $$props) $$invalidate(0, habit = $$props.habit);
     		if ("i" in $$props) $$invalidate(1, i = $$props.i);
     		if ("dateStart" in $$props) dateStart = $$props.dateStart;
-    		if ("dateEnd" in $$props) $$invalidate(13, dateEnd = $$props.dateEnd);
-    		if ("dateCurrent" in $$props) $$invalidate(6, dateCurrent = $$props.dateCurrent);
+    		if ("dateEnd" in $$props) $$invalidate(16, dateEnd = $$props.dateEnd);
+    		if ("dateCurrent" in $$props) $$invalidate(7, dateCurrent = $$props.dateCurrent);
     		if ("timeRemaining" in $$props) $$invalidate(2, timeRemaining = $$props.timeRemaining);
     		if ("updateTime" in $$props) updateTime = $$props.updateTime;
     	};
@@ -4665,11 +4722,11 @@ var app = (function () {
     	}
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*dateCurrent*/ 64) {
+    		if ($$self.$$.dirty & /*dateCurrent*/ 128) {
     			 updateTime = dateEnd - dateCurrent;
     		}
 
-    		if ($$self.$$.dirty & /*dateCurrent*/ 64) {
+    		if ($$self.$$.dirty & /*dateCurrent*/ 128) {
     			 $$invalidate(2, timeRemaining = getTimeRemaining(dateEnd, dateCurrent));
     		}
     	};
@@ -4681,6 +4738,7 @@ var app = (function () {
     		$currentActiveHabit,
     		handleClick,
     		handleHabitAdd,
+    		handleHabitCheck,
     		dateCurrent,
     		click_handler,
     		click_handler_1
@@ -7685,7 +7743,7 @@ var app = (function () {
     			create_component(router.$$.fragment);
     			attr_dev(div, "class", "bg-repeat h-screen w-screen overflow-x-hidden relative");
     			set_style(div, "background-image", "url(/static/subtle-bg/greek-vase.png)");
-    			add_location(div, file$d, 51, 0, 1315);
+    			add_location(div, file$d, 54, 0, 1410);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -7734,35 +7792,38 @@ var app = (function () {
     	let $isActiveUserLive;
     	let $isNewActiveUserHabit;
     	validate_store(getIsLocalStorage, "getIsLocalStorage");
-    	component_subscribe($$self, getIsLocalStorage, $$value => $$invalidate(2, $getIsLocalStorage = $$value));
+    	component_subscribe($$self, getIsLocalStorage, $$value => $$invalidate(3, $getIsLocalStorage = $$value));
     	validate_store(isLocalStorage, "isLocalStorage");
-    	component_subscribe($$self, isLocalStorage, $$value => $$invalidate(3, $isLocalStorage = $$value));
+    	component_subscribe($$self, isLocalStorage, $$value => $$invalidate(4, $isLocalStorage = $$value));
     	validate_store(LSisUserDefined, "LSisUserDefined");
-    	component_subscribe($$self, LSisUserDefined, $$value => $$invalidate(4, $LSisUserDefined = $$value));
+    	component_subscribe($$self, LSisUserDefined, $$value => $$invalidate(5, $LSisUserDefined = $$value));
     	validate_store(LSuserDetails, "LSuserDetails");
-    	component_subscribe($$self, LSuserDetails, $$value => $$invalidate(5, $LSuserDetails = $$value));
+    	component_subscribe($$self, LSuserDetails, $$value => $$invalidate(6, $LSuserDetails = $$value));
     	validate_store(LSactiveHabits, "LSactiveHabits");
-    	component_subscribe($$self, LSactiveHabits, $$value => $$invalidate(6, $LSactiveHabits = $$value));
+    	component_subscribe($$self, LSactiveHabits, $$value => $$invalidate(7, $LSactiveHabits = $$value));
     	validate_store(activeUserAuth, "activeUserAuth");
-    	component_subscribe($$self, activeUserAuth, $$value => $$invalidate(7, $activeUserAuth = $$value));
+    	component_subscribe($$self, activeUserAuth, $$value => $$invalidate(8, $activeUserAuth = $$value));
     	validate_store(activeUserDetails, "activeUserDetails");
-    	component_subscribe($$self, activeUserDetails, $$value => $$invalidate(8, $activeUserDetails = $$value));
+    	component_subscribe($$self, activeUserDetails, $$value => $$invalidate(9, $activeUserDetails = $$value));
     	validate_store(activeUserHabits, "activeUserHabits");
-    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(9, $activeUserHabits = $$value));
+    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(0, $activeUserHabits = $$value));
     	validate_store(isActiveUserLive, "isActiveUserLive");
-    	component_subscribe($$self, isActiveUserLive, $$value => $$invalidate(0, $isActiveUserLive = $$value));
+    	component_subscribe($$self, isActiveUserLive, $$value => $$invalidate(1, $isActiveUserLive = $$value));
     	validate_store(isNewActiveUserHabit, "isNewActiveUserHabit");
-    	component_subscribe($$self, isNewActiveUserHabit, $$value => $$invalidate(1, $isNewActiveUserHabit = $$value));
+    	component_subscribe($$self, isNewActiveUserHabit, $$value => $$invalidate(2, $isNewActiveUserHabit = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
     	isLocalStorage.set($getIsLocalStorage());
 
     	if ($isLocalStorage && $LSisUserDefined) {
-    		console.log("writing activeUser from LS");
+    		// console.log("writing activeUser from LS");
     		activeUserId.set($LSuserDetails.userId);
+
     		activeUserDetails.set($LSuserDetails);
     		activeUserHabits.set($LSactiveHabits);
     		replace("/");
+    	} else {
+    		replace("/start");
     	}
 
     	const updateLocalStorage = () => {
@@ -7818,18 +7879,22 @@ var app = (function () {
     	});
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*$isActiveUserLive*/ 1) {
+    		if ($$self.$$.dirty & /*$isActiveUserLive*/ 2) {
     			 $isActiveUserLive == true ? updateLocalStorage() : "";
     		}
 
-    		if ($$self.$$.dirty & /*$isNewActiveUserHabit*/ 2) {
+    		if ($$self.$$.dirty & /*$isNewActiveUserHabit*/ 4) {
     			 $isNewActiveUserHabit == true
     			? updateLocalStorage()
     			: "";
     		}
+
+    		if ($$self.$$.dirty & /*$activeUserHabits*/ 1) {
+    			 console.log("$activeUserHabits", $activeUserHabits);
+    		}
     	};
 
-    	return [$isActiveUserLive, $isNewActiveUserHabit];
+    	return [$activeUserHabits, $isActiveUserLive, $isNewActiveUserHabit];
     }
 
     class App extends SvelteComponentDev {

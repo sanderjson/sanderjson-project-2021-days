@@ -23,11 +23,13 @@
   // loads user profile from local storage
   isLocalStorage.set($getIsLocalStorage());
   if ($isLocalStorage && $LSisUserDefined) {
-    console.log("writing activeUser from LS");
+    // console.log("writing activeUser from LS");
     activeUserId.set($LSuserDetails.userId);
     activeUserDetails.set($LSuserDetails);
     activeUserHabits.set($LSactiveHabits);
     replace("/");
+  } else {
+    replace("/start");
   }
 
   const updateLocalStorage = () => {
@@ -43,6 +45,7 @@
 
   $: $isActiveUserLive == true ? updateLocalStorage() : "";
   $: $isNewActiveUserHabit == true ? updateLocalStorage() : "";
+  $: console.log("$activeUserHabits", $activeUserHabits);
 
   onDestroy(() => {
     isActiveUserLive.set(false);
