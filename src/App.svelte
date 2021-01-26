@@ -11,7 +11,8 @@
     activeUserAuth,
     activeUserId,
     activeUserDetails,
-    activeUserHabits
+    activeUserHabits,
+    getUserHabitBlank
   } from "./stores.js";
   import {
     LSisUserDefined,
@@ -23,10 +24,22 @@
   // loads user profile from local storage
   isLocalStorage.set($getIsLocalStorage());
   if ($isLocalStorage && $LSisUserDefined) {
-    // console.log("writing activeUser from LS");
     activeUserId.set($LSuserDetails.userId);
     activeUserDetails.set($LSuserDetails);
-    activeUserHabits.set($LSactiveHabits);
+
+    let activeHabitsClean = $LSactiveHabits.map(habit => {
+      if (habit === null) {
+        return $getUserHabitBlank();
+      } else {
+        return habit;
+      }
+    });
+
+    while (activeHabitsClean.length < 3) {
+      activeHabitsClean.push($getUserHabitBlank());
+    }
+    
+    activeUserHabits.set(activeHabitsClean);
     replace("/");
   } else {
     replace("/start");
@@ -45,7 +58,7 @@
 
   $: $isActiveUserLive == true ? updateLocalStorage() : "";
   $: $isNewActiveUserHabit == true ? updateLocalStorage() : "";
-  $: console.log("$activeUserHabits", $activeUserHabits);
+  console.log("$activeUserHabits", $activeUserHabits);
 
   onDestroy(() => {
     isActiveUserLive.set(false);

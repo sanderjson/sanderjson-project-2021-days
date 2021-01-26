@@ -81,6 +81,8 @@ const getUserHabitBlankFun = () => {
 		adminSeriesId: null,
 		adminScore: 0,
 		adminIsSuccessful: null,
+		adminUserRating: 0,
+		adminUserReflection: "",
 		detailIsCategory1: false,
 		detailIsCategory2: false,
 		detailIsCategory3: false,
@@ -149,3 +151,4 @@ export const activeUserId = writable(null);
 
 // adding new habits
 export const isNewActiveUserHabit = writable(false);
+export const tempUserHabit = writable({});

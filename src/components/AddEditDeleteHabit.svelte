@@ -1,24 +1,28 @@
 <script>
   import { onMount } from "svelte";
   import {
-    errMessage,
-    API_ENDPOINT,
     contentHabitDetailCategory,
     contentHabitDuration,
     currentActiveHabit,
-    getUserHabitBlank,
-    isNewActiveUserHabit,
-    activeUserId,
-    activeUserDetails,
-    activeUserHabits
+    activeUserHabits,
+    tempUserHabit
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeader from "../components/AppHeader.svelte";
   import TwentyTwentyOne from "../svg/2021.svelte";
+  import Modal from "../components/Modal.svelte";
 
-  let userHabitTemp = $activeUserHabits[$currentActiveHabit];
+  export let altActionTitle;
+  export let handleAltAction;
+  export let handleSubmit;
 
+  let tempLocalUserHabit = $activeUserHabits[$currentActiveHabit];
+
+  const handleLocalSubmit = () => {
+    tempUserHabit.set(tempLocalUserHabit);
+    handleSubmit();
+  };
   const getNewDate = () => {
     return new Date();
   };
@@ -28,80 +32,13 @@
     let dateStart = getNewDate();
     let dateEnd = getNewDate();
     dateEnd.setDate(dateEnd.getDate() + option.value);
-    userHabitTemp.detailDateStartUTCString = dateStart.toUTCString();
-    userHabitTemp.detailDateEndUTCString = dateEnd.toUTCString();
-    userHabitTemp.detailDuration = option.value;
+    tempLocalUserHabit.detailDateStartUTCString = dateStart.toUTCString();
+    tempLocalUserHabit.detailDateEndUTCString = dateEnd.toUTCString();
+    tempLocalUserHabit.detailDuration = option.value;
   };
 
   const handleToggleHabit = () => {
-    userHabitTemp.detailIsNewHabit = !userHabitTemp.detailIsNewHabit;
-  };
-
-  const handleReset = () => {
-    userHabitTemp = $getUserHabitBlank();
-  };
-
-  const handleDelete = () => {
-    console.log("delete");
-    // show modal
-    // delete from db
-    // reset userHabitTemp
-  };
-
-  const handleSaveOrUpdateHabit = async () => {
-    const fetchURL = $API_ENDPOINT + "/createNewHabit";
-    const fetchOptions = {
-      method: "POST",
-      headers: {
-        "content-type": "application/json"
-      },
-
-      body: JSON.stringify({
-        adminActivePosition: $currentActiveHabit,
-        adminIsActive: userHabitTemp.adminIsActive,
-        adminUserId: $activeUserId,
-        adminHabitId: userHabitTemp.adminHabitId,
-        adminSeriesId: userHabitTemp.adminSeriesId,
-        adminScore: userHabitTemp.adminScore,
-        adminIsSuccessful: userHabitTemp.adminIsSuccessful,
-        detailIsCategory1: userHabitTemp.detailIsCategory1,
-        detailIsCategory2: userHabitTemp.detailIsCategory2,
-        detailIsCategory3: userHabitTemp.detailIsCategory3,
-        detailCode: userHabitTemp.detailCode,
-        detailDateEndUTCString: userHabitTemp.detailDateEndUTCString,
-        detailDateStartUTCString: userHabitTemp.detailDateStartUTCString,
-        detailDuration: userHabitTemp.detailDuration,
-        detailDescription: userHabitTemp.detailDescription,
-        detailIsNewHabit: userHabitTemp.detailIsNewHabit,
-        detailTitle: userHabitTemp.detailTitle,
-        checks: userHabitTemp.checks,
-        messages: userHabitTemp.messages
-      })
-    };
-
-    const handleErrors = res => {
-      if (!res.ok) {
-        return res.text().then(text => {
-          throw text;
-        });
-      }
-      return res.json();
-    };
-
-    const postData = await fetch(fetchURL, fetchOptions)
-      .then(handleErrors)
-      .then(res => {
-        activeUserDetails.set(res.userDetails);
-        let newHabitData = $activeUserHabits;
-        newHabitData[$currentActiveHabit] = res.newHabit;
-        activeUserHabits.set(newHabitData);
-        isNewActiveUserHabit.set(true);
-      })
-      .catch(err => {
-        console.clear();
-        errMessage.set(err);
-        push(`/error`);
-      });
+    tempLocalUserHabit.detailIsNewHabit = !tempLocalUserHabit.detailIsNewHabit;
   };
 
   onMount(() => {
@@ -109,13 +46,9 @@
   });
 </script>
 
-<!-- <AppHeader>
-  <TwentyTwentyOne />
-</AppHeader> -->
-
 <ContentWrapper>
   <div>
-    <form class="space-y-6" on:submit|preventDefault={handleSaveOrUpdateHabit}>
+    <form class="space-y-6" on:submit|preventDefault={handleLocalSubmit}>
 
       <div
         class="w-1/3 bg-white py-1 px-2 border-2 border-blue-100 shadow
@@ -124,8 +57,8 @@
           <div
             class="relative uppercase font-extrabold text-gray-900 text-xs
             text-left">
-            {#if userHabitTemp.detailDuration > 1}
-              {userHabitTemp.detailDuration} Days
+            {#if tempLocalUserHabit.detailDuration > 1}
+              {tempLocalUserHabit.detailDuration} Days
             {:else}24 Hours{/if}
             <span
               style="height: 50%; top: 50%; width: 28vw; left: calc(100% +
@@ -142,8 +75,8 @@
           <div
             class="relative mt-1 text-6xl font-extrabold text-center
             text-blue-900">
-            {#if userHabitTemp.detailCode}
-              {userHabitTemp.detailCode}
+            {#if tempLocalUserHabit.detailCode}
+              {tempLocalUserHabit.detailCode}
             {:else}+{/if}
             <span
               style="height: 50%; top: 50%; width: 23vw; left: calc(100% +
@@ -185,7 +118,7 @@
         </label>
         <div class="mt-1">
           <input
-            bind:value={userHabitTemp.detailTitle}
+            bind:value={tempLocalUserHabit.detailTitle}
             id="habit-title"
             name="habit-title"
             required
@@ -221,7 +154,7 @@
         </label>
         <div class="mt-1">
           <textarea
-            bind:value={userHabitTemp.detailDescription}
+            bind:value={tempLocalUserHabit.detailDescription}
             id="habit-desc"
             name="habit-desc"
             required
@@ -238,7 +171,7 @@
         </label>
         <div class="mt-1">
           <input
-            bind:value={userHabitTemp.detailCode}
+            bind:value={tempLocalUserHabit.detailCode}
             id="habit-code"
             name="habit-code"
             required
@@ -256,7 +189,7 @@
           on:click={handleToggleHabit}
           aria-pressed="false"
           aria-labelledby="toggleLabel"
-          class:bg-blue-900={userHabitTemp.detailIsNewHabit}
+          class:bg-blue-900={tempLocalUserHabit.detailIsNewHabit}
           class="bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11
           border-2 border-transparent rounded-full cursor-pointer
           transition-colors ease-in-out duration-200 focus:outline-none
@@ -265,13 +198,13 @@
           <!-- On: "translate-x-5", Off: "translate-x-0" -->
           <span
             aria-hidden="true"
-            class:translate-x-5={userHabitTemp.detailIsNewHabit}
+            class:translate-x-5={tempLocalUserHabit.detailIsNewHabit}
             class="translate-x-5 inline-block h-5 w-5 rounded-full bg-white
             shadow transform ring-0 transition ease-in-out duration-200" />
         </button>
         <span class="ml-3" id="toggleLabel">
           <span class="text-sm font-medium text-gray-900">
-            {#if userHabitTemp.detailIsNewHabit}
+            {#if tempLocalUserHabit.detailIsNewHabit}
               Start a new habit
             {:else}Kick an old habit{/if}
           </span>
@@ -293,7 +226,7 @@
               <div class="relative flex items-start">
                 <div class="flex items-center h-5">
                   <input
-                    bind:checked={userHabitTemp[`detailIsCategory${i + 1}`]}
+                    bind:checked={tempLocalUserHabit[`detailIsCategory${i + 1}`]}
                     id={category.label}
                     name={category.label}
                     type="checkbox"
@@ -320,7 +253,7 @@
           rounded-md shadow-sm text-sm font-bold text-white bg-blue-900
           hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2
           focus:ring-blue-900">
-          Save
+          Update
         </button>
       </div>
     </form>
@@ -338,26 +271,23 @@
       <div class="mt-6 grid grid-cols-2 gap-3">
         <div>
           <button
-            on:click={handleReset}
+            on:click={() => push('/')}
             class="w-full inline-flex justify-center py-2 px-4 border
             border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium
             text-gray-900 hover:bg-gray-50">
-            <span class="">Reset</span>
+            <span class="">Back</span>
           </button>
         </div>
-
         <div>
           <button
-            on:click={handleDelete}
+            on:click={handleAltAction}
             class="w-full inline-flex justify-center py-2 px-4 border
             border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium
             text-gray-900 hover:bg-gray-50">
-            <span class="">Delete</span>
+            <span class="">{altActionTitle}</span>
           </button>
         </div>
-
       </div>
     </div>
   </div>
-
 </ContentWrapper>

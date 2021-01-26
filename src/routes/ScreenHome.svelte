@@ -2,28 +2,42 @@
   import {
     currentActiveHabit,
     isNewSocialModal,
-    isActiveUserLive,
     activeUserDetails,
     activeUserHabits
   } from "../stores.js";
+  import { fade } from "svelte/transition";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import HomeHabitButton from "../components/HomeHabitButton.svelte";
   import Modal from "../components/Modal.svelte";
-  import { fade } from "svelte/transition";
 
-  const handleHabitEdit = () => {
-    push("/edit");
+  const contentModal = {
+    title: "Social Share Unavailable",
+    details: "This feature will be enabled shortly, check back again.",
+    button: "Go back to App"
+  };
+
+  const handleHistory = () => {
+    push("/history");
   };
 
   const handleSocial = () => {
     isNewSocialModal.set(true);
   };
 
-  const validActiveHabits = $activeUserHabits.filter(
-    habit => habit.adminIsActive == true
-  );
+  const handleModal = () => {
+    isNewSocialModal.set(false);
+  };
+
+  const validActiveHabits = $activeUserHabits.filter(habit => {
+    return habit.adminIsActive == true;
+  });
+
+  const handleHabitEdit = () => {
+    push("/edit");
+  };
+  console.log("$activeUserHabits", $activeUserHabits);
 </script>
 
 <style>
@@ -126,7 +140,7 @@
       <span>{$activeUserDetails.habitHistoryIds.length}</span>
     </div>
     <button
-      on:click={() => push('/history')}
+      on:click={handleHistory}
       class="user-icon1 bg-white h-14 w-14 flex justify-center items-center
       rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
       focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none
@@ -182,5 +196,5 @@
 </div>
 
 {#if $isNewSocialModal}
-  <Modal />
+  <Modal {handleModal} {contentModal} />
 {/if}

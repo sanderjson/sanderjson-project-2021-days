@@ -64,15 +64,26 @@
             text-left">
             End: {habit.detailDateStartUTCString.slice(0, 16)}
           </div>
-          <ul class="ml-2 pl-2 pt-1 flex space-x-2">
-            {#each habit.checks as check}
-              <li>
-                {#if check.isOK}
-                  <i class="bg-green-100 far fa-1x fa-check-square" />
-                {:else}
-                  <i class="bg-red-100 far fa-1x fa-window-close" />
-                {/if}
-              </li>
+          <ul
+            class="ml-2 pt-1 place-items-center grid grid-cols-8 grid-cols-2
+            w-4/5 leading-tight">
+            {#each habit.checks as check, i}
+              {#if i < 15}
+                <li>
+                  {#if check.checkIsOk}
+                    <i class="bg-green-100 far fa-1x fa-check-square" />
+                  {:else}
+                    <i class="bg-red-100 far fa-1x fa-window-close" />
+                  {/if}
+                </li>
+              {/if}
+              {#if i === 15}
+                <div
+                  class="w-full text-xs font-extrabold text-gray-900 uppercase
+                  text-center">
+                  ...
+                </div>
+              {/if}
             {/each}
           </ul>
         </div>

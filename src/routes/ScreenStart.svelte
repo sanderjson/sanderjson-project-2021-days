@@ -6,7 +6,7 @@
   import { push } from "svelte-spa-router";
   import { onMount } from "svelte";
   import {
-    errMessage, 
+    errMessage,
     API_ENDPOINT,
     isLocalStorage,
     getUserHabitBlank,
@@ -27,9 +27,6 @@
     email: "",
     password: ""
   };
-
-  // let blankUser = $getUserHabitBlank();
-  // let blankHabit = $getUserHabitBlank();
 
   const handleSignIn = async () => {
     const fetchURL = $API_ENDPOINT + "/signInUser";
@@ -57,17 +54,23 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        console.log("res from start", res);
+        // console.log("res", res);
         let activeHabitsClean = res.userActiveHabits.map(habit => {
-          if (habit == null) {
+          if (habit === null) {
             return $getUserHabitBlank();
+          } else {
+            return habit;
           }
-          return habit;
         });
+        while (activeHabitsClean.length < 3) {
+          activeHabitsClean.push($getUserHabitBlank());
+        }
+
         activeUserAuth.set(res.userAuth);
         activeUserDetails.set(res.userDetails);
         activeUserId.set(res.userDetails.userId);
         activeUserHabits.set(activeHabitsClean);
+        console.log("$activeUserHabits", $activeUserHabits);
         isActiveUserLive.set(true);
       })
       .catch(err => {
@@ -85,11 +88,12 @@
       LSactiveHabits.set([null, null, null]);
       LSisUserDefined.set(false);
     }
-    activeUserAuth.set(null);
-    activeUserId.set(null);
-    activeUserDetails.set(null);
-    activeUserHabits.set([null, null, null]);
-    isActiveUserLive.set(false);
+    // already set to the initial values
+    // console.log("$activeUserAuth", $activeUserAuth);
+    // console.log("$activeUserId", $activeUserId);
+    // console.log("$activeUserDetails", $activeUserDetails);
+    // console.log("$activeUserHabits", $activeUserHabits);
+    // console.log("$isActiveUserLive", $isActiveUserLive);
   });
 </script>
 

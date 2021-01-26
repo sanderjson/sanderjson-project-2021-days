@@ -1,10 +1,10 @@
 <script>
-  import { isNewSocialModal } from "../stores.js";
   import { fade, fly } from "svelte/transition";
 
-  const handleModal = () => {
-    isNewSocialModal.set(false);
-  };
+  export let handleModal;
+  export let contentModal;
+
+
 </script>
 
 <div in:fade class="fixed z-10 inset-0 overflow-y-auto">
@@ -72,12 +72,10 @@
           <h3
             class="text-lg leading-6 font-medium text-gray-900"
             id="modal-headline">
-            Social Share Unavailable
+            {contentModal.title}
           </h3>
           <div class="mt-2">
-            <p class="text-sm text-gray-500">
-              This feature will be enabled shortly, check back again.
-            </p>
+            <p class="text-sm text-gray-500">{contentModal.details}</p>
           </div>
         </div>
       </div>
@@ -89,7 +87,7 @@
           border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base
           font-medium text-white hover:bg-blue-500 focus:outline-none
           focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 sm:text-sm">
-          Go back to App
+          {contentModal.button}
         </button>
       </div>
     </div>

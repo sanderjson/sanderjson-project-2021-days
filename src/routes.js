@@ -4,7 +4,10 @@ import ScreenSignUp from "./routes/ScreenSignUp.svelte";
 import ScreenAbout from "./routes/ScreenAbout.svelte";
 import ScreenError from "./routes/ScreenError.svelte";
 import ScreenHome from "./routes/ScreenHome.svelte";
-import ScreenHabitAddOrEdit from "./routes/ScreenHabitAddOrEdit.svelte";
+// import ScreenHabitAddEditDelete from "./routes/ScreenHabitAddEditDelete.svelte";
+import ScreenHabitAdd from "./routes/ScreenHabitAdd.svelte";
+import ScreenHabitEdit from "./routes/ScreenHabitEdit.svelte";
+
 import ScreenHabitHistory from "./routes/ScreenHabitHistory.svelte";
 
 export default {
@@ -15,8 +18,8 @@ export default {
 	"/about": ScreenAbout,
 	"/error": ScreenError,
 	// "/user/:id": ScreenUser,
-	"/add": ScreenHabitAddOrEdit,
-	"/edit": ScreenHabitAddOrEdit,
+	"/add": ScreenHabitAdd,
+	"/edit": ScreenHabitEdit,
 	"/history": ScreenHabitHistory,
 
 	// Using named parameters, with last being optional
