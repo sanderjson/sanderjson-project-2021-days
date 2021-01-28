@@ -8,16 +8,17 @@
     isNewActiveUserHabit,
     activeUserId,
     activeUserDetails,
-    activeUserHabits,
-    tempUserHabit
+    activeUserHabits
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
   import TwentyTwentyOne from "../svg/2021.svelte";
   import AddEditDeleteHabit from "../components/AddEditDeleteHabit.svelte";
 
+  let tempLocalUserHabit = $getUserHabitBlank();
+
   const handleReset = () => {
-    tempUserHabit.set($getUserHabitBlank());
+    tempLocalUserHabit = $getUserHabitBlank();
   };
 
   const handleSubmitCreateNewHabit = async () => {
@@ -30,24 +31,27 @@
 
       body: JSON.stringify({
         adminActivePosition: $currentActiveHabit,
-        adminIsActive: $tempUserHabit.adminIsActive,
+        adminIsActive: tempLocalUserHabit.adminIsActive,
         adminUserId: $activeUserId,
-        adminHabitId: $tempUserHabit.adminHabitId,
-        adminSeriesId: $tempUserHabit.adminSeriesId,
-        adminScore: $tempUserHabit.adminScore,
-        adminIsSuccessful: $tempUserHabit.adminIsSuccessful,
-        detailIsCategory1: $tempUserHabit.detailIsCategory1,
-        detailIsCategory2: $tempUserHabit.detailIsCategory2,
-        detailIsCategory3: $tempUserHabit.detailIsCategory3,
-        detailCode: $tempUserHabit.detailCode,
-        detailDateEndUTCString: $tempUserHabit.detailDateEndUTCString,
-        detailDateStartUTCString: $tempUserHabit.detailDateStartUTCString,
-        detailDuration: $tempUserHabit.detailDuration,
-        detailDescription: $tempUserHabit.detailDescription,
-        detailIsNewHabit: $tempUserHabit.detailIsNewHabit,
-        detailTitle: $tempUserHabit.detailTitle,
-        checks: $tempUserHabit.checks,
-        messages: $tempUserHabit.messages
+        adminHabitId: tempLocalUserHabit.adminHabitId,
+        adminSeriesId: tempLocalUserHabit.adminSeriesId,
+        adminScore: tempLocalUserHabit.adminScore,
+        detailIsCategory1: tempLocalUserHabit.detailIsCategory1,
+        detailIsCategory2: tempLocalUserHabit.detailIsCategory2,
+        detailIsCategory3: tempLocalUserHabit.detailIsCategory3,
+        detailCode: tempLocalUserHabit.detailCode,
+        detailDateEndUTCString: tempLocalUserHabit.detailDateEndUTCString,
+        detailDateStartUTCString: tempLocalUserHabit.detailDateStartUTCString,
+        detailDuration: tempLocalUserHabit.detailDuration,
+        detailDescription: tempLocalUserHabit.detailDescription,
+        detailIsNewHabit: tempLocalUserHabit.detailIsNewHabit,
+        detailTitle: tempLocalUserHabit.detailTitle,
+        checks: tempLocalUserHabit.checks,
+        messages: tempLocalUserHabit.messages,
+        reflectComment: tempLocalUserHabit.reflectComment,
+        reflectDifficulty: tempLocalUserHabit.reflectDifficulty,
+        reflectIsSuccessful: tempLocalUserHabit.reflectIsSuccessful,
+        reflectRecommend: tempLocalUserHabit.reflectRecommend
       })
     };
 
@@ -82,6 +86,8 @@
 </AppHeader> -->
 
 <AddEditDeleteHabit
+  {tempLocalUserHabit}
+  actionTitle="Create Habit"
+  handleSubmit={handleSubmitCreateNewHabit}
   altActionTitle="Reset"
-  handleAltAction={handleReset}
-  handleSubmit={handleSubmitCreateNewHabit} />
+  handleAltAction={handleReset} />

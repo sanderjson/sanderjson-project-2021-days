@@ -5,7 +5,8 @@
     contentHabitDuration,
     currentActiveHabit,
     activeUserHabits,
-    tempUserHabit
+    tempUserHabit,
+    getUserHabitBlank
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import ContentWrapper from "../components/ContentWrapper.svelte";
@@ -13,16 +14,16 @@
   import TwentyTwentyOne from "../svg/2021.svelte";
   import Modal from "../components/Modal.svelte";
 
+  export let tempLocalUserHabit;
+  export let actionTitle;
   export let altActionTitle;
   export let handleAltAction;
   export let handleSubmit;
 
-  let tempLocalUserHabit = $activeUserHabits[$currentActiveHabit];
-
   const handleLocalSubmit = () => {
-    tempUserHabit.set(tempLocalUserHabit);
     handleSubmit();
   };
+
   const getNewDate = () => {
     return new Date();
   };
@@ -31,18 +32,24 @@
   const handleSelectDuration = option => {
     let dateStart = getNewDate();
     let dateEnd = getNewDate();
-    dateEnd.setDate(dateEnd.getDate() + option.value);
+    dateEnd.setSeconds(dateEnd.getSeconds() + option.value);
     tempLocalUserHabit.detailDateStartUTCString = dateStart.toUTCString();
     tempLocalUserHabit.detailDateEndUTCString = dateEnd.toUTCString();
     tempLocalUserHabit.detailDuration = option.value;
+    // console.log("after toUTCString() dateStart", dateStart);
+    // console.log("after toUTCString() dateEnd", dateEnd);
   };
 
   const handleToggleHabit = () => {
     tempLocalUserHabit.detailIsNewHabit = !tempLocalUserHabit.detailIsNewHabit;
   };
 
+  console.log("tempLocalUserHabit", tempLocalUserHabit);
+
   onMount(() => {
-    handleSelectDuration($contentHabitDuration[0]);
+    tempLocalUserHabit.adminIsActive
+      ? ""
+      : handleSelectDuration($contentHabitDuration[0]);
   });
 </script>
 
@@ -57,9 +64,11 @@
           <div
             class="relative uppercase font-extrabold text-gray-900 text-xs
             text-left">
-            {#if tempLocalUserHabit.detailDuration > 1}
-              {tempLocalUserHabit.detailDuration} Days
-            {:else}24 Hours{/if}
+            {#if tempLocalUserHabit.detailDuration > 86400}
+              {tempLocalUserHabit.detailDuration / 86400} days
+            {:else if tempLocalUserHabit.detailDuration == 86400}
+              24 hours
+            {:else}1 hour{/if}
             <span
               style="height: 50%; top: 50%; width: 28vw; left: calc(100% +
               .5rem)"
@@ -253,7 +262,7 @@
           rounded-md shadow-sm text-sm font-bold text-white bg-blue-900
           hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2
           focus:ring-blue-900">
-          Update
+          {actionTitle}
         </button>
       </div>
     </form>
@@ -288,6 +297,8 @@
           </button>
         </div>
       </div>
+
     </div>
+
   </div>
 </ContentWrapper>

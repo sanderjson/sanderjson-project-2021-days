@@ -12,7 +12,7 @@
     activeUserId,
     activeUserDetails,
     activeUserHabits,
-    getUserHabitBlank
+    isActiveHabitComplete
   } from "./stores.js";
   import {
     LSisUserDefined,
@@ -27,18 +27,11 @@
     activeUserId.set($LSuserDetails.userId);
     activeUserDetails.set($LSuserDetails);
 
-    let activeHabitsClean = $LSactiveHabits.map(habit => {
-      if (habit === null) {
-        return $getUserHabitBlank();
-      } else {
-        return habit;
-      }
-    });
-
+    let activeHabitsClean = $LSactiveHabits;
     while (activeHabitsClean.length < 3) {
-      activeHabitsClean.push($getUserHabitBlank());
+      activeHabitsClean.push(null);
     }
-    
+
     activeUserHabits.set(activeHabitsClean);
     replace("/");
   } else {
@@ -52,13 +45,18 @@
       LSactiveHabits.set($activeUserHabits);
       LSisUserDefined.set(true);
     }
-    isNewActiveUserHabit.set(false);
+    $isNewActiveUserHabit ? isNewActiveUserHabit.set(false) : "";
+    $isActiveHabitComplete ? isActiveHabitComplete.set(false) : "";
+
     replace("/");
   };
 
   $: $isActiveUserLive == true ? updateLocalStorage() : "";
   $: $isNewActiveUserHabit == true ? updateLocalStorage() : "";
-  console.log("$activeUserHabits", $activeUserHabits);
+  $: isActiveHabitComplete == true ? updateLocalStorage() : "";
+
+  $: console.log("$activeUserDetails", $activeUserDetails);
+  $: console.log("$activeUserHabits", $activeUserHabits);
 
   onDestroy(() => {
     isActiveUserLive.set(false);

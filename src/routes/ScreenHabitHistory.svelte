@@ -8,7 +8,7 @@
   class="pb-2 px-5 space-y-3 sm:w-full sm:max-w-md mt-8 mb-2 sm:mx-auto">
 
   {#each $activeUserHabits as habit}
-    {#if habit.adminIsActive || habit.adminIsSuccessful !== null}
+    {#if habit}
       <div
         class="mx-auto flex py-1 border-2 border-blue-100 shadow rounded-sm
         bg-white hover:bg-blue-200 focus:ring-2 focus:ring-offset-2
@@ -20,23 +20,24 @@
             <div
               class="relative uppercase font-extrabold text-gray-900 text-xs
               text-left">
-              {#if habit.detailDuration > 1}
-                {habit.detailDuration} Days
-              {:else}24 Hours{/if}
+              {#if habit.detailDuration > 86400}
+                {habit.detailDuration / 86400} days
+              {:else if habit.detailDuration == 86400}24 hours{:else}1 hour{/if}
             </div>
             <div
               class="relative mt-1 text-6xl font-extrabold text-center
               text-blue-900">
               {#if habit.detailCode}{habit.detailCode}{:else}+{/if}
             </div>
+
             <div
               class="relative mt-2 text-sm font-bold text-center text-gray-900
               uppercase">
-              {#if habit.adminSuccessful}
+              {#if habit.reflectionIsSuccessful}
                 <span class="bg-green-100 text-green-700 py-1 px-2 rounded-sm">
                   success
                 </span>
-              {:else if habit.adminSuccessful == null}
+              {:else if habit.reflectionIsSuccessful == null}
                 <span class="bg-blue-100 text-blue-700 px-2 rounded-sm">
                   active
                 </span>
@@ -46,6 +47,7 @@
                 </span>
               {/if}
             </div>
+
           </div>
         </div>
         <div class="w-full">

@@ -22,12 +22,13 @@ const contentHabitDetailCategoryData = [
 ];
 
 const contentHabitDurationData = [
-	{ disabled: false, value: 1, text: `24 hours` },
-	{ disabled: false, value: 3, text: `3 days` },
-	{ disabled: true, value: 7, text: `7 days` },
-	{ disabled: true, value: 21, text: `21 days` },
-	{ disabled: true, value: 100, text: `100 days` },
-	{ disabled: true, value: 365, text: `1 year` },
+	{ disabled: false, value: 3600, text: `1 hour` },
+	{ disabled: false, value: 3600 * 24, text: `24 hours` },
+	{ disabled: false, value: 3600 * 24 * 3, text: `3 days` },
+	{ disabled: true, value: 3600 * 24 * 7, text: `7 days` },
+	{ disabled: true, value: 3600 * 24 * 21, text: `21 days` },
+	{ disabled: true, value: 3600 * 24 * 100, text: `100 days` },
+	{ disabled: true, value: 3600 * 24 * 365, text: `1 year` },
 ];
 
 // function to test if local storage is enabled
@@ -95,6 +96,10 @@ const getUserHabitBlankFun = () => {
 		detailTitle: "",
 		checks: [],
 		messages: [],
+		reflectComment: "",
+		reflectDifficulty: null,
+		reflectionIsSuccessful: null,
+		reflectRecommend: null,
 	};
 };
 
@@ -127,11 +132,7 @@ const tempActiveHabitsData = [{}, {}, {}];
 
 // active...Data is what the app uses -> see App.svelte
 const activeUserDetailsData = getUserProfileBlankFun();
-const activeUserHabitsData = [
-	getUserHabitBlankFun(),
-	getUserHabitBlankFun(),
-	getUserHabitBlankFun(),
-];
+const activeUserHabitsData = [null, null, null];
 
 export const getUserProfileBlank = readable(getUserProfileBlankFun);
 export const getUserHabitBlank = readable(getUserHabitBlankFun);
@@ -152,3 +153,4 @@ export const activeUserId = writable(null);
 // adding new habits
 export const isNewActiveUserHabit = writable(false);
 export const tempUserHabit = writable({});
+export const isActiveHabitComplete = writable(false);

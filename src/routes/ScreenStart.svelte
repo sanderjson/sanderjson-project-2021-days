@@ -55,22 +55,15 @@
       .then(handleErrors)
       .then(res => {
         // console.log("res", res);
-        let activeHabitsClean = res.userActiveHabits.map(habit => {
-          if (habit === null) {
-            return $getUserHabitBlank();
-          } else {
-            return habit;
-          }
-        });
+        let activeHabitsClean = res.userActiveHabits;
         while (activeHabitsClean.length < 3) {
-          activeHabitsClean.push($getUserHabitBlank());
+          activeHabitsClean.push(null);
         }
 
         activeUserAuth.set(res.userAuth);
         activeUserDetails.set(res.userDetails);
         activeUserId.set(res.userDetails.userId);
         activeUserHabits.set(activeHabitsClean);
-        console.log("$activeUserHabits", $activeUserHabits);
         isActiveUserLive.set(true);
       })
       .catch(err => {

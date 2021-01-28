@@ -7,6 +7,7 @@ import ScreenHome from "./routes/ScreenHome.svelte";
 // import ScreenHabitAddEditDelete from "./routes/ScreenHabitAddEditDelete.svelte";
 import ScreenHabitAdd from "./routes/ScreenHabitAdd.svelte";
 import ScreenHabitEdit from "./routes/ScreenHabitEdit.svelte";
+import ScreenHabitReflect from "./routes/ScreenHabitReflect.svelte";
 
 import ScreenHabitHistory from "./routes/ScreenHabitHistory.svelte";
 
@@ -21,6 +22,7 @@ export default {
 	"/add": ScreenHabitAdd,
 	"/edit": ScreenHabitEdit,
 	"/history": ScreenHabitHistory,
+	"/reflect": ScreenHabitReflect,
 
 	// Using named parameters, with last being optional
 	// "/author/:first/:last?": Author,

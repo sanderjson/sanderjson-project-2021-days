@@ -3,41 +3,56 @@
     currentActiveHabit,
     isNewSocialModal,
     activeUserDetails,
-    activeUserHabits
+    activeUserHabits,
+    API_ENDPOINT,
+    getUserHabitBlank,
+    isActiveHabitComplete
   } from "../stores.js";
   import { fade } from "svelte/transition";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import HomeHabitButton from "../components/HomeHabitButton.svelte";
+  import HomeHabitButtonNull from "../components/HomeHabitButtonNull.svelte";
+
   import Modal from "../components/Modal.svelte";
 
-  const contentModal = {
+  let selected;
+
+  const contentModalSocial = {
     title: "Social Share Unavailable",
     details: "This feature will be enabled shortly, check back again.",
     button: "Go back to App"
   };
 
-  const handleHistory = () => {
+  const contentModalHabitIsComplete = {
+    title: "Congratulations!",
+    details: "Complete this reflection to track your progress",
+    button: "Complete Habit"
+  };
+
+  const handleButtonHistory = () => {
     push("/history");
   };
-
-  const handleSocial = () => {
-    isNewSocialModal.set(true);
-  };
-
-  const handleModal = () => {
-    isNewSocialModal.set(false);
-  };
-
-  const validActiveHabits = $activeUserHabits.filter(habit => {
-    return habit.adminIsActive == true;
-  });
 
   const handleHabitEdit = () => {
     push("/edit");
   };
-  console.log("$activeUserHabits", $activeUserHabits);
+
+  // const validActiveHabits = $activeUserHabits.filter(habit => {
+  //   return habit.adminIsActive == true;
+  // });
+
+  // modals
+  const handleButtonSocial = () => {
+    isNewSocialModal.set(true);
+  };
+
+  const handleModalSocialAction = () => {
+    isNewSocialModal.set(false);
+  };
+
+  // $: console.log("$activeUserHabits", $activeUserHabits);
 </script>
 
 <style>
@@ -132,7 +147,7 @@
     <div
       class="user-stat1 bg-white text-lg border-1 h-10 w-10 flex justify-center
       items-center rounded-full border-blue-100 font-extrabold shadow ml-5">
-      <span>{validActiveHabits.length}</span>
+      <span>{$activeUserHabits.length}</span>
     </div>
     <div
       class="user-stat2 bg-white text-lg border-1 h-10 w-10 flex justify-center
@@ -140,7 +155,7 @@
       <span>{$activeUserDetails.habitHistoryIds.length}</span>
     </div>
     <button
-      on:click={handleHistory}
+      on:click={handleButtonHistory}
       class="user-icon1 bg-white h-14 w-14 flex justify-center items-center
       rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
       focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none
@@ -149,7 +164,7 @@
       <!-- <i class=" fas fa-1x fa-envelope text-blue-900" /> -->
     </button>
     <button
-      on:click={handleSocial}
+      on:click={handleButtonSocial}
       class="user-icon2 bg-white h-14 w-14 flex justify-center items-center
       rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
       focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none
@@ -162,27 +177,33 @@
     <div
       class="relative bg-white h-full py-2 px-2 shadow rounded sm:rounded-lg
       sm:px-10 text-left">
-      <h1 class="text-xl font-bold">
-        {#if $activeUserHabits[$currentActiveHabit] && $activeUserHabits[$currentActiveHabit].adminIsActive}
+      {#if $activeUserHabits[$currentActiveHabit]}
+        <h1 class="text-xl font-bold">
           {$activeUserHabits[$currentActiveHabit].detailTitle}
-        {:else}Your New Habit{/if}
-      </h1>
-      <p class="text-base mt-1 text-gray-700">
-        {#if $activeUserHabits[$currentActiveHabit] && $activeUserHabits[$currentActiveHabit].adminIsActive}
+        </h1>
+      {:else}
+        <h1 class="text-xl font-bold text-gray-500">Your New Habit</h1>
+      {/if}
+      {#if $activeUserHabits[$currentActiveHabit]}
+        <p class="text-base mt-1 text-gray-700">
           {$activeUserHabits[$currentActiveHabit].detailDescription}
-        {:else}
+        </p>
+      {:else}
+        <p class="text-base mt-1 text-gray-500">
           What will you do? Who will you become? Tap the [Add] button below to
           create a new habit.
-        {/if}
-      </p>
-      <button
-        on:click={handleHabitEdit}
-        class="user-icon1 absolute right-0 bottom-0 inline-flex ml-2 bg-white
-        h-6 w-6 justify-center items-center focus:outline-none
-        focus:border-blue-400 focus:border-2 mr-2 mb-2">
-        <i class="fas fa-1x fa-pencil-alt text-blue-900" />
-        <!-- <span class="font-bold text-blue-100">[edit]</span> -->
-      </button>
+        </p>
+      {/if}
+      {#if $activeUserHabits[$currentActiveHabit]}
+        <button
+          on:click={handleHabitEdit}
+          class="user-icon1 absolute right-0 bottom-0 inline-flex ml-2 bg-white
+          h-6 w-6 justify-center items-center focus:outline-none
+          focus:border-blue-400 focus:border-2 mr-2 mb-2">
+          <i class="fas fa-1x fa-pencil-alt text-blue-900" />
+          <!-- <span class="font-bold text-blue-100">[edit]</span> -->
+        </button>
+      {/if}
     </div>
   </section>
 
@@ -190,11 +211,25 @@
     class="home-habit-select pt-3 grid grid-cols-3 grid-rows-1 gap-3 sm:mx-auto
     sm:w-full sm:max-w-md">
     {#each $activeUserHabits as habit, i}
-      <HomeHabitButton {habit} {i} />
+      {#if habit}
+        <HomeHabitButton {habit} {i} />
+      {:else}
+        <HomeHabitButtonNull {i} />
+      {/if}
     {/each}
   </section>
 </div>
 
 {#if $isNewSocialModal}
-  <Modal {handleModal} {contentModal} />
+  <Modal contentModal={contentModalSocial}>
+    <button
+      on:click={handleModalSocialAction}
+      type="button"
+      class="inline-flex justify-center w-full rounded-md border
+      border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-medium
+      text-white hover:bg-blue-500 focus:outline-none focus:ring-2
+      focus:ring-offset-2 focus:ring-blue-700 sm:text-sm">
+      {contentModalSocial.button}
+    </button>
+  </Modal>
 {/if}

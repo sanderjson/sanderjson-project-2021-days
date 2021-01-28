@@ -8,6 +8,8 @@
     isNewActiveUserHabit,
     activeUserId,
     activeUserHabits,
+    activeUserDetails,
+
     tempUserHabit
   } from "../stores.js";
   import { push } from "svelte-spa-router";
@@ -16,13 +18,15 @@
   import Modal from "../components/Modal.svelte";
   import AddEditDeleteHabit from "../components/AddEditDeleteHabit.svelte";
 
-  let contentModal = {
+  let tempLocalUserHabit = $activeUserHabits[$currentActiveHabit];
+
+  let contentModalDelete = {
     title: "Are You Sure You Want to Delete?",
     details: "You will lose all data associated with this habit.",
     button: "Delete Habit Data"
   };
 
-  const handleModal = async () => {
+  const handleModalDeleteAction = async () => {
     const fetchURL = $API_ENDPOINT + "/deleteExistingHabit";
     const fetchOptions = {
       method: "POST",
@@ -31,7 +35,7 @@
       },
 
       body: JSON.stringify({
-        adminHabitId: $tempUserHabit.adminHabitId
+        adminHabitId: tempLocalUserHabit.adminHabitId
       })
     };
 
@@ -49,7 +53,7 @@
       .then(res => {
         // res = null
         let newHabitData = $activeUserHabits;
-        newHabitData[$currentActiveHabit] = $getUserHabitBlank();
+        newHabitData[$currentActiveHabit] = null;
         activeUserHabits.set(newHabitData);
         isNewActiveUserHabit.set(true);
       })
@@ -78,24 +82,27 @@
 
       body: JSON.stringify({
         adminActivePosition: $currentActiveHabit,
-        adminIsActive: $tempUserHabit.adminIsActive,
+        adminIsActive: tempLocalUserHabit.adminIsActive,
         adminUserId: $activeUserId,
-        adminHabitId: $tempUserHabit.adminHabitId,
-        adminSeriesId: $tempUserHabit.adminSeriesId,
-        adminScore: $tempUserHabit.adminScore,
-        adminIsSuccessful: $tempUserHabit.adminIsSuccessful,
-        detailIsCategory1: $tempUserHabit.detailIsCategory1,
-        detailIsCategory2: $tempUserHabit.detailIsCategory2,
-        detailIsCategory3: $tempUserHabit.detailIsCategory3,
-        detailCode: $tempUserHabit.detailCode,
-        detailDateEndUTCString: $tempUserHabit.detailDateEndUTCString,
-        detailDateStartUTCString: $tempUserHabit.detailDateStartUTCString,
-        detailDuration: $tempUserHabit.detailDuration,
-        detailDescription: $tempUserHabit.detailDescription,
-        detailIsNewHabit: $tempUserHabit.detailIsNewHabit,
-        detailTitle: $tempUserHabit.detailTitle,
-        checks: $tempUserHabit.checks,
-        messages: $tempUserHabit.messages
+        adminHabitId: tempLocalUserHabit.adminHabitId,
+        adminSeriesId: tempLocalUserHabit.adminSeriesId,
+        adminScore: tempLocalUserHabit.adminScore,
+        detailIsCategory1: tempLocalUserHabit.detailIsCategory1,
+        detailIsCategory2: tempLocalUserHabit.detailIsCategory2,
+        detailIsCategory3: tempLocalUserHabit.detailIsCategory3,
+        detailCode: tempLocalUserHabit.detailCode,
+        detailDateEndUTCString: tempLocalUserHabit.detailDateEndUTCString,
+        detailDateStartUTCString: tempLocalUserHabit.detailDateStartUTCString,
+        detailDuration: tempLocalUserHabit.detailDuration,
+        detailDescription: tempLocalUserHabit.detailDescription,
+        detailIsNewHabit: tempLocalUserHabit.detailIsNewHabit,
+        detailTitle: tempLocalUserHabit.detailTitle,
+        checks: tempLocalUserHabit.checks,
+        messages: tempLocalUserHabit.messages,
+        reflectComment: tempLocalUserHabit.reflectComment,
+        reflectDifficulty: tempLocalUserHabit.reflectDifficulty,
+        reflectIsSuccessful: tempLocalUserHabit.reflectIsSuccessful,
+        reflectRecommend: tempLocalUserHabit.reflectRecommend
       })
     };
 
@@ -129,10 +136,22 @@
 </AppHeader> -->
 
 <AddEditDeleteHabit
+  {tempLocalUserHabit}
+  actionTitle="Update Habit"
+  handleSubmit={handleSubmitEditExistingHabit}
   altActionTitle="Delete"
-  handleAltAction={handleDelete}
-  handleSubmit={handleSubmitEditExistingHabit} />
+  handleAltAction={handleDelete} />
 
 {#if habitDeleteWarning}
-  <Modal {handleModal} {contentModal} />
+  <Modal contentModal={contentModalDelete}>
+    <button
+      on:click={handleModalDeleteAction}
+      type="button"
+      class="inline-flex justify-center w-full rounded-md border
+      border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-medium
+      text-white hover:bg-blue-500 focus:outline-none focus:ring-2
+      focus:ring-offset-2 focus:ring-blue-700 sm:text-sm">
+      {contentModalDelete.button}
+    </button>
+  </Modal>
 {/if}
