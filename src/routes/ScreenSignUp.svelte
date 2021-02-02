@@ -50,7 +50,7 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        console.log("POST /users res", res);
+        console.log("res", res);
         activeUserAuth.set(res.userAuth);
         activeUserDetails.set(res.userDetails);
         adminIdUser.set(res.userDetails.adminIdUser);

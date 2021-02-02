@@ -3073,7 +3073,7 @@ var app = (function () {
     			button.textContent = "Sign Up";
     			attr_dev(label0, "for", "name");
     			attr_dev(label0, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label0, file$4, 78, 6, 1887);
+    			add_location(label0, file$4, 78, 6, 1875);
     			attr_dev(input0, "id", "name");
     			attr_dev(input0, "name", "name");
     			attr_dev(input0, "type", "name");
@@ -3081,13 +3081,13 @@ var app = (function () {
     			input0.required = true;
     			attr_dev(input0, "placeholder", "Jane Doe");
     			attr_dev(input0, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input0, file$4, 82, 8, 2015);
+    			add_location(input0, file$4, 82, 8, 2003);
     			attr_dev(div0, "class", "mt-1");
-    			add_location(div0, file$4, 81, 6, 1988);
-    			add_location(div1, file$4, 77, 4, 1875);
+    			add_location(div0, file$4, 81, 6, 1976);
+    			add_location(div1, file$4, 77, 4, 1863);
     			attr_dev(label1, "for", "initials");
     			attr_dev(label1, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label1, file$4, 97, 6, 2481);
+    			add_location(label1, file$4, 97, 6, 2469);
     			attr_dev(input1, "id", "initials");
     			attr_dev(input1, "name", "initials");
     			attr_dev(input1, "type", "initials");
@@ -3095,13 +3095,13 @@ var app = (function () {
     			input1.required = true;
     			attr_dev(input1, "placeholder", "JD");
     			attr_dev(input1, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input1, file$4, 101, 8, 2617);
+    			add_location(input1, file$4, 101, 8, 2605);
     			attr_dev(div2, "class", "mt-1");
-    			add_location(div2, file$4, 100, 6, 2590);
-    			add_location(div3, file$4, 96, 4, 2469);
+    			add_location(div2, file$4, 100, 6, 2578);
+    			add_location(div3, file$4, 96, 4, 2457);
     			attr_dev(label2, "for", "title");
     			attr_dev(label2, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label2, file$4, 116, 6, 3097);
+    			add_location(label2, file$4, 116, 6, 3085);
     			attr_dev(input2, "id", "title");
     			attr_dev(input2, "name", "title");
     			attr_dev(input2, "type", "title");
@@ -3109,13 +3109,13 @@ var app = (function () {
     			input2.required = true;
     			attr_dev(input2, "placeholder", "Guardian of the Galaxy");
     			attr_dev(input2, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input2, file$4, 120, 8, 3227);
+    			add_location(input2, file$4, 120, 8, 3215);
     			attr_dev(div4, "class", "mt-1");
-    			add_location(div4, file$4, 119, 6, 3200);
-    			add_location(div5, file$4, 115, 4, 3085);
+    			add_location(div4, file$4, 119, 6, 3188);
+    			add_location(div5, file$4, 115, 4, 3073);
     			attr_dev(label3, "for", "email");
     			attr_dev(label3, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label3, file$4, 135, 6, 3712);
+    			add_location(label3, file$4, 135, 6, 3700);
     			attr_dev(input3, "id", "email");
     			attr_dev(input3, "name", "email");
     			attr_dev(input3, "type", "email");
@@ -3123,13 +3123,13 @@ var app = (function () {
     			input3.required = true;
     			attr_dev(input3, "placeholder", "janedoe@domain.com");
     			attr_dev(input3, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input3, file$4, 139, 8, 3842);
+    			add_location(input3, file$4, 139, 8, 3830);
     			attr_dev(div6, "class", "mt-1");
-    			add_location(div6, file$4, 138, 6, 3815);
-    			add_location(div7, file$4, 134, 4, 3700);
+    			add_location(div6, file$4, 138, 6, 3803);
+    			add_location(div7, file$4, 134, 4, 3688);
     			attr_dev(label4, "for", "password");
     			attr_dev(label4, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label4, file$4, 154, 6, 4323);
+    			add_location(label4, file$4, 154, 6, 4311);
     			attr_dev(input4, "id", "password");
     			attr_dev(input4, "name", "password");
     			attr_dev(input4, "type", "password");
@@ -3137,16 +3137,16 @@ var app = (function () {
     			input4.required = true;
     			attr_dev(input4, "placeholder", "*****");
     			attr_dev(input4, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input4, file$4, 158, 8, 4459);
+    			add_location(input4, file$4, 158, 8, 4447);
     			attr_dev(div8, "class", "mt-1");
-    			add_location(div8, file$4, 157, 6, 4432);
-    			add_location(div9, file$4, 153, 4, 4311);
+    			add_location(div8, file$4, 157, 6, 4420);
+    			add_location(div9, file$4, 153, 4, 4299);
     			attr_dev(button, "type", "submit");
     			attr_dev(button, "class", "w-full flex justify-center py-2 px-4 border border-transparent\n        rounded-md shadow-sm text-sm font-bold text-white bg-blue-900\n        hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2\n        focus:ring-blue-500");
-    			add_location(button, file$4, 173, 6, 4942);
-    			add_location(div10, file$4, 172, 4, 4930);
+    			add_location(button, file$4, 173, 6, 4930);
+    			add_location(div10, file$4, 172, 4, 4918);
     			attr_dev(form, "class", "space-y-6");
-    			add_location(form, file$4, 76, 2, 1806);
+    			add_location(form, file$4, 76, 2, 1794);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -3357,7 +3357,7 @@ var app = (function () {
     		};
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
-    			console.log("POST /users res", res);
+    			console.log("res", res);
     			activeUserAuth.set(res.userAuth);
     			activeUserDetails.set(res.userDetails);
     			adminIdUser.set(res.userDetails.adminIdUser);
@@ -8282,7 +8282,7 @@ var app = (function () {
     const { Object: Object_1$3, console: console_1$6 } = globals;
     const file$e = "src/routes/ScreenHabitReflect.svelte";
 
-    // (243:12) {:else}
+    // (246:12) {:else}
     function create_else_block_5$1(ctx) {
     	let t;
 
@@ -8303,14 +8303,14 @@ var app = (function () {
     		block,
     		id: create_else_block_5$1.name,
     		type: "else",
-    		source: "(243:12) {:else}",
+    		source: "(246:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (241:65) 
+    // (244:65) 
     function create_if_block_8$1(ctx) {
     	let t;
 
@@ -8331,14 +8331,14 @@ var app = (function () {
     		block,
     		id: create_if_block_8$1.name,
     		type: "if",
-    		source: "(241:65) ",
+    		source: "(244:65) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (239:12) {#if tempLocalUserHabit.detailDuration > 86400}
+    // (242:12) {#if tempLocalUserHabit.detailDuration > 86400}
     function create_if_block_7$1(ctx) {
     	let t0_value = /*tempLocalUserHabit*/ ctx[0].detailDuration / 86400 + "";
     	let t0;
@@ -8366,14 +8366,14 @@ var app = (function () {
     		block,
     		id: create_if_block_7$1.name,
     		type: "if",
-    		source: "(239:12) {#if tempLocalUserHabit.detailDuration > 86400}",
+    		source: "(242:12) {#if tempLocalUserHabit.detailDuration > 86400}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (261:12) {:else}
+    // (264:12) {:else}
     function create_else_block_4$1(ctx) {
     	let t;
 
@@ -8394,14 +8394,14 @@ var app = (function () {
     		block,
     		id: create_else_block_4$1.name,
     		type: "else",
-    		source: "(261:12) {:else}",
+    		source: "(264:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (259:12) {#if tempLocalUserHabit.detailCode}
+    // (262:12) {#if tempLocalUserHabit.detailCode}
     function create_if_block_6$1(ctx) {
     	let t_value = /*tempLocalUserHabit*/ ctx[0].detailCode + "";
     	let t;
@@ -8425,14 +8425,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6$1.name,
     		type: "if",
-    		source: "(259:12) {#if tempLocalUserHabit.detailCode}",
+    		source: "(262:12) {#if tempLocalUserHabit.detailCode}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (286:12) {:else}
+    // (289:12) {:else}
     function create_else_block_3$1(ctx) {
     	let span;
 
@@ -8441,7 +8441,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "fail";
     			attr_dev(span, "class", "bg-red-100 text-red-700 px-2 rounded-sm");
-    			add_location(span, file$e, 286, 14, 7873);
+    			add_location(span, file$e, 289, 14, 7977);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -8455,14 +8455,14 @@ var app = (function () {
     		block,
     		id: create_else_block_3$1.name,
     		type: "else",
-    		source: "(286:12) {:else}",
+    		source: "(289:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (282:69) 
+    // (285:69) 
     function create_if_block_5$1(ctx) {
     	let span;
 
@@ -8471,7 +8471,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "active";
     			attr_dev(span, "class", "bg-blue-100 text-blue-700 px-2 rounded-sm");
-    			add_location(span, file$e, 282, 14, 7737);
+    			add_location(span, file$e, 285, 14, 7841);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -8485,14 +8485,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5$1.name,
     		type: "if",
-    		source: "(282:69) ",
+    		source: "(285:69) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (278:12) {#if tempLocalUserHabit.reflectIsSuccessful}
+    // (281:12) {#if tempLocalUserHabit.reflectIsSuccessful}
     function create_if_block_4$1(ctx) {
     	let span;
 
@@ -8501,7 +8501,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "success";
     			attr_dev(span, "class", "bg-green-100 text-green-700 py-1 px-2 rounded-sm");
-    			add_location(span, file$e, 278, 14, 7543);
+    			add_location(span, file$e, 281, 14, 7647);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -8515,14 +8515,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4$1.name,
     		type: "if",
-    		source: "(278:12) {#if tempLocalUserHabit.reflectIsSuccessful}",
+    		source: "(281:12) {#if tempLocalUserHabit.reflectIsSuccessful}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (310:10) {:else}
+    // (313:10) {:else}
     function create_else_block_2$2(ctx) {
     	let t;
 
@@ -8543,14 +8543,14 @@ var app = (function () {
     		block,
     		id: create_else_block_2$2.name,
     		type: "else",
-    		source: "(310:10) {:else}",
+    		source: "(313:10) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (308:10) {#if tempLocalUserHabit}
+    // (311:10) {#if tempLocalUserHabit}
     function create_if_block_3$2(ctx) {
     	let t_value = /*tempLocalUserHabit*/ ctx[0].detailDescription + "";
     	let t;
@@ -8574,14 +8574,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$2.name,
     		type: "if",
-    		source: "(308:10) {#if tempLocalUserHabit}",
+    		source: "(311:10) {#if tempLocalUserHabit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (382:12) {:else}
+    // (385:12) {:else}
     function create_else_block_1$3(ctx) {
     	let t;
 
@@ -8601,14 +8601,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1$3.name,
     		type: "else",
-    		source: "(382:12) {:else}",
+    		source: "(385:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (380:12) {#if tempLocalUserHabit.reflectIsSuccessful}
+    // (383:12) {#if tempLocalUserHabit.reflectIsSuccessful}
     function create_if_block_2$3(ctx) {
     	let t;
 
@@ -8628,14 +8628,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$3.name,
     		type: "if",
-    		source: "(380:12) {#if tempLocalUserHabit.reflectIsSuccessful}",
+    		source: "(383:12) {#if tempLocalUserHabit.reflectIsSuccessful}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (412:12) {:else}
+    // (415:12) {:else}
     function create_else_block$4(ctx) {
     	let t;
 
@@ -8655,14 +8655,14 @@ var app = (function () {
     		block,
     		id: create_else_block$4.name,
     		type: "else",
-    		source: "(412:12) {:else}",
+    		source: "(415:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (410:12) {#if tempLocalUserHabit.reflectRecommend}
+    // (413:12) {#if tempLocalUserHabit.reflectRecommend}
     function create_if_block_1$3(ctx) {
     	let t;
 
@@ -8682,14 +8682,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$3.name,
     		type: "if",
-    		source: "(410:12) {#if tempLocalUserHabit.reflectRecommend}",
+    		source: "(413:12) {#if tempLocalUserHabit.reflectRecommend}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (225:0) <ContentWrapper>
+    // (228:0) <ContentWrapper>
     function create_default_slot_1$4(ctx) {
     	let div21;
     	let form;
@@ -8927,59 +8927,59 @@ var app = (function () {
     			set_style(span0, "width", "28vw");
     			set_style(span0, "left", "calc(100% +\n              .5rem)");
     			attr_dev(span0, "class", "absolute text-blue-900 border-t-2 green-500");
-    			add_location(span0, file$e, 243, 12, 6120);
+    			add_location(span0, file$e, 246, 12, 6224);
     			set_style(span1, "left", "calc(100% + 28vw)");
     			attr_dev(span1, "class", "ml-2 p-2 rounded flex justify-center items-center absolute\n              top-0 bottom-0 leading-none text-xs font-extrabold text-gray-900\n              uppercase text-left");
-    			add_location(span1, file$e, 247, 12, 6304);
+    			add_location(span1, file$e, 250, 12, 6408);
     			attr_dev(div0, "class", "relative uppercase font-extrabold text-gray-900 text-xs\n            text-left");
-    			add_location(div0, file$e, 235, 10, 5761);
+    			add_location(div0, file$e, 238, 10, 5865);
     			set_style(span2, "height", "50%");
     			set_style(span2, "top", "50%");
     			set_style(span2, "width", "23vw");
     			set_style(span2, "left", "calc(100% +\n              .5rem)");
     			attr_dev(span2, "class", "absolute text-blue-900 border-t-2 green-500");
-    			add_location(span2, file$e, 261, 12, 6861);
+    			add_location(span2, file$e, 264, 12, 6965);
     			set_style(span3, "left", "calc(100% + 23vw)");
     			attr_dev(span3, "class", "ml-2 p-2 rounded flex justify-center items-center absolute\n              top-0 bottom-0 leading-none text-xs font-extrabold text-gray-900\n              uppercase text-left");
-    			add_location(span3, file$e, 265, 12, 7045);
+    			add_location(span3, file$e, 268, 12, 7149);
     			attr_dev(div1, "class", "relative mt-1 text-6xl font-extrabold text-center\n            text-blue-900");
-    			add_location(div1, file$e, 255, 10, 6627);
+    			add_location(div1, file$e, 258, 10, 6731);
     			set_style(span4, "height", "50%");
     			set_style(span4, "top", "50%");
     			set_style(span4, "width", "28vw");
     			set_style(span4, "left", "calc(100% +\n              .5rem)");
     			attr_dev(span4, "class", "absolute text-blue-900 border-t-2 green-500");
-    			add_location(span4, file$e, 288, 12, 7969);
+    			add_location(span4, file$e, 291, 12, 8073);
     			set_style(span5, "left", "calc(100% + 28vw)");
     			attr_dev(span5, "class", "ml-2 p-2 rounded flex justify-center items-center absolute\n              top-0 bottom-0 leading-none text-xs font-extrabold text-gray-900\n              uppercase text-left");
-    			add_location(span5, file$e, 292, 12, 8153);
+    			add_location(span5, file$e, 295, 12, 8257);
     			attr_dev(div2, "class", "relative mt-2 text-sm font-bold text-center text-gray-900\n            uppercase");
-    			add_location(div2, file$e, 274, 10, 7366);
+    			add_location(div2, file$e, 277, 10, 7470);
     			attr_dev(div3, "class", "flex flex-col mx-auto");
-    			add_location(div3, file$e, 234, 8, 5715);
+    			add_location(div3, file$e, 237, 8, 5819);
     			attr_dev(div4, "class", "w-1/3 bg-white py-1 px-2 border-2 border-blue-100 shadow\n        rounded-sm focus:outline-none");
-    			add_location(div4, file$e, 231, 6, 5590);
+    			add_location(div4, file$e, 234, 6, 5694);
     			attr_dev(h1, "class", "text-xl font-bold");
-    			add_location(h1, file$e, 305, 8, 8515);
+    			add_location(h1, file$e, 308, 8, 8619);
     			attr_dev(p, "class", "text-base mt-1 text-gray-700");
-    			add_location(p, file$e, 306, 8, 8591);
-    			add_location(div5, file$e, 304, 6, 8501);
+    			add_location(p, file$e, 309, 8, 8695);
+    			add_location(div5, file$e, 307, 6, 8605);
     			attr_dev(label0, "for", "habit-reflect-comment");
     			attr_dev(label0, "class", "block text-sm font-medium text-gray-900");
-    			add_location(label0, file$e, 317, 8, 8912);
+    			add_location(label0, file$e, 320, 8, 9016);
     			attr_dev(textarea, "id", "habit-reflect-comment");
     			attr_dev(textarea, "name", "habit-reflect-comment");
     			textarea.required = true;
     			attr_dev(textarea, "rows", "3");
     			attr_dev(textarea, "placeholder", "This is where you write a brief description of your\n            results.");
     			attr_dev(textarea, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n            rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n            focus:ring-blue-900 focus:border-blue-900 sm:text-sm");
-    			add_location(textarea, file$e, 323, 10, 9096);
+    			add_location(textarea, file$e, 326, 10, 9200);
     			attr_dev(div6, "class", "mt-1");
-    			add_location(div6, file$e, 322, 8, 9067);
-    			add_location(div7, file$e, 316, 6, 8898);
+    			add_location(div6, file$e, 325, 8, 9171);
+    			add_location(div7, file$e, 319, 6, 9002);
     			attr_dev(label1, "for", "habit-reflect-difficulty");
     			attr_dev(label1, "class", "block text-sm font-medium text-gray-900");
-    			add_location(label1, file$e, 338, 8, 9658);
+    			add_location(label1, file$e, 341, 8, 9762);
     			attr_dev(input, "type", "range");
     			attr_dev(input, "id", "habit-reflect-difficulty");
     			attr_dev(input, "name", "habit-reflect-difficulty");
@@ -8987,80 +8987,80 @@ var app = (function () {
     			attr_dev(input, "max", "10");
     			attr_dev(input, "step", "1");
     			attr_dev(input, "class", "h-8 w-full svelte-1qra9fn");
-    			add_location(input, file$e, 345, 10, 9887);
+    			add_location(input, file$e, 348, 10, 9991);
     			attr_dev(div8, "class", "mt-1");
-    			add_location(div8, file$e, 344, 8, 9858);
-    			add_location(div9, file$e, 337, 6, 9644);
+    			add_location(div8, file$e, 347, 8, 9962);
+    			add_location(div9, file$e, 340, 6, 9748);
     			attr_dev(span6, "class", "sr-only");
-    			add_location(span6, file$e, 369, 10, 10797);
+    			add_location(span6, file$e, 372, 10, 10901);
     			attr_dev(span7, "aria-hidden", "true");
     			attr_dev(span7, "class", "translate-x-5 inline-block h-5 w-5 rounded-full bg-white\n            shadow transform ring-0 transition ease-in-out duration-200");
     			toggle_class(span7, "translate-x-5", /*tempLocalUserHabit*/ ctx[0].reflectIsSuccessful);
-    			add_location(span7, file$e, 370, 10, 10848);
+    			add_location(span7, file$e, 373, 10, 10952);
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "aria-pressed", "false");
     			attr_dev(button0, "aria-labelledby", "toggleLabel");
     			attr_dev(button0, "class", "bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11\n          border-2 border-transparent rounded-full cursor-pointer\n          transition-colors ease-in-out duration-200 focus:outline-none\n          focus:ring-2 focus:ring-offset-2 focus:ring-blue-900");
     			toggle_class(button0, "bg-blue-900", /*tempLocalUserHabit*/ ctx[0].reflectIsSuccessful);
-    			add_location(button0, file$e, 359, 8, 10293);
+    			add_location(button0, file$e, 362, 8, 10397);
     			attr_dev(span8, "class", "text-sm font-medium text-gray-900");
-    			add_location(span8, file$e, 378, 10, 11184);
+    			add_location(span8, file$e, 381, 10, 11288);
     			attr_dev(span9, "class", "ml-3");
     			attr_dev(span9, "id", "toggleLabel");
-    			add_location(span9, file$e, 377, 8, 11137);
+    			add_location(span9, file$e, 380, 8, 11241);
     			attr_dev(div10, "class", "flex items-center");
-    			add_location(div10, file$e, 357, 6, 10198);
+    			add_location(div10, file$e, 360, 6, 10302);
     			attr_dev(span10, "class", "sr-only");
-    			add_location(span10, file$e, 399, 10, 12106);
+    			add_location(span10, file$e, 402, 10, 12210);
     			attr_dev(span11, "aria-hidden", "true");
     			attr_dev(span11, "class", "translate-x-5 inline-block h-5 w-5 rounded-full bg-white\n            shadow transform ring-0 transition ease-in-out duration-200");
     			toggle_class(span11, "translate-x-5", /*tempLocalUserHabit*/ ctx[0].reflectRecommend);
-    			add_location(span11, file$e, 400, 10, 12157);
+    			add_location(span11, file$e, 403, 10, 12261);
     			attr_dev(button1, "type", "button");
     			attr_dev(button1, "aria-pressed", "false");
     			attr_dev(button1, "aria-labelledby", "toggleLabel");
     			attr_dev(button1, "class", "bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11\n          border-2 border-transparent rounded-full cursor-pointer\n          transition-colors ease-in-out duration-200 focus:outline-none\n          focus:ring-2 focus:ring-offset-2 focus:ring-blue-900");
     			toggle_class(button1, "bg-blue-900", /*tempLocalUserHabit*/ ctx[0].reflectRecommend);
-    			add_location(button1, file$e, 389, 8, 11603);
+    			add_location(button1, file$e, 392, 8, 11707);
     			attr_dev(span12, "class", "text-sm font-medium text-gray-900");
-    			add_location(span12, file$e, 408, 10, 12490);
+    			add_location(span12, file$e, 411, 10, 12594);
     			attr_dev(span13, "class", "ml-3");
     			attr_dev(span13, "id", "toggleLabel");
-    			add_location(span13, file$e, 407, 8, 12443);
+    			add_location(span13, file$e, 410, 8, 12547);
     			attr_dev(div11, "class", "flex items-center");
-    			add_location(div11, file$e, 387, 6, 11508);
+    			add_location(div11, file$e, 390, 6, 11612);
     			attr_dev(button2, "type", "submit");
     			attr_dev(button2, "class", "w-full flex justify-center py-2 px-4 border border-transparent\n          rounded-md shadow-sm text-sm font-bold text-white bg-blue-900\n          hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2\n          focus:ring-blue-900");
-    			add_location(button2, file$e, 418, 8, 12851);
+    			add_location(button2, file$e, 421, 8, 12955);
     			attr_dev(div12, "class", "mt-6");
-    			add_location(div12, file$e, 417, 6, 12824);
+    			add_location(div12, file$e, 420, 6, 12928);
     			attr_dev(form, "class", "space-y-6");
-    			add_location(form, file$e, 228, 4, 5493);
+    			add_location(form, file$e, 231, 4, 5597);
     			attr_dev(div13, "class", "w-full border-t border-gray-300");
-    			add_location(div13, file$e, 431, 10, 13335);
+    			add_location(div13, file$e, 434, 10, 13439);
     			attr_dev(div14, "class", "absolute inset-0 flex items-center");
-    			add_location(div14, file$e, 430, 8, 13276);
+    			add_location(div14, file$e, 433, 8, 13380);
     			attr_dev(span14, "class", "px-2 bg-white text-gray-900");
-    			add_location(span14, file$e, 434, 10, 13467);
+    			add_location(span14, file$e, 437, 10, 13571);
     			attr_dev(div15, "class", "relative flex justify-center text-sm");
-    			add_location(div15, file$e, 433, 8, 13406);
+    			add_location(div15, file$e, 436, 8, 13510);
     			attr_dev(div16, "class", "relative");
-    			add_location(div16, file$e, 429, 6, 13245);
+    			add_location(div16, file$e, 432, 6, 13349);
     			attr_dev(span15, "class", "");
-    			add_location(span15, file$e, 445, 12, 13872);
+    			add_location(span15, file$e, 448, 12, 13976);
     			attr_dev(button3, "class", "w-full inline-flex justify-center py-2 px-4 border\n            border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n            text-gray-900 hover:bg-gray-50");
-    			add_location(button3, file$e, 440, 10, 13620);
-    			add_location(div17, file$e, 439, 8, 13604);
+    			add_location(button3, file$e, 443, 10, 13724);
+    			add_location(div17, file$e, 442, 8, 13708);
     			attr_dev(span16, "class", "");
-    			add_location(span16, file$e, 454, 12, 14207);
+    			add_location(span16, file$e, 457, 12, 14311);
     			attr_dev(button4, "class", "w-full inline-flex justify-center py-2 px-4 border\n            border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n            text-gray-900 hover:bg-gray-50");
-    			add_location(button4, file$e, 449, 10, 13958);
-    			add_location(div18, file$e, 448, 8, 13942);
+    			add_location(button4, file$e, 452, 10, 14062);
+    			add_location(div18, file$e, 451, 8, 14046);
     			attr_dev(div19, "class", "mt-6 grid grid-cols-2 gap-3");
-    			add_location(div19, file$e, 438, 6, 13554);
+    			add_location(div19, file$e, 441, 6, 13658);
     			attr_dev(div20, "class", "mt-6");
-    			add_location(div20, file$e, 428, 4, 13220);
-    			add_location(div21, file$e, 226, 2, 5482);
+    			add_location(div20, file$e, 431, 4, 13324);
+    			add_location(div21, file$e, 229, 2, 5586);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div21, anchor);
@@ -9278,14 +9278,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$4.name,
     		type: "slot",
-    		source: "(225:0) <ContentWrapper>",
+    		source: "(228:0) <ContentWrapper>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (465:0) {#if habitDeleteWarning}
+    // (468:0) {#if habitDeleteWarning}
     function create_if_block$6(ctx) {
     	let modal;
     	let current;
@@ -9334,14 +9334,14 @@ var app = (function () {
     		block,
     		id: create_if_block$6.name,
     		type: "if",
-    		source: "(465:0) {#if habitDeleteWarning}",
+    		source: "(468:0) {#if habitDeleteWarning}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (466:2) <Modal contentModal={contentModalDelete}>
+    // (469:2) <Modal contentModal={contentModalDelete}>
     function create_default_slot$7(ctx) {
     	let button0;
     	let t1;
@@ -9379,25 +9379,25 @@ var app = (function () {
     			span1.textContent = "Back";
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "class", "inline-flex justify-center w-full rounded-md border\n      border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-medium\n      text-white hover:bg-blue-500 focus:outline-none focus:ring-2\n      focus:ring-offset-2 focus:ring-blue-700 sm:text-sm");
-    			add_location(button0, file$e, 466, 4, 14398);
+    			add_location(button0, file$e, 469, 4, 14502);
     			attr_dev(div0, "class", "w-full border-t border-gray-300");
-    			add_location(div0, file$e, 478, 10, 14904);
+    			add_location(div0, file$e, 481, 10, 15008);
     			attr_dev(div1, "class", "absolute inset-0 flex items-center");
-    			add_location(div1, file$e, 477, 8, 14845);
+    			add_location(div1, file$e, 480, 8, 14949);
     			attr_dev(span0, "class", "px-2 bg-white text-gray-900");
-    			add_location(span0, file$e, 481, 10, 15036);
+    			add_location(span0, file$e, 484, 10, 15140);
     			attr_dev(div2, "class", "relative flex justify-center text-sm");
-    			add_location(div2, file$e, 480, 8, 14975);
+    			add_location(div2, file$e, 483, 8, 15079);
     			attr_dev(div3, "class", "relative");
-    			add_location(div3, file$e, 476, 6, 14814);
+    			add_location(div3, file$e, 479, 6, 14918);
     			attr_dev(span1, "class", "");
-    			add_location(span1, file$e, 492, 10, 15390);
+    			add_location(span1, file$e, 495, 10, 15494);
     			attr_dev(button1, "class", "w-full inline-flex justify-center py-2 px-4 border\n          border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n          text-gray-900 hover:bg-gray-50");
-    			add_location(button1, file$e, 487, 8, 15151);
+    			add_location(button1, file$e, 490, 8, 15255);
     			attr_dev(div4, "class", "mt-6");
-    			add_location(div4, file$e, 485, 6, 15123);
+    			add_location(div4, file$e, 488, 6, 15227);
     			attr_dev(div5, "class", "mt-6");
-    			add_location(div5, file$e, 475, 4, 14789);
+    			add_location(div5, file$e, 478, 4, 14893);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button0, anchor);
@@ -9437,7 +9437,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$7.name,
     		type: "slot",
-    		source: "(466:2) <Modal contentModal={contentModalDelete}>",
+    		source: "(469:2) <Modal contentModal={contentModalDelete}>",
     		ctx
     	});
 
@@ -9639,9 +9639,11 @@ var app = (function () {
     		};
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
+    			console.log("res", res);
     			let newHabitData = $activeUserHabits;
     			newHabitData[$currentActiveHabit] = res.updatedHabit;
     			activeUserHabits.set(newHabitData);
+    			activeUserDetails.set(res.updatedUser);
     			isNewActiveUserHabitChange.set(true);
     		}).catch(err => {
     			console.clear();
@@ -9677,6 +9679,7 @@ var app = (function () {
     		isNewActiveUserHabitChange,
     		adminIdUser,
     		activeUserHabits,
+    		activeUserDetails,
     		tempUserHabit,
     		push,
     		AppHeader,
