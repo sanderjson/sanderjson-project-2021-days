@@ -33,8 +33,8 @@
     let dateStart = getNewDate();
     let dateEnd = getNewDate();
     dateEnd.setSeconds(dateEnd.getSeconds() + option.value);
-    tempLocalUserHabit.detailDateStartUTCString = dateStart.toUTCString();
-    tempLocalUserHabit.detailDateEndUTCString = dateEnd.toUTCString();
+    tempLocalUserHabit.adminDateStartUTCString = dateStart.toUTCString();
+    tempLocalUserHabit.adminDateEndUTCString = dateEnd.toUTCString();
     tempLocalUserHabit.detailDuration = option.value;
     // console.log("after toUTCString() dateStart", dateStart);
     // console.log("after toUTCString() dateEnd", dateEnd);
@@ -44,7 +44,7 @@
     tempLocalUserHabit.detailIsNewHabit = !tempLocalUserHabit.detailIsNewHabit;
   };
 
-  console.log("tempLocalUserHabit", tempLocalUserHabit);
+  // $: console.log("tempLocalUserHabit", tempLocalUserHabit);
 
   onMount(() => {
     tempLocalUserHabit.adminIsActive
@@ -235,7 +235,7 @@
               <div class="relative flex items-start">
                 <div class="flex items-center h-5">
                   <input
-                    bind:checked={tempLocalUserHabit[`detailIsCategory${i + 1}`]}
+                    bind:checked={tempLocalUserHabit.detailCategory[`isCategory${i + 1}`]}
                     id={category.label}
                     name={category.label}
                     type="checkbox"

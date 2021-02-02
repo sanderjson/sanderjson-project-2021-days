@@ -56,49 +56,50 @@ const isLocalStorageFun = () => {
 
 const getUserProfileBlankFun = () => {
 	return {
-		name: "",
-		email: "",
-		title: "",
-		initials: "",
-		password: "",
-		userScore: 0,
-		isAccountPrivate: true,
-		socialAccounts: {},
-		habitActiveIds: [null, null, null],
-		habitHistoryIds: [],
-		userId: null,
-		podId: null,
-		imageId: null,
-		signUpDate: null,
+		adminDateCreated: null,
+		adminOther: {},
+		adminIdPod: null,
+		adminIdUser: null,
+		adminScoreUser: 0,
+		detailEmail: "",
+		detailImage: "",
+		detailInitials: "",
+		detailIsAccountPrivate: null,
+		detailName: "",
+		detailPassword: "",
+		detailSocialAccounts: {},
+		detailTitle: "",
+		habitIdsActive: [],
+		habitIdsHistory: [],
 	};
 };
 
 const getUserHabitBlankFun = () => {
 	return {
 		adminActivePosition: null,
+		adminDateEndUTCString: "",
+		adminDateStartUTCString: "",
+		adminIdUser: null,
+		adminIdHabit: null,
+		adminIdSeries: null,
 		adminIsActive: null,
-		adminUserId: null,
-		adminHabitId: null,
-		adminSeriesId: null,
 		adminScore: 0,
-		adminIsSuccessful: null,
-		adminUserRating: 0,
-		adminUserReflection: "",
-		detailIsCategory1: false,
-		detailIsCategory2: false,
-		detailIsCategory3: false,
+		detailCategory: {
+			isCategory1: false,
+			isCategory2: false,
+			isCategory3: false,
+		},
 		detailCode: "",
-		detailDateEndUTCString: "",
-		detailDateStartUTCString: "",
-		detailDuration: 0,
 		detailDescription: "",
-		detailIsNewHabit: true,
+		detailDuration: 0,
+		detailIsNewHabit: "",
 		detailTitle: "",
 		checks: [],
 		messages: [],
 		reflectComment: "",
 		reflectDifficulty: null,
-		reflectionIsSuccessful: null,
+		reflectIsSuccessful: null,
+		reflectRating: 0,
 		reflectRecommend: null,
 	};
 };
@@ -148,9 +149,19 @@ export const currentActiveHabit = writable(0);
 // flag for social media
 export const isNewSocialModal = writable(false);
 
-export const activeUserId = writable(null);
+export const adminIdUser = writable(null);
 
 // adding new habits
-export const isNewActiveUserHabit = writable(false);
+export const isNewActiveUserHabitChange = writable(false);
 export const tempUserHabit = writable({});
 export const isActiveHabitComplete = writable(false);
+
+//
+// API REWRITE :)
+//
+
+const isObjectEmptyFun = (obj) => {
+	for (let i in obj) return false;
+	return true;
+};
+export const isObjectEmpty = readable(isObjectEmptyFun);

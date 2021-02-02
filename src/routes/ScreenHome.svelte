@@ -6,7 +6,8 @@
     activeUserHabits,
     API_ENDPOINT,
     getUserHabitBlank,
-    isActiveHabitComplete
+    isActiveHabitComplete,
+    isObjectEmpty
   } from "../stores.js";
   import { fade } from "svelte/transition";
   import { push } from "svelte-spa-router";
@@ -39,20 +40,13 @@
     push("/edit");
   };
 
-  // const validActiveHabits = $activeUserHabits.filter(habit => {
-  //   return habit.adminIsActive == true;
-  // });
-
-  // modals
-  const handleButtonSocial = () => {
-    isNewSocialModal.set(true);
-  };
-
   const handleModalSocialAction = () => {
     isNewSocialModal.set(false);
   };
 
-  // $: console.log("$activeUserHabits", $activeUserHabits);
+  const handleButtonSocial = () => {
+    isNewSocialModal.set(true);
+  };
 </script>
 
 <style>
@@ -125,10 +119,10 @@
   <section class="home-user home-user2 pt-6">
     <h1 class="user-title text-center ">
       <div class="text-lg font-bold leading-tight">
-        {$activeUserDetails.name}
+        {$activeUserDetails.detailName}
       </div>
       <div class="text-sm font-extrabold leading-tight text-blue-900">
-        {$activeUserDetails.title}
+        {$activeUserDetails.detailTitle}
       </div>
     </h1>
     <div class="user-img relative">
@@ -141,7 +135,7 @@
         style="font-family: 'Bungee', cursive; width: 168px; height 168px;"
         class="relative rounded-full m-1 z-0 text-9xl flex justify-center
         items-center h-full">
-        <span>{$activeUserDetails.initials}</span>
+        <span>{$activeUserDetails.detailInitials}</span>
       </div>
     </div>
     <div
@@ -152,7 +146,7 @@
     <div
       class="user-stat2 bg-white text-lg border-1 h-10 w-10 flex justify-center
       items-center rounded-full border-blue-100 font-extrabold shadow mr-5">
-      <span>{$activeUserDetails.habitHistoryIds.length}</span>
+      <span>{$activeUserDetails.habitIdsHistory.length}</span>
     </div>
     <button
       on:click={handleButtonHistory}
@@ -177,24 +171,13 @@
     <div
       class="relative bg-white h-full py-2 px-2 shadow rounded sm:rounded-lg
       sm:px-10 text-left">
-      {#if $activeUserHabits[$currentActiveHabit]}
+      {#if $activeUserHabits[$currentActiveHabit] && !$isObjectEmpty($activeUserHabits[$currentActiveHabit])}
         <h1 class="text-xl font-bold">
           {$activeUserHabits[$currentActiveHabit].detailTitle}
         </h1>
-      {:else}
-        <h1 class="text-xl font-bold text-gray-500">Your New Habit</h1>
-      {/if}
-      {#if $activeUserHabits[$currentActiveHabit]}
         <p class="text-base mt-1 text-gray-700">
           {$activeUserHabits[$currentActiveHabit].detailDescription}
         </p>
-      {:else}
-        <p class="text-base mt-1 text-gray-500">
-          What will you do? Who will you become? Tap the [Add] button below to
-          create a new habit.
-        </p>
-      {/if}
-      {#if $activeUserHabits[$currentActiveHabit]}
         <button
           on:click={handleHabitEdit}
           class="user-icon1 absolute right-0 bottom-0 inline-flex ml-2 bg-white
@@ -203,6 +186,12 @@
           <i class="fas fa-1x fa-pencil-alt text-blue-900" />
           <!-- <span class="font-bold text-blue-100">[edit]</span> -->
         </button>
+      {:else}
+        <h1 class="text-xl font-bold text-gray-500">Your New Habit</h1>
+        <p class="text-base mt-1 text-gray-500">
+          What will you do? Who will you become? Tap the [Add] button below to
+          create a new habit.
+        </p>
       {/if}
     </div>
   </section>
@@ -211,7 +200,7 @@
     class="home-habit-select pt-3 grid grid-cols-3 grid-rows-1 gap-3 sm:mx-auto
     sm:w-full sm:max-w-md">
     {#each $activeUserHabits as habit, i}
-      {#if habit}
+      {#if habit && !$isObjectEmpty(habit)}
         <HomeHabitButton {habit} {i} />
       {:else}
         <HomeHabitButtonNull {i} />

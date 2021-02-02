@@ -11,7 +11,7 @@
     isLocalStorage,
     getUserHabitBlank,
     activeUserAuth,
-    activeUserId,
+    adminIdUser,
     activeUserDetails,
     activeUserHabits,
     isActiveUserLive
@@ -29,7 +29,7 @@
   };
 
   const handleSignIn = async () => {
-    const fetchURL = $API_ENDPOINT + "/signInUser";
+    const fetchURL = $API_ENDPOINT + "/_login";
 
     const fetchOptions = {
       method: "POST",
@@ -54,15 +54,17 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        // console.log("res", res);
-        let activeHabitsClean = res.userActiveHabits;
-        while (activeHabitsClean.length < 3) {
-          activeHabitsClean.push(null);
+        console.log("res", res);
+
+        let activeHabitsRes = res.userActiveHabits;
+        let activeHabitsClean = [{}, {}, {}];
+        for (const [index, habit] of activeHabitsRes.entries()) {
+          activeHabitsClean[habit.adminActivePosition] = habit;
         }
 
         activeUserAuth.set(res.userAuth);
         activeUserDetails.set(res.userDetails);
-        activeUserId.set(res.userDetails.userId);
+        adminIdUser.set(res.userDetails.adminIdUser);
         activeUserHabits.set(activeHabitsClean);
         isActiveUserLive.set(true);
       })
@@ -83,7 +85,7 @@
     }
     // already set to the initial values
     // console.log("$activeUserAuth", $activeUserAuth);
-    // console.log("$activeUserId", $activeUserId);
+    // console.log("$adminIdUser", $adminIdUser);
     // console.log("$activeUserDetails", $activeUserDetails);
     // console.log("$activeUserHabits", $activeUserHabits);
     // console.log("$isActiveUserLive", $isActiveUserLive);

@@ -12,16 +12,20 @@
     getUserProfileBlank,
     getUserHabitBlank,
     activeUserAuth,
-    activeUserId,
+    adminIdUser,
     activeUserDetails,
     activeUserHabits,
     isActiveUserLive
   } from "../stores.js";
 
-  const userProfileTemp = $getUserProfileBlank();
+  let tempLocalUserProfile = $getUserProfileBlank();
 
   const handleSignUp = async () => {
-    const fetchURL = $API_ENDPOINT + "/createNewUser";
+    Object.assign(tempLocalUserHabit, {
+      detailEmail: tempLocalUserProfile.detailEmail.toLocaleLowerCase()
+    });
+
+    const fetchURL = $API_ENDPOINT + "/users";
 
     const fetchOptions = {
       method: "POST",
@@ -30,20 +34,7 @@
       },
 
       body: JSON.stringify({
-        name: userProfileTemp.name,
-        email: userProfileTemp.email.toLocaleLowerCase(),
-        title: userProfileTemp.title,
-        initials: userProfileTemp.initials,
-        password: userProfileTemp.password,
-        userScore: userProfileTemp.userScore,
-        isAccountPrivate: userProfileTemp.isAccountPrivate,
-        socialAccounts: userProfileTemp.socialAccounts,
-        habitActiveIds: userProfileTemp.habitActiveIds,
-        habitHistoryIds: userProfileTemp.habitHistoryIds,
-        userId: userProfileTemp.userId,
-        podId: userProfileTemp.podId,
-        imageId: userProfileTemp.imageId,
-        signUpDate: userProfileTemp.signUpDate
+        ...tempLocalUserProfile
       })
     };
 
@@ -59,16 +50,11 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        let activeHabitsClean = res.userActiveHabits.map(habit => {
-          if (habit == null) {
-            return $getUserHabitBlank();
-          }
-          return habit;
-        });
+        console.log("POST /users res", res);
         activeUserAuth.set(res.userAuth);
         activeUserDetails.set(res.userDetails);
-        activeUserId.set(res.userDetails.userId);
-        activeUserHabits.set(activeHabitsClean);
+        adminIdUser.set(res.userDetails.adminIdUser);
+        activeUserHabits.set([{}, {}, {}]);
         isActiveUserLive.set(true);
       })
       .catch(err => {
@@ -79,7 +65,7 @@
   };
 
   onMount(() => {
-    userProfileTemp.signUpDate = new Date();
+    tempLocalUserProfile.adminDateCreated = new Date();
   });
 </script>
 
@@ -95,7 +81,7 @@
       </label>
       <div class="mt-1">
         <input
-          bind:value={userProfileTemp.name}
+          bind:value={tempLocalUserProfile.detailName}
           id="name"
           name="name"
           type="name"
@@ -114,7 +100,7 @@
       </label>
       <div class="mt-1">
         <input
-          bind:value={userProfileTemp.initials}
+          bind:value={tempLocalUserProfile.detailInitials}
           id="initials"
           name="initials"
           type="initials"
@@ -133,7 +119,7 @@
       </label>
       <div class="mt-1">
         <input
-          bind:value={userProfileTemp.title}
+          bind:value={tempLocalUserProfile.detailTitle}
           id="title"
           name="title"
           type="title"
@@ -152,7 +138,7 @@
       </label>
       <div class="mt-1">
         <input
-          bind:value={userProfileTemp.email}
+          bind:value={tempLocalUserProfile.detailEmail}
           id="email"
           name="email"
           type="email"
@@ -171,7 +157,7 @@
       </label>
       <div class="mt-1">
         <input
-          bind:value={userProfileTemp.password}
+          bind:value={tempLocalUserProfile.detailPassword}
           id="password"
           name="password"
           type="password"

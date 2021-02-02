@@ -5,8 +5,8 @@
     API_ENDPOINT,
     currentActiveHabit,
     getUserHabitBlank,
-    isNewActiveUserHabit,
-    activeUserId,
+    isNewActiveUserHabitChange,
+    adminIdUser,
     activeUserDetails,
     activeUserHabits
   } from "../stores.js";
@@ -16,13 +16,19 @@
   import AddEditDeleteHabit from "../components/AddEditDeleteHabit.svelte";
 
   let tempLocalUserHabit = $getUserHabitBlank();
+  tempLocalUserHabit.detailIsNewHabit = true;
 
   const handleReset = () => {
     tempLocalUserHabit = $getUserHabitBlank();
   };
 
   const handleSubmitCreateNewHabit = async () => {
-    const fetchURL = $API_ENDPOINT + "/createNewHabit";
+    Object.assign(tempLocalUserHabit, {
+      adminActivePosition: $currentActiveHabit,
+      adminIdUser: $adminIdUser
+    });
+
+    const fetchURL = $API_ENDPOINT + `/habits/${$adminIdUser}`;
     const fetchOptions = {
       method: "POST",
       headers: {
@@ -30,28 +36,7 @@
       },
 
       body: JSON.stringify({
-        adminActivePosition: $currentActiveHabit,
-        adminIsActive: tempLocalUserHabit.adminIsActive,
-        adminUserId: $activeUserId,
-        adminHabitId: tempLocalUserHabit.adminHabitId,
-        adminSeriesId: tempLocalUserHabit.adminSeriesId,
-        adminScore: tempLocalUserHabit.adminScore,
-        detailIsCategory1: tempLocalUserHabit.detailIsCategory1,
-        detailIsCategory2: tempLocalUserHabit.detailIsCategory2,
-        detailIsCategory3: tempLocalUserHabit.detailIsCategory3,
-        detailCode: tempLocalUserHabit.detailCode,
-        detailDateEndUTCString: tempLocalUserHabit.detailDateEndUTCString,
-        detailDateStartUTCString: tempLocalUserHabit.detailDateStartUTCString,
-        detailDuration: tempLocalUserHabit.detailDuration,
-        detailDescription: tempLocalUserHabit.detailDescription,
-        detailIsNewHabit: tempLocalUserHabit.detailIsNewHabit,
-        detailTitle: tempLocalUserHabit.detailTitle,
-        checks: tempLocalUserHabit.checks,
-        messages: tempLocalUserHabit.messages,
-        reflectComment: tempLocalUserHabit.reflectComment,
-        reflectDifficulty: tempLocalUserHabit.reflectDifficulty,
-        reflectIsSuccessful: tempLocalUserHabit.reflectIsSuccessful,
-        reflectRecommend: tempLocalUserHabit.reflectRecommend
+        ...tempLocalUserHabit
       })
     };
 
@@ -71,7 +56,7 @@
         let newHabitData = $activeUserHabits;
         newHabitData[$currentActiveHabit] = res.newHabit;
         activeUserHabits.set(newHabitData);
-        isNewActiveUserHabit.set(true);
+        isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {
         console.clear();

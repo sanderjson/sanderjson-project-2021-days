@@ -4,15 +4,13 @@
     errMessage,
     API_ENDPOINT,
     activeUserHabits,
-    isNewActiveUserHabit,
+    isNewActiveUserHabitChange,
     getUserHabitBlank
   } from "../stores.js";
   import { push } from "svelte-spa-router";
 
   export let habit;
   export let i;
-
-  // habit == null ? () => (habit = $getUserHabitBlank()) : "";
 
   const handleClick = () => {
     currentActiveHabit.set(i);
@@ -30,17 +28,21 @@
     console.log("complete");
   };
   const handleHabitCheck = async val => {
-    const fetchURL = $API_ENDPOINT + "/addHabitCheck";
+    let tempLocalUserHabit = habit;
+    tempLocalUserHabit.checks.push({
+      date: new Date(),
+      isOK: val
+    });
+    const fetchURL =
+      $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
     const fetchOptions = {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "content-type": "application/json"
       },
 
       body: JSON.stringify({
-        checkDate: new Date(),
-        checkIsOk: val,
-        habitId: habit.adminHabitId
+        ...tempLocalUserHabit
       })
     };
 
@@ -56,13 +58,14 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
+        // console.log("res", res);
         let newHabitData = $activeUserHabits;
-        newHabitData[$currentActiveHabit] = res;
+        newHabitData[$currentActiveHabit] = res.updatedHabit;
         activeUserHabits.set(newHabitData);
-        isNewActiveUserHabit.set(true);
+        isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {
-        console.clear();
+        // console.clear();
         errMessage.set(err);
         push(`/error`);
       });
@@ -105,15 +108,13 @@
     dateCurrent++;
   }, 1000);
 
-  let dateStart = new Date(habit.detailDateStartUTCString).getTime();
-  let dateEnd = new Date(habit.detailDateEndUTCString).getTime();
+  let dateStart = new Date(habit.adminDateStartUTCString).getTime();
+  let dateEnd = new Date(habit.adminDateEndUTCString).getTime();
   let dateCurrent = new Date().getTime();
   let timeRemaining = getTimeRemaining(dateEnd, dateCurrent);
 
   $: dateCurrent;
   $: timeRemaining = getTimeRemaining(dateEnd, dateCurrent);
-
-  // console.log("habit: ", i, habit);
 </script>
 
 <style>

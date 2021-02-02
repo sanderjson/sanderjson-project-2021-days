@@ -5,11 +5,10 @@
     API_ENDPOINT,
     currentActiveHabit,
     getUserHabitBlank,
-    isNewActiveUserHabit,
-    activeUserId,
+    isNewActiveUserHabitChange,
+    adminIdUser,
     activeUserHabits,
     activeUserDetails,
-
     tempUserHabit
   } from "../stores.js";
   import { push } from "svelte-spa-router";
@@ -27,15 +26,16 @@
   };
 
   const handleModalDeleteAction = async () => {
-    const fetchURL = $API_ENDPOINT + "/deleteExistingHabit";
+    const fetchURL =
+      $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
     const fetchOptions = {
-      method: "POST",
+      method: "DELETE",
       headers: {
         "content-type": "application/json"
       },
 
       body: JSON.stringify({
-        adminHabitId: tempLocalUserHabit.adminHabitId
+        ...tempLocalUserHabit
       })
     };
 
@@ -51,14 +51,15 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        // res = null
+        console.log("res", res);
         let newHabitData = $activeUserHabits;
-        newHabitData[$currentActiveHabit] = null;
+        newHabitData[$currentActiveHabit] = {};
         activeUserHabits.set(newHabitData);
-        isNewActiveUserHabit.set(true);
+        activeUserDetails.set(res.userProfile);
+        isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {
-        console.clear();
+        // console.clear();
         errMessage.set(err);
         push(`/error`);
       });
@@ -69,40 +70,19 @@
   let habitDeleteWarning = false;
   const handleDelete = () => {
     habitDeleteWarning = true;
-    console.log("delete");
   };
 
   const handleSubmitEditExistingHabit = async () => {
-    const fetchURL = $API_ENDPOINT + "/editExistingHabit";
+    const fetchURL =
+      $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
     const fetchOptions = {
-      method: "POST",
+      method: "PATCH",
       headers: {
         "content-type": "application/json"
       },
 
       body: JSON.stringify({
-        adminActivePosition: $currentActiveHabit,
-        adminIsActive: tempLocalUserHabit.adminIsActive,
-        adminUserId: $activeUserId,
-        adminHabitId: tempLocalUserHabit.adminHabitId,
-        adminSeriesId: tempLocalUserHabit.adminSeriesId,
-        adminScore: tempLocalUserHabit.adminScore,
-        detailIsCategory1: tempLocalUserHabit.detailIsCategory1,
-        detailIsCategory2: tempLocalUserHabit.detailIsCategory2,
-        detailIsCategory3: tempLocalUserHabit.detailIsCategory3,
-        detailCode: tempLocalUserHabit.detailCode,
-        detailDateEndUTCString: tempLocalUserHabit.detailDateEndUTCString,
-        detailDateStartUTCString: tempLocalUserHabit.detailDateStartUTCString,
-        detailDuration: tempLocalUserHabit.detailDuration,
-        detailDescription: tempLocalUserHabit.detailDescription,
-        detailIsNewHabit: tempLocalUserHabit.detailIsNewHabit,
-        detailTitle: tempLocalUserHabit.detailTitle,
-        checks: tempLocalUserHabit.checks,
-        messages: tempLocalUserHabit.messages,
-        reflectComment: tempLocalUserHabit.reflectComment,
-        reflectDifficulty: tempLocalUserHabit.reflectDifficulty,
-        reflectIsSuccessful: tempLocalUserHabit.reflectIsSuccessful,
-        reflectRecommend: tempLocalUserHabit.reflectRecommend
+        ...tempLocalUserHabit
       })
     };
 
@@ -118,13 +98,14 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
+        console.log("res", res);
         let newHabitData = $activeUserHabits;
         newHabitData[$currentActiveHabit] = res.updatedHabit;
         activeUserHabits.set(newHabitData);
-        isNewActiveUserHabit.set(true);
+        isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {
-        console.clear();
+        // console.clear();
         errMessage.set(err);
         push(`/error`);
       });
