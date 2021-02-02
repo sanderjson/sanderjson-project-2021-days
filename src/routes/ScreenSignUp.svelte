@@ -13,15 +13,15 @@
     getUserHabitBlank,
     activeUserAuth,
     adminIdUser,
-    activeUserDetails,
-    activeUserHabits,
+    userProfile,
+    userHabitsActive,
     isActiveUserLive
   } from "../stores.js";
 
   let tempLocalUserProfile = $getUserProfileBlank();
 
   const handleSignUp = async () => {
-    Object.assign(tempLocalUserHabit, {
+    Object.assign(tempLocalUserProfile, {
       detailEmail: tempLocalUserProfile.detailEmail.toLocaleLowerCase()
     });
 
@@ -52,9 +52,9 @@
       .then(res => {
         console.log("res", res);
         activeUserAuth.set(res.userAuth);
-        activeUserDetails.set(res.userDetails);
+        userProfile.set(res.userDetails);
         adminIdUser.set(res.userDetails.adminIdUser);
-        activeUserHabits.set([{}, {}, {}]);
+        userHabitsActive.set([{}, {}, {}]);
         isActiveUserLive.set(true);
       })
       .catch(err => {

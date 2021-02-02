@@ -11,6 +11,9 @@ var app = (function () {
             tar[k] = src[k];
         return tar;
     }
+    function is_promise(value) {
+        return value && typeof value === 'object' && typeof value.then === 'function';
+    }
     function add_location(element, file, line, column, char) {
         element.__svelte_meta = {
             loc: { file, line, column, char }
@@ -490,6 +493,77 @@ var app = (function () {
                 }
             }
         };
+    }
+
+    function handle_promise(promise, info) {
+        const token = info.token = {};
+        function update(type, index, key, value) {
+            if (info.token !== token)
+                return;
+            info.resolved = value;
+            let child_ctx = info.ctx;
+            if (key !== undefined) {
+                child_ctx = child_ctx.slice();
+                child_ctx[key] = value;
+            }
+            const block = type && (info.current = type)(child_ctx);
+            let needs_flush = false;
+            if (info.block) {
+                if (info.blocks) {
+                    info.blocks.forEach((block, i) => {
+                        if (i !== index && block) {
+                            group_outros();
+                            transition_out(block, 1, 1, () => {
+                                if (info.blocks[i] === block) {
+                                    info.blocks[i] = null;
+                                }
+                            });
+                            check_outros();
+                        }
+                    });
+                }
+                else {
+                    info.block.d(1);
+                }
+                block.c();
+                transition_in(block, 1);
+                block.m(info.mount(), info.anchor);
+                needs_flush = true;
+            }
+            info.block = block;
+            if (info.blocks)
+                info.blocks[index] = block;
+            if (needs_flush) {
+                flush();
+            }
+        }
+        if (is_promise(promise)) {
+            const current_component = get_current_component();
+            promise.then(value => {
+                set_current_component(current_component);
+                update(info.then, 1, info.value, value);
+                set_current_component(null);
+            }, error => {
+                set_current_component(current_component);
+                update(info.catch, 2, info.error, error);
+                set_current_component(null);
+                if (!info.hasCatch) {
+                    throw error;
+                }
+            });
+            // if we previously had a then/catch block, destroy it
+            if (info.current !== info.pending) {
+                update(info.pending, 0);
+                return true;
+            }
+        }
+        else {
+            if (info.current !== info.then) {
+                update(info.then, 1, info.value, promise);
+                return true;
+            }
+            info.resolved = promise;
+        }
     }
 
     const globals = (typeof window !== 'undefined'
@@ -2117,6 +2191,7 @@ var app = (function () {
     ];
 
     const contentHabitDurationData = [
+    	{ disabled: false, value: 300, text: `5 min` },
     	{ disabled: false, value: 3600, text: `1 hour` },
     	{ disabled: false, value: 3600 * 24, text: `24 hours` },
     	{ disabled: false, value: 3600 * 24 * 3, text: `3 days` },
@@ -2126,7 +2201,11 @@ var app = (function () {
     	{ disabled: true, value: 3600 * 24 * 365, text: `1 year` },
     ];
 
-    // function to test if local storage is enabled
+    const contentHabitDetailCategory = readable(
+    	contentHabitDetailCategoryData
+    );
+    const contentHabitDuration = readable(contentHabitDurationData);
+
     const isLocalStorageFun = () => {
     	if (typeof localStorage !== "undefined") {
     		try {
@@ -2148,6 +2227,15 @@ var app = (function () {
     		return false;
     	}
     };
+
+    const isObjectEmptyFun = (obj) => {
+    	for (let i in obj) return false;
+    	return true;
+    };
+
+    const getIsLocalStorage = readable(isLocalStorageFun);
+    const isLocalStorage = writable(null);
+    const isObjectEmpty = readable(isObjectEmptyFun);
 
     const getUserProfileBlankFun = () => {
     	return {
@@ -2199,14 +2287,8 @@ var app = (function () {
     	};
     };
 
-    // content edit
-    const contentHabitDetailCategory = readable(
-    	contentHabitDetailCategoryData
-    );
-    const contentHabitDuration = readable(contentHabitDurationData);
-
-    const getIsLocalStorage = readable(isLocalStorageFun);
-    const isLocalStorage = writable(null);
+    const getUserProfileBlank = readable(getUserProfileBlankFun);
+    const getUserHabitBlank = readable(getUserHabitBlankFun);
 
     const errMessage = writable(null);
     const API_ENDPOINT = readable(
@@ -2223,13 +2305,12 @@ var app = (function () {
     const isActiveUserLive = writable(false);
 
     // active...Data is what the app uses -> see App.svelte
-    const activeUserDetailsData = getUserProfileBlankFun();
-    const activeUserHabitsData = [null, null, null];
-
-    const getUserProfileBlank = readable(getUserProfileBlankFun);
-    const getUserHabitBlank = readable(getUserHabitBlankFun);
-    const activeUserDetails = writable(activeUserDetailsData);
-    const activeUserHabits = writable(activeUserHabitsData);
+    const userProfileData = getUserProfileBlankFun();
+    const userHabitsActiveData = [null, null, null];
+    const userHabitsHistoryData = [];
+    const userProfile = writable(userProfileData);
+    const userHabitsActive = writable(userHabitsActiveData);
+    const userHabitsHistory = writable(userHabitsHistoryData);
 
     // for iterating over active habits
     const currentActiveHabit = writable(0);
@@ -2243,15 +2324,8 @@ var app = (function () {
     const tempUserHabit = writable({});
     const isActiveHabitComplete = writable(false);
 
-    //
-    // API REWRITE :)
-    //
-
-    const isObjectEmptyFun = (obj) => {
-    	for (let i in obj) return false;
-    	return true;
-    };
-    const isObjectEmpty = readable(isObjectEmptyFun);
+    const isNewDataLoaded = writable(false);
+    const isHabitHistoryUpdated = writable(false);
 
     /* src/svg/2021.svelte generated by Svelte v3.32.1 */
 
@@ -2450,16 +2524,25 @@ var app = (function () {
     	prop3: null,
     };
 
-    const LSuserDetailsData = {
-    	name: "",
-    	habit: "",
-    	habitType: null,
-    	habitCategory: [],
-    	habitDateStartUTCString: "",
-    	habitDateEndUTCString: "",
+    const LSuserProfileData = {
+    	adminDateCreated: null,
+    	adminOther: {},
+    	adminIdPod: null,
+    	adminIdUser: null,
+    	adminScoreUser: 0,
+    	detailEmail: "",
+    	detailImage: "",
+    	detailInitials: "",
+    	detailIsAccountPrivate: null,
+    	detailName: "",
+    	detailPassword: "",
+    	detailSocialAccounts: {},
+    	detailTitle: "",
+    	habitIdsActive: [],
+    	habitIdsHistory: [],
     };
 
-    const LSactiveHabitsData = [
+    const LSuserHabitsActiveData = [
     	{
     		prop1: 1,
     	},
@@ -2471,10 +2554,14 @@ var app = (function () {
     	},
     ];
 
-    const LSisUserDefined = writable$1("isUserDefined", false);
-    const LSuserAuth = writable$1("userAuth", LSuserAuthData);
-    const LSuserDetails = writable$1("userDetails", LSuserDetailsData);
-    const LSactiveHabits = writable$1("activeHabits", LSactiveHabitsData);
+    const LSisUserDefined = writable$1("LSisUserDefined", false);
+    const LSuserAuth = writable$1("LSuserAuth", LSuserAuthData);
+    const LSuserProfile = writable$1("LSuserProfile", LSuserProfileData);
+    const LSuserHabitsActive = writable$1(
+    	"LSuserHabitsActive",
+    	LSuserHabitsActiveData
+    );
+    const LSuserHabitsHistory = writable$1("LSuserHabitsHistory", []);
 
     /* src/routes/ScreenStart.svelte generated by Svelte v3.32.1 */
 
@@ -2482,7 +2569,7 @@ var app = (function () {
 
     const file$3 = "src/routes/ScreenStart.svelte";
 
-    // (95:0) <AppHeader>
+    // (89:0) <AppHeader>
     function create_default_slot_1(ctx) {
     	let twentytwentyone;
     	let current;
@@ -2514,14 +2601,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1.name,
     		type: "slot",
-    		source: "(95:0) <AppHeader>",
+    		source: "(89:0) <AppHeader>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (99:0) <ContentWrapper>
+    // (93:0) <ContentWrapper>
     function create_default_slot(ctx) {
     	let form;
     	let div1;
@@ -2600,62 +2687,62 @@ var app = (function () {
     			span2.textContent = "Learn More";
     			attr_dev(label0, "for", "email");
     			attr_dev(label0, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label0, file$3, 101, 6, 2629);
+    			add_location(label0, file$3, 95, 6, 2375);
     			attr_dev(input0, "id", "email");
     			attr_dev(input0, "name", "email");
     			attr_dev(input0, "type", "email");
     			attr_dev(input0, "autocomplete", "email");
     			input0.required = true;
     			attr_dev(input0, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input0, file$3, 105, 8, 2767);
+    			add_location(input0, file$3, 99, 8, 2513);
     			attr_dev(div0, "class", "mt-1");
-    			add_location(div0, file$3, 104, 6, 2740);
-    			add_location(div1, file$3, 100, 4, 2617);
+    			add_location(div0, file$3, 98, 6, 2486);
+    			add_location(div1, file$3, 94, 4, 2363);
     			attr_dev(label1, "for", "password");
     			attr_dev(label1, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label1, file$3, 119, 6, 3187);
+    			add_location(label1, file$3, 113, 6, 2933);
     			attr_dev(input1, "id", "password");
     			attr_dev(input1, "name", "password");
     			attr_dev(input1, "type", "password");
     			attr_dev(input1, "autocomplete", "password");
     			input1.required = true;
     			attr_dev(input1, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input1, file$3, 123, 8, 3323);
+    			add_location(input1, file$3, 117, 8, 3069);
     			attr_dev(div2, "class", "mt-1");
-    			add_location(div2, file$3, 122, 6, 3296);
-    			add_location(div3, file$3, 118, 4, 3175);
+    			add_location(div2, file$3, 116, 6, 3042);
+    			add_location(div3, file$3, 112, 4, 2921);
     			attr_dev(button, "type", "submit");
     			attr_dev(button, "class", "w-full flex justify-center py-2 px-4 border border-transparent\n        rounded-md shadow-sm text-sm font-medium text-white bg-blue-600\n        hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2\n        focus:ring-blue-500");
-    			add_location(button, file$3, 137, 6, 3758);
-    			add_location(div4, file$3, 136, 4, 3746);
+    			add_location(button, file$3, 131, 6, 3504);
+    			add_location(div4, file$3, 130, 4, 3492);
     			attr_dev(form, "class", "space-y-6");
-    			add_location(form, file$3, 99, 2, 2548);
+    			add_location(form, file$3, 93, 2, 2294);
     			attr_dev(div5, "class", "w-full border-t border-gray-300");
-    			add_location(div5, file$3, 151, 8, 4211);
+    			add_location(div5, file$3, 145, 8, 3957);
     			attr_dev(div6, "class", "absolute inset-0 flex items-center");
-    			add_location(div6, file$3, 150, 6, 4154);
+    			add_location(div6, file$3, 144, 6, 3900);
     			attr_dev(span0, "class", "px-2 bg-white text-gray-500");
-    			add_location(span0, file$3, 154, 8, 4337);
+    			add_location(span0, file$3, 148, 8, 4083);
     			attr_dev(div7, "class", "relative flex justify-center text-sm");
-    			add_location(div7, file$3, 153, 6, 4278);
+    			add_location(div7, file$3, 147, 6, 4024);
     			attr_dev(div8, "class", "relative");
-    			add_location(div8, file$3, 149, 4, 4125);
+    			add_location(div8, file$3, 143, 4, 3871);
     			attr_dev(span1, "class", "");
-    			add_location(span1, file$3, 165, 10, 4706);
+    			add_location(span1, file$3, 159, 10, 4452);
     			attr_dev(a0, "href", "#/signup");
     			attr_dev(a0, "class", "w-full inline-flex justify-center py-2 px-4 border\n          border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n          text-gray-500 hover:bg-gray-50");
-    			add_location(a0, file$3, 160, 8, 4480);
-    			add_location(div9, file$3, 159, 6, 4466);
+    			add_location(a0, file$3, 154, 8, 4226);
+    			add_location(div9, file$3, 153, 6, 4212);
     			attr_dev(span2, "class", "");
-    			add_location(span2, file$3, 175, 10, 5008);
+    			add_location(span2, file$3, 169, 10, 4754);
     			attr_dev(a1, "href", "#/about");
     			attr_dev(a1, "class", "w-full inline-flex justify-center py-2 px-4 border\n          border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n          text-gray-500 hover:bg-gray-50");
-    			add_location(a1, file$3, 170, 8, 4783);
-    			add_location(div10, file$3, 169, 6, 4769);
+    			add_location(a1, file$3, 164, 8, 4529);
+    			add_location(div10, file$3, 163, 6, 4515);
     			attr_dev(div11, "class", "mt-6 grid grid-cols-2 gap-3");
-    			add_location(div11, file$3, 158, 4, 4418);
+    			add_location(div11, file$3, 152, 4, 4164);
     			attr_dev(div12, "class", "mt-6");
-    			add_location(div12, file$3, 148, 2, 4102);
+    			add_location(div12, file$3, 142, 2, 3848);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -2725,7 +2812,7 @@ var app = (function () {
     		block,
     		id: create_default_slot.name,
     		type: "slot",
-    		source: "(99:0) <ContentWrapper>",
+    		source: "(93:0) <ContentWrapper>",
     		ctx
     	});
 
@@ -2848,18 +2935,20 @@ var app = (function () {
     		};
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
-    			console.log("res", res);
-    			let activeHabitsRes = res.userActiveHabits;
+    			// console.log("res", res);
+    			activeUserAuth.set(res.userAuth);
+
+    			userProfile.set(res.userProfile);
+    			adminIdUser.set(res.userProfile.adminIdUser);
+    			let activeHabitsRes = res.userHabitsHistory;
     			let activeHabitsClean = [{}, {}, {}];
 
     			for (const [index, habit] of activeHabitsRes.entries()) {
     				activeHabitsClean[habit.adminActivePosition] = habit;
     			}
 
-    			activeUserAuth.set(res.userAuth);
-    			activeUserDetails.set(res.userDetails);
-    			adminIdUser.set(res.userDetails.adminIdUser);
-    			activeUserHabits.set(activeHabitsClean);
+    			userHabitsActive.set(activeHabitsClean);
+    			userHabitsHistory.set(res.userHabitsHistory);
     			isActiveUserLive.set(true);
     		}).catch(err => {
     			console.clear();
@@ -2872,14 +2961,11 @@ var app = (function () {
     		// clean all local storage on start screen
     		if ($isLocalStorage) {
     			LSuserAuth.set(null);
-    			LSuserDetails.set(null);
-    			LSactiveHabits.set([null, null, null]);
+    			LSuserProfile.set(null);
+    			LSuserHabitsActive.set([null, null, null]);
     			LSisUserDefined.set(false);
     		}
-    	}); // already set to the initial values
-    	// console.log("$activeUserAuth", $activeUserAuth);
-    	// console.log("$adminIdUser", $adminIdUser);
-    	// console.log("$activeUserDetails", $activeUserDetails);
+    	});
 
     	const writable_props = [];
 
@@ -2909,13 +2995,14 @@ var app = (function () {
     		getUserHabitBlank,
     		activeUserAuth,
     		adminIdUser,
-    		activeUserDetails,
-    		activeUserHabits,
+    		userProfile,
+    		userHabitsActive,
+    		userHabitsHistory,
     		isActiveUserLive,
     		LSisUserDefined,
     		LSuserAuth,
-    		LSuserDetails,
-    		LSactiveHabits,
+    		LSuserProfile,
+    		LSuserHabitsActive,
     		userTemp,
     		handleSignIn,
     		$API_ENDPOINT,
@@ -3073,7 +3160,7 @@ var app = (function () {
     			button.textContent = "Sign Up";
     			attr_dev(label0, "for", "name");
     			attr_dev(label0, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label0, file$4, 78, 6, 1875);
+    			add_location(label0, file$4, 78, 6, 1865);
     			attr_dev(input0, "id", "name");
     			attr_dev(input0, "name", "name");
     			attr_dev(input0, "type", "name");
@@ -3081,13 +3168,13 @@ var app = (function () {
     			input0.required = true;
     			attr_dev(input0, "placeholder", "Jane Doe");
     			attr_dev(input0, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input0, file$4, 82, 8, 2003);
+    			add_location(input0, file$4, 82, 8, 1993);
     			attr_dev(div0, "class", "mt-1");
-    			add_location(div0, file$4, 81, 6, 1976);
-    			add_location(div1, file$4, 77, 4, 1863);
+    			add_location(div0, file$4, 81, 6, 1966);
+    			add_location(div1, file$4, 77, 4, 1853);
     			attr_dev(label1, "for", "initials");
     			attr_dev(label1, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label1, file$4, 97, 6, 2469);
+    			add_location(label1, file$4, 97, 6, 2459);
     			attr_dev(input1, "id", "initials");
     			attr_dev(input1, "name", "initials");
     			attr_dev(input1, "type", "initials");
@@ -3095,13 +3182,13 @@ var app = (function () {
     			input1.required = true;
     			attr_dev(input1, "placeholder", "JD");
     			attr_dev(input1, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input1, file$4, 101, 8, 2605);
+    			add_location(input1, file$4, 101, 8, 2595);
     			attr_dev(div2, "class", "mt-1");
-    			add_location(div2, file$4, 100, 6, 2578);
-    			add_location(div3, file$4, 96, 4, 2457);
+    			add_location(div2, file$4, 100, 6, 2568);
+    			add_location(div3, file$4, 96, 4, 2447);
     			attr_dev(label2, "for", "title");
     			attr_dev(label2, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label2, file$4, 116, 6, 3085);
+    			add_location(label2, file$4, 116, 6, 3075);
     			attr_dev(input2, "id", "title");
     			attr_dev(input2, "name", "title");
     			attr_dev(input2, "type", "title");
@@ -3109,13 +3196,13 @@ var app = (function () {
     			input2.required = true;
     			attr_dev(input2, "placeholder", "Guardian of the Galaxy");
     			attr_dev(input2, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input2, file$4, 120, 8, 3215);
+    			add_location(input2, file$4, 120, 8, 3205);
     			attr_dev(div4, "class", "mt-1");
-    			add_location(div4, file$4, 119, 6, 3188);
-    			add_location(div5, file$4, 115, 4, 3073);
+    			add_location(div4, file$4, 119, 6, 3178);
+    			add_location(div5, file$4, 115, 4, 3063);
     			attr_dev(label3, "for", "email");
     			attr_dev(label3, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label3, file$4, 135, 6, 3700);
+    			add_location(label3, file$4, 135, 6, 3690);
     			attr_dev(input3, "id", "email");
     			attr_dev(input3, "name", "email");
     			attr_dev(input3, "type", "email");
@@ -3123,13 +3210,13 @@ var app = (function () {
     			input3.required = true;
     			attr_dev(input3, "placeholder", "janedoe@domain.com");
     			attr_dev(input3, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input3, file$4, 139, 8, 3830);
+    			add_location(input3, file$4, 139, 8, 3820);
     			attr_dev(div6, "class", "mt-1");
-    			add_location(div6, file$4, 138, 6, 3803);
-    			add_location(div7, file$4, 134, 4, 3688);
+    			add_location(div6, file$4, 138, 6, 3793);
+    			add_location(div7, file$4, 134, 4, 3678);
     			attr_dev(label4, "for", "password");
     			attr_dev(label4, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label4, file$4, 154, 6, 4311);
+    			add_location(label4, file$4, 154, 6, 4301);
     			attr_dev(input4, "id", "password");
     			attr_dev(input4, "name", "password");
     			attr_dev(input4, "type", "password");
@@ -3137,16 +3224,16 @@ var app = (function () {
     			input4.required = true;
     			attr_dev(input4, "placeholder", "*****");
     			attr_dev(input4, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n          rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n          focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input4, file$4, 158, 8, 4447);
+    			add_location(input4, file$4, 158, 8, 4437);
     			attr_dev(div8, "class", "mt-1");
-    			add_location(div8, file$4, 157, 6, 4420);
-    			add_location(div9, file$4, 153, 4, 4299);
+    			add_location(div8, file$4, 157, 6, 4410);
+    			add_location(div9, file$4, 153, 4, 4289);
     			attr_dev(button, "type", "submit");
     			attr_dev(button, "class", "w-full flex justify-center py-2 px-4 border border-transparent\n        rounded-md shadow-sm text-sm font-bold text-white bg-blue-900\n        hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2\n        focus:ring-blue-500");
-    			add_location(button, file$4, 173, 6, 4930);
-    			add_location(div10, file$4, 172, 4, 4918);
+    			add_location(button, file$4, 173, 6, 4920);
+    			add_location(div10, file$4, 172, 4, 4908);
     			attr_dev(form, "class", "space-y-6");
-    			add_location(form, file$4, 76, 2, 1794);
+    			add_location(form, file$4, 76, 2, 1784);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, form, anchor);
@@ -3334,7 +3421,7 @@ var app = (function () {
     	let tempLocalUserProfile = $getUserProfileBlank();
 
     	const handleSignUp = async () => {
-    		Object.assign(tempLocalUserHabit, {
+    		Object.assign(tempLocalUserProfile, {
     			detailEmail: tempLocalUserProfile.detailEmail.toLocaleLowerCase()
     		});
 
@@ -3359,9 +3446,9 @@ var app = (function () {
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
     			console.log("res", res);
     			activeUserAuth.set(res.userAuth);
-    			activeUserDetails.set(res.userDetails);
+    			userProfile.set(res.userDetails);
     			adminIdUser.set(res.userDetails.adminIdUser);
-    			activeUserHabits.set([{}, {}, {}]);
+    			userHabitsActive.set([{}, {}, {}]);
     			isActiveUserLive.set(true);
     		}).catch(err => {
     			console.clear();
@@ -3418,8 +3505,8 @@ var app = (function () {
     		getUserHabitBlank,
     		activeUserAuth,
     		adminIdUser,
-    		activeUserDetails,
-    		activeUserHabits,
+    		userProfile,
+    		userHabitsActive,
     		isActiveUserLive,
     		tempLocalUserProfile,
     		handleSignUp,
@@ -4048,7 +4135,7 @@ var app = (function () {
     const { console: console_1$3 } = globals;
     const file$8 = "src/components/HomeHabitButton.svelte";
 
-    // (139:8) {:else}
+    // (147:8) {:else}
     function create_else_block_5(ctx) {
     	let t;
 
@@ -4069,7 +4156,7 @@ var app = (function () {
     		block,
     		id: create_else_block_5.name,
     		type: "else",
-    		source: "(139:8) {:else}",
+    		source: "(147:8) {:else}",
     		ctx
     	});
 
@@ -4083,6 +4170,9 @@ var app = (function () {
     	function select_block_type_1(ctx, dirty) {
     		if (/*habit*/ ctx[0].detailDuration > 86400) return create_if_block_7;
     		if (/*habit*/ ctx[0].detailDuration == 86400) return create_if_block_8;
+    		if (/*habit*/ ctx[0].detailDuration > 3600) return create_if_block_9;
+    		if (/*habit*/ ctx[0].detailDuration == 3600) return create_if_block_10;
+    		if (/*habit*/ ctx[0].detailDuration > 60) return create_if_block_11;
     		return create_else_block_4;
     	}
 
@@ -4128,13 +4218,13 @@ var app = (function () {
     	return block;
     }
 
-    // (138:58) {:else}
+    // (146:10) {:else}
     function create_else_block_4(ctx) {
     	let t;
 
     	const block = {
     		c: function create() {
-    			t = text("1 hour");
+    			t = text("1 min");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t, anchor);
@@ -4149,7 +4239,105 @@ var app = (function () {
     		block,
     		id: create_else_block_4.name,
     		type: "else",
-    		source: "(138:58) {:else}",
+    		source: "(146:10) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (144:46) 
+    function create_if_block_11(ctx) {
+    	let t0_value = /*habit*/ ctx[0].detailDuration / 60 + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text(t0_value);
+    			t1 = text(" mins");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*habit*/ 1 && t0_value !== (t0_value = /*habit*/ ctx[0].detailDuration / 60 + "")) set_data_dev(t0, t0_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_11.name,
+    		type: "if",
+    		source: "(144:46) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (142:49) 
+    function create_if_block_10(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("60 mins");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_10.name,
+    		type: "if",
+    		source: "(142:49) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (140:48) 
+    function create_if_block_9(ctx) {
+    	let t0_value = /*habit*/ ctx[0].detailDuration / 3600 + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text(t0_value);
+    			t1 = text(" hours");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*habit*/ 1 && t0_value !== (t0_value = /*habit*/ ctx[0].detailDuration / 3600 + "")) set_data_dev(t0, t0_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_9.name,
+    		type: "if",
+    		source: "(140:48) ",
     		ctx
     	});
 
@@ -4219,7 +4407,7 @@ var app = (function () {
     	return block;
     }
 
-    // (142:37) {:else}
+    // (150:37) {:else}
     function create_else_block_3(ctx) {
     	let t;
 
@@ -4240,14 +4428,14 @@ var app = (function () {
     		block,
     		id: create_else_block_3.name,
     		type: "else",
-    		source: "(142:37) {:else}",
+    		source: "(150:37) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (142:8) {#if habit}
+    // (150:8) {#if habit}
     function create_if_block_5(ctx) {
     	let t_value = /*habit*/ ctx[0].detailCode + "";
     	let t;
@@ -4271,14 +4459,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5.name,
     		type: "if",
-    		source: "(142:8) {#if habit}",
+    		source: "(150:8) {#if habit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (147:8) {:else}
+    // (155:8) {:else}
     function create_else_block_2(ctx) {
     	let t;
 
@@ -4299,14 +4487,14 @@ var app = (function () {
     		block,
     		id: create_else_block_2.name,
     		type: "else",
-    		source: "(147:8) {:else}",
+    		source: "(155:8) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (145:8) {#if habit}
+    // (153:8) {#if habit}
     function create_if_block_3(ctx) {
     	let if_block_anchor;
 
@@ -4350,14 +4538,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3.name,
     		type: "if",
-    		source: "(145:8) {#if habit}",
+    		source: "(153:8) {#if habit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (146:50) {:else}
+    // (154:50) {:else}
     function create_else_block_1(ctx) {
     	let t;
 
@@ -4378,14 +4566,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1.name,
     		type: "else",
-    		source: "(146:50) {:else}",
+    		source: "(154:50) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (146:10) {#if habit.adminIsActive}
+    // (154:10) {#if habit.adminIsActive}
     function create_if_block_4(ctx) {
     	let t;
 
@@ -4408,14 +4596,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4.name,
     		type: "if",
-    		source: "(146:10) {#if habit.adminIsActive}",
+    		source: "(154:10) {#if habit.adminIsActive}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (188:4) {:else}
+    // (196:4) {:else}
     function create_else_block$1(ctx) {
     	let div;
     	let button;
@@ -4430,12 +4618,12 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "ADD";
     			attr_dev(span, "class", "border-2 rounded-sm border-black bg-green-100 p-1 text-xs\n            font-extrabold align-middle");
-    			add_location(span, file$8, 195, 10, 6076);
+    			add_location(span, file$8, 203, 10, 6358);
     			set_style(button, "height", "32px");
     			attr_dev(button, "class", "flex justify-center items-center focus:ring-1 outline-none\n          focus:ring-offset-1 focus:ring-green-500 focus:outline-none\n          transition-colors duration-75");
-    			add_location(button, file$8, 189, 8, 5803);
+    			add_location(button, file$8, 197, 8, 6085);
     			attr_dev(div, "class", "py-1 flex justify-center items-center space-x-2");
-    			add_location(div, file$8, 188, 6, 5733);
+    			add_location(div, file$8, 196, 6, 6015);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4459,14 +4647,14 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(188:4) {:else}",
+    		source: "(196:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (153:4) {#if habit}
+    // (161:4) {#if habit}
     function create_if_block$1(ctx) {
     	let if_block_anchor;
 
@@ -4513,14 +4701,14 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(153:4) {#if habit}",
+    		source: "(161:4) {#if habit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (169:42) 
+    // (177:42) 
     function create_if_block_2(ctx) {
     	let div;
     	let button0;
@@ -4540,15 +4728,15 @@ var app = (function () {
     			button1 = element("button");
     			i1 = element("i");
     			attr_dev(i0, "class", "bg-green-100 far fa-2x fa-check-square");
-    			add_location(i0, file$8, 176, 12, 5269);
+    			add_location(i0, file$8, 184, 12, 5551);
     			attr_dev(button0, "class", "flex justify-center items-center focus:ring-1 outline-none\n            focus:ring-offset-1 focus:ring-green-500 focus:outline-none\n            transition-colors duration-75");
-    			add_location(button0, file$8, 170, 10, 4966);
+    			add_location(button0, file$8, 178, 10, 5248);
     			attr_dev(i1, "class", "bg-red-100 far fa-2x fa-window-close");
-    			add_location(i1, file$8, 183, 12, 5617);
+    			add_location(i1, file$8, 191, 12, 5899);
     			attr_dev(button1, "class", "flex justify-center items-center focus:ring-1 outline-none\n            focus:ring-offset-1 focus:ring-red-500 focus:outline-none\n            transition-colors duration-75");
-    			add_location(button1, file$8, 178, 10, 5352);
+    			add_location(button1, file$8, 186, 10, 5634);
     			attr_dev(div, "class", "py-1 flex justify-center items-center space-x-2");
-    			add_location(div, file$8, 169, 8, 4894);
+    			add_location(div, file$8, 177, 8, 5176);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4579,14 +4767,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2.name,
     		type: "if",
-    		source: "(169:42) ",
+    		source: "(177:42) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (154:6) {#if !habit.adminIsActive && $currentActiveHabit === i}
+    // (162:6) {#if !habit.adminIsActive && $currentActiveHabit === i}
     function create_if_block_1(ctx) {
     	let div;
     	let button;
@@ -4601,12 +4789,12 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "Reflect";
     			attr_dev(span, "class", "border-2 rounded-sm border-black bg-green-100 p-1 text-xs\n              font-extrabold align-middle");
-    			add_location(span, file$8, 161, 12, 4637);
+    			add_location(span, file$8, 169, 12, 4919);
     			set_style(button, "height", "32px");
     			attr_dev(button, "class", "flex justify-center items-center focus:ring-1 outline-none\n            focus:ring-offset-1 focus:ring-green-500 focus:outline-none\n            transition-colors duration-75");
-    			add_location(button, file$8, 155, 10, 4348);
+    			add_location(button, file$8, 163, 10, 4630);
     			attr_dev(div, "class", "py-1 flex justify-center items-center space-x-2");
-    			add_location(div, file$8, 154, 8, 4276);
+    			add_location(div, file$8, 162, 8, 4558);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -4630,7 +4818,7 @@ var app = (function () {
     		block,
     		id: create_if_block_1.name,
     		type: "if",
-    		source: "(154:6) {#if !habit.adminIsActive && $currentActiveHabit === i}",
+    		source: "(162:6) {#if !habit.adminIsActive && $currentActiveHabit === i}",
     		ctx
     	});
 
@@ -4702,16 +4890,16 @@ var app = (function () {
     			attr_dev(div0, "class", "uppercase font-extrabold text-gray-900 text-xs text-left");
     			add_location(div0, file$8, 133, 6, 3449);
     			attr_dev(div1, "class", "mt-1 text-6xl font-extrabold text-center text-blue-900");
-    			add_location(div1, file$8, 140, 6, 3754);
+    			add_location(div1, file$8, 148, 6, 4036);
     			attr_dev(div2, "class", "mt-2 text-sm font-bold text-center text-gray-500 uppercase");
-    			add_location(div2, file$8, 143, 6, 3893);
+    			add_location(div2, file$8, 151, 6, 4175);
     			attr_dev(div3, "class", "flex flex-col mx-auto");
     			add_location(div3, file$8, 132, 4, 3407);
     			attr_dev(button, "class", "bg-white py-1 px-2 border-2 border-blue-100 shadow rounded-sm\n    hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700\n    focus:outline-none transition-colors duration-75 svelte-6i48u6");
     			toggle_class(button, "selected", /*$currentActiveHabit*/ ctx[3] === /*i*/ ctx[1] || /*$currentActiveHabit*/ ctx[3] === null && !/*habit*/ ctx[0].adminIsActive);
     			add_location(button, file$8, 126, 2, 3060);
     			attr_dev(div4, "class", "bg-white mt-2 shadow rounded-sm sm:rounded-lg sm:px-10");
-    			add_location(div4, file$8, 151, 2, 4121);
+    			add_location(div4, file$8, 159, 2, 4403);
     			attr_dev(div5, "class", "flex flex-col");
     			add_location(div5, file$8, 125, 0, 3030);
     		},
@@ -4818,12 +5006,12 @@ var app = (function () {
 
     function instance$9($$self, $$props, $$invalidate) {
     	let $API_ENDPOINT;
-    	let $activeUserHabits;
+    	let $userHabitsActive;
     	let $currentActiveHabit;
     	validate_store(API_ENDPOINT, "API_ENDPOINT");
     	component_subscribe($$self, API_ENDPOINT, $$value => $$invalidate(11, $API_ENDPOINT = $$value));
-    	validate_store(activeUserHabits, "activeUserHabits");
-    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(12, $activeUserHabits = $$value));
+    	validate_store(userHabitsActive, "userHabitsActive");
+    	component_subscribe($$self, userHabitsActive, $$value => $$invalidate(12, $userHabitsActive = $$value));
     	validate_store(currentActiveHabit, "currentActiveHabit");
     	component_subscribe($$self, currentActiveHabit, $$value => $$invalidate(3, $currentActiveHabit = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
@@ -4870,10 +5058,10 @@ var app = (function () {
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
     			// console.log("res", res);
-    			let newHabitData = $activeUserHabits;
+    			let newHabitData = $userHabitsActive;
 
     			newHabitData[$currentActiveHabit] = res.updatedHabit;
-    			activeUserHabits.set(newHabitData);
+    			userHabitsActive.set(newHabitData);
     			isNewActiveUserHabitChange.set(true);
     		}).catch(err => {
     			// console.clear();
@@ -4884,9 +5072,9 @@ var app = (function () {
     	};
 
     	const handleHabitIsComplete = () => {
-    		let newHabitData = $activeUserHabits;
+    		let newHabitData = $userHabitsActive;
     		newHabitData[i].adminIsActive = false;
-    		activeUserHabits.set(newHabitData);
+    		userHabitsActive.set(newHabitData);
     	};
 
     	const getTimeRemaining = (endTime, curTime) => {
@@ -4948,7 +5136,7 @@ var app = (function () {
     		currentActiveHabit,
     		errMessage,
     		API_ENDPOINT,
-    		activeUserHabits,
+    		userHabitsActive,
     		isNewActiveUserHabitChange,
     		getUserHabitBlank,
     		push,
@@ -4967,7 +5155,7 @@ var app = (function () {
     		dateCurrent,
     		timeRemaining,
     		$API_ENDPOINT,
-    		$activeUserHabits,
+    		$userHabitsActive,
     		$currentActiveHabit
     	});
 
@@ -5534,12 +5722,12 @@ var app = (function () {
 
     function get_each_context(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[12] = list[i];
-    	child_ctx[14] = i;
+    	child_ctx[14] = list[i];
+    	child_ctx[16] = i;
     	return child_ctx;
     }
 
-    // (193:6) {:else}
+    // (199:6) {:else}
     function create_else_block_1$1(ctx) {
     	let h1;
     	let t1;
@@ -5553,9 +5741,9 @@ var app = (function () {
     			p = element("p");
     			p.textContent = "What will you do? Who will you become? Tap the [Add] button below to\n          create a new habit.";
     			attr_dev(h1, "class", "text-xl font-bold text-gray-500");
-    			add_location(h1, file$b, 193, 8, 5673);
+    			add_location(h1, file$b, 199, 8, 5792);
     			attr_dev(p, "class", "text-base mt-1 text-gray-500");
-    			add_location(p, file$b, 194, 8, 5745);
+    			add_location(p, file$b, 200, 8, 5864);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h1, anchor);
@@ -5574,21 +5762,21 @@ var app = (function () {
     		block,
     		id: create_else_block_1$1.name,
     		type: "else",
-    		source: "(193:6) {:else}",
+    		source: "(199:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (178:6) {#if $activeUserHabits[$currentActiveHabit] && !$isObjectEmpty($activeUserHabits[$currentActiveHabit])}
+    // (184:6) {#if $userHabitsActive[$currentActiveHabit] && !$isObjectEmpty($userHabitsActive[$currentActiveHabit])}
     function create_if_block_2$1(ctx) {
     	let h1;
-    	let t0_value = /*$activeUserHabits*/ ctx[1][/*$currentActiveHabit*/ ctx[2]].detailTitle + "";
+    	let t0_value = /*$userHabitsActive*/ ctx[0][/*$currentActiveHabit*/ ctx[4]].detailTitle + "";
     	let t0;
     	let t1;
     	let p;
-    	let t2_value = /*$activeUserHabits*/ ctx[1][/*$currentActiveHabit*/ ctx[2]].detailDescription + "";
+    	let t2_value = /*$userHabitsActive*/ ctx[0][/*$currentActiveHabit*/ ctx[4]].detailDescription + "";
     	let t2;
     	let t3;
     	let button;
@@ -5607,13 +5795,13 @@ var app = (function () {
     			button = element("button");
     			i = element("i");
     			attr_dev(h1, "class", "text-xl font-bold");
-    			add_location(h1, file$b, 178, 8, 5004);
+    			add_location(h1, file$b, 184, 8, 5123);
     			attr_dev(p, "class", "text-base mt-1 text-gray-700");
-    			add_location(p, file$b, 181, 8, 5120);
+    			add_location(p, file$b, 187, 8, 5239);
     			attr_dev(i, "class", "fas fa-1x fa-pencil-alt text-blue-900");
-    			add_location(i, file$b, 189, 10, 5510);
+    			add_location(i, file$b, 195, 10, 5629);
     			attr_dev(button, "class", "user-icon1 absolute right-0 bottom-0 inline-flex ml-2 bg-white\n          h-6 w-6 justify-center items-center focus:outline-none\n          focus:border-blue-400 focus:border-2 mr-2 mb-2");
-    			add_location(button, file$b, 184, 8, 5251);
+    			add_location(button, file$b, 190, 8, 5370);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, h1, anchor);
@@ -5626,13 +5814,13 @@ var app = (function () {
     			append_dev(button, i);
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*handleHabitEdit*/ ctx[7], false, false, false);
+    				dispose = listen_dev(button, "click", /*handleHabitEdit*/ ctx[9], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$activeUserHabits, $currentActiveHabit*/ 6 && t0_value !== (t0_value = /*$activeUserHabits*/ ctx[1][/*$currentActiveHabit*/ ctx[2]].detailTitle + "")) set_data_dev(t0, t0_value);
-    			if (dirty & /*$activeUserHabits, $currentActiveHabit*/ 6 && t2_value !== (t2_value = /*$activeUserHabits*/ ctx[1][/*$currentActiveHabit*/ ctx[2]].detailDescription + "")) set_data_dev(t2, t2_value);
+    			if (dirty & /*$userHabitsActive, $currentActiveHabit*/ 17 && t0_value !== (t0_value = /*$userHabitsActive*/ ctx[0][/*$currentActiveHabit*/ ctx[4]].detailTitle + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*$userHabitsActive, $currentActiveHabit*/ 17 && t2_value !== (t2_value = /*$userHabitsActive*/ ctx[0][/*$currentActiveHabit*/ ctx[4]].detailDescription + "")) set_data_dev(t2, t2_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(h1);
@@ -5649,20 +5837,20 @@ var app = (function () {
     		block,
     		id: create_if_block_2$1.name,
     		type: "if",
-    		source: "(178:6) {#if $activeUserHabits[$currentActiveHabit] && !$isObjectEmpty($activeUserHabits[$currentActiveHabit])}",
+    		source: "(184:6) {#if $userHabitsActive[$currentActiveHabit] && !$isObjectEmpty($userHabitsActive[$currentActiveHabit])}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (209:6) {:else}
+    // (215:6) {:else}
     function create_else_block$2(ctx) {
     	let homehabitbuttonnull;
     	let current;
 
     	homehabitbuttonnull = new HomeHabitButtonNull({
-    			props: { i: /*i*/ ctx[14] },
+    			props: { i: /*i*/ ctx[16] },
     			$$inline: true
     		});
 
@@ -5693,22 +5881,22 @@ var app = (function () {
     		block,
     		id: create_else_block$2.name,
     		type: "else",
-    		source: "(209:6) {:else}",
+    		source: "(215:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (207:6) {#if habit && !$isObjectEmpty(habit)}
+    // (213:6) {#if habit && !$isObjectEmpty(habit)}
     function create_if_block_1$1(ctx) {
     	let homehabitbutton;
     	let current;
 
     	homehabitbutton = new HomeHabitButton({
     			props: {
-    				habit: /*habit*/ ctx[12],
-    				i: /*i*/ ctx[14]
+    				habit: /*habit*/ ctx[14],
+    				i: /*i*/ ctx[16]
     			},
     			$$inline: true
     		});
@@ -5723,7 +5911,7 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			const homehabitbutton_changes = {};
-    			if (dirty & /*$activeUserHabits*/ 2) homehabitbutton_changes.habit = /*habit*/ ctx[12];
+    			if (dirty & /*$userHabitsActive*/ 1) homehabitbutton_changes.habit = /*habit*/ ctx[14];
     			homehabitbutton.$set(homehabitbutton_changes);
     		},
     		i: function intro(local) {
@@ -5744,14 +5932,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$1.name,
     		type: "if",
-    		source: "(207:6) {#if habit && !$isObjectEmpty(habit)}",
+    		source: "(213:6) {#if habit && !$isObjectEmpty(habit)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (206:4) {#each $activeUserHabits as habit, i}
+    // (212:4) {#each $userHabitsActive as habit, i}
     function create_each_block(ctx) {
     	let show_if;
     	let current_block_type_index;
@@ -5762,7 +5950,7 @@ var app = (function () {
     	const if_blocks = [];
 
     	function select_block_type_1(ctx, dirty) {
-    		if (dirty & /*$activeUserHabits, $isObjectEmpty*/ 10) show_if = !!(/*habit*/ ctx[12] && !/*$isObjectEmpty*/ ctx[3](/*habit*/ ctx[12]));
+    		if (dirty & /*$userHabitsActive, $isObjectEmpty*/ 3) show_if = !!(/*habit*/ ctx[14] && !/*$isObjectEmpty*/ ctx[1](/*habit*/ ctx[14]));
     		if (show_if) return 0;
     		return 1;
     	}
@@ -5826,21 +6014,21 @@ var app = (function () {
     		block,
     		id: create_each_block.name,
     		type: "each",
-    		source: "(206:4) {#each $activeUserHabits as habit, i}",
+    		source: "(212:4) {#each $userHabitsActive as habit, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (216:0) {#if $isNewSocialModal}
+    // (222:0) {#if $isNewSocialModal}
     function create_if_block$3(ctx) {
     	let modal;
     	let current;
 
     	modal = new Modal({
     			props: {
-    				contentModal: /*contentModalSocial*/ ctx[5],
+    				contentModal: /*contentModalSocial*/ ctx[7],
     				$$slots: { default: [create_default_slot$4] },
     				$$scope: { ctx }
     			},
@@ -5858,7 +6046,7 @@ var app = (function () {
     		p: function update(ctx, dirty) {
     			const modal_changes = {};
 
-    			if (dirty & /*$$scope*/ 32768) {
+    			if (dirty & /*$$scope*/ 131072) {
     				modal_changes.$$scope = { dirty, ctx };
     			}
 
@@ -5882,14 +6070,14 @@ var app = (function () {
     		block,
     		id: create_if_block$3.name,
     		type: "if",
-    		source: "(216:0) {#if $isNewSocialModal}",
+    		source: "(222:0) {#if $isNewSocialModal}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (217:2) <Modal contentModal={contentModalSocial}>
+    // (223:2) <Modal contentModal={contentModalSocial}>
     function create_default_slot$4(ctx) {
     	let button;
     	let mounted;
@@ -5898,16 +6086,16 @@ var app = (function () {
     	const block = {
     		c: function create() {
     			button = element("button");
-    			button.textContent = `${/*contentModalSocial*/ ctx[5].button}`;
+    			button.textContent = `${/*contentModalSocial*/ ctx[7].button}`;
     			attr_dev(button, "type", "button");
     			attr_dev(button, "class", "inline-flex justify-center w-full rounded-md border\n      border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-medium\n      text-white hover:bg-blue-500 focus:outline-none focus:ring-2\n      focus:ring-offset-2 focus:ring-blue-700 sm:text-sm");
-    			add_location(button, file$b, 217, 4, 6357);
+    			add_location(button, file$b, 223, 4, 6476);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
 
     			if (!mounted) {
-    				dispose = listen_dev(button, "click", /*handleModalSocialAction*/ ctx[8], false, false, false);
+    				dispose = listen_dev(button, "click", /*handleModalSocialAction*/ ctx[10], false, false, false);
     				mounted = true;
     			}
     		},
@@ -5923,7 +6111,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$4.name,
     		type: "slot",
-    		source: "(217:2) <Modal contentModal={contentModalSocial}>",
+    		source: "(223:2) <Modal contentModal={contentModalSocial}>",
     		ctx
     	});
 
@@ -5944,11 +6132,11 @@ var app = (function () {
     	let section1;
     	let h1;
     	let div3;
-    	let t6_value = /*$activeUserDetails*/ ctx[0].detailName + "";
+    	let t6_value = /*$userProfile*/ ctx[2].detailName + "";
     	let t6;
     	let t7;
     	let div4;
-    	let t8_value = /*$activeUserDetails*/ ctx[0].detailTitle + "";
+    	let t8_value = /*$userProfile*/ ctx[2].detailTitle + "";
     	let t8;
     	let t9;
     	let div7;
@@ -5956,17 +6144,15 @@ var app = (function () {
     	let t10;
     	let div6;
     	let span2;
-    	let t11_value = /*$activeUserDetails*/ ctx[0].detailInitials + "";
+    	let t11_value = /*$userProfile*/ ctx[2].detailInitials + "";
     	let t11;
     	let t12;
     	let div8;
     	let span3;
-    	let t13_value = /*$activeUserHabits*/ ctx[1].length + "";
-    	let t13;
     	let t14;
     	let div9;
     	let span4;
-    	let t15_value = /*$activeUserDetails*/ ctx[0].habitIdsHistory.length + "";
+    	let t15_value = /*$userHabitsHistory*/ ctx[3].length + "";
     	let t15;
     	let t16;
     	let button0;
@@ -5988,14 +6174,14 @@ var app = (function () {
     	let dispose;
 
     	function select_block_type(ctx, dirty) {
-    		if (show_if == null || dirty & /*$activeUserHabits, $currentActiveHabit, $isObjectEmpty*/ 14) show_if = !!(/*$activeUserHabits*/ ctx[1][/*$currentActiveHabit*/ ctx[2]] && !/*$isObjectEmpty*/ ctx[3](/*$activeUserHabits*/ ctx[1][/*$currentActiveHabit*/ ctx[2]]));
+    		if (show_if == null || dirty & /*$userHabitsActive, $currentActiveHabit, $isObjectEmpty*/ 19) show_if = !!(/*$userHabitsActive*/ ctx[0][/*$currentActiveHabit*/ ctx[4]] && !/*$isObjectEmpty*/ ctx[1](/*$userHabitsActive*/ ctx[0][/*$currentActiveHabit*/ ctx[4]]));
     		if (show_if) return create_if_block_2$1;
     		return create_else_block_1$1;
     	}
 
     	let current_block_type = select_block_type(ctx, -1);
     	let if_block0 = current_block_type(ctx);
-    	let each_value = /*$activeUserHabits*/ ctx[1];
+    	let each_value = /*$userHabitsActive*/ ctx[0];
     	validate_each_argument(each_value);
     	let each_blocks = [];
 
@@ -6007,7 +6193,7 @@ var app = (function () {
     		each_blocks[i] = null;
     	});
 
-    	let if_block1 = /*$isNewSocialModal*/ ctx[4] && create_if_block$3(ctx);
+    	let if_block1 = /*$isNewSocialModal*/ ctx[5] && create_if_block$3(ctx);
 
     	const block = {
     		c: function create() {
@@ -6041,7 +6227,7 @@ var app = (function () {
     			t12 = space();
     			div8 = element("div");
     			span3 = element("span");
-    			t13 = text(t13_value);
+    			span3.textContent = `${/*userHabitsActiveClean*/ ctx[6].length}`;
     			t14 = space();
     			div9 = element("div");
     			span4 = element("span");
@@ -6067,54 +6253,54 @@ var app = (function () {
     			if (if_block1) if_block1.c();
     			if_block1_anchor = empty();
     			attr_dev(div0, "class", "w-1/2 uppercase text-gray-500 font-bold text-xs");
-    			add_location(div0, file$b, 113, 6, 2300);
-    			add_location(span0, file$b, 116, 8, 2471);
+    			add_location(div0, file$b, 119, 6, 2449);
+    			add_location(span0, file$b, 122, 8, 2620);
     			attr_dev(span1, "class", "ml-2");
-    			add_location(span1, file$b, 117, 8, 2497);
+    			add_location(span1, file$b, 123, 8, 2646);
     			attr_dev(div1, "class", "flex justify-between uppercase text-gray-500 font-bold text-xs");
-    			add_location(div1, file$b, 114, 6, 2378);
+    			add_location(div1, file$b, 120, 6, 2527);
     			attr_dev(div2, "class", "opacity-0 px-4 flex items-center justify-between");
-    			add_location(div2, file$b, 112, 4, 2231);
+    			add_location(div2, file$b, 118, 4, 2380);
     			attr_dev(section0, "class", "home-score pt-3");
-    			add_location(section0, file$b, 111, 2, 2193);
+    			add_location(section0, file$b, 117, 2, 2342);
     			attr_dev(div3, "class", "text-lg font-bold leading-tight");
-    			add_location(div3, file$b, 124, 6, 2659);
+    			add_location(div3, file$b, 130, 6, 2808);
     			attr_dev(div4, "class", "text-sm font-extrabold leading-tight text-blue-900");
-    			add_location(div4, file$b, 127, 6, 2764);
+    			add_location(div4, file$b, 133, 6, 2907);
     			attr_dev(h1, "class", "user-title text-center  svelte-lab9ei");
-    			add_location(h1, file$b, 123, 4, 2616);
+    			add_location(h1, file$b, 129, 4, 2765);
     			attr_dev(div5, "class", "absolute inset-0 bg-blue-100 rounded-full");
-    			add_location(div5, file$b, 132, 6, 2935);
-    			add_location(span2, file$b, 141, 8, 3322);
+    			add_location(div5, file$b, 138, 6, 3072);
+    			add_location(span2, file$b, 147, 8, 3459);
     			attr_dev(div6, "style", "font-family: 'Bungee', cursive; width: 168px; height 168px;");
     			attr_dev(div6, "class", "relative rounded-full m-1 z-0 text-9xl flex justify-center\n        items-center h-full");
-    			add_location(div6, file$b, 137, 6, 3129);
+    			add_location(div6, file$b, 143, 6, 3266);
     			attr_dev(div7, "class", "user-img relative svelte-lab9ei");
-    			add_location(div7, file$b, 131, 4, 2897);
-    			add_location(span3, file$b, 147, 6, 3567);
+    			add_location(div7, file$b, 137, 4, 3034);
+    			add_location(span3, file$b, 153, 6, 3698);
     			attr_dev(div8, "class", "user-stat1 bg-white text-lg border-1 h-10 w-10 flex justify-center\n      items-center rounded-full border-blue-100 font-extrabold shadow ml-5 svelte-lab9ei");
-    			add_location(div8, file$b, 144, 4, 3399);
-    			add_location(span4, file$b, 152, 6, 3790);
+    			add_location(div8, file$b, 150, 4, 3530);
+    			add_location(span4, file$b, 158, 6, 3925);
     			attr_dev(div9, "class", "user-stat2 bg-white text-lg border-1 h-10 w-10 flex justify-center\n      items-center rounded-full border-blue-100 font-extrabold shadow mr-5 svelte-lab9ei");
-    			add_location(div9, file$b, 149, 4, 3622);
+    			add_location(div9, file$b, 155, 4, 3757);
     			attr_dev(i0, "class", " fas fa-1x fa-history text-blue-900");
-    			add_location(i0, file$b, 160, 6, 4174);
+    			add_location(i0, file$b, 166, 6, 4293);
     			attr_dev(button0, "class", "user-icon1 bg-white h-14 w-14 flex justify-center items-center\n      rounded-full border-2 border-blue-100 shadow hover:bg-blue-200\n      focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none\n      transition-colors duration-75 svelte-lab9ei");
-    			add_location(button0, file$b, 154, 4, 3862);
+    			add_location(button0, file$b, 160, 4, 3981);
     			attr_dev(i1, "class", " fas fa-1x fa-share-alt text-blue-900");
-    			add_location(i1, file$b, 169, 6, 4619);
+    			add_location(i1, file$b, 175, 6, 4738);
     			attr_dev(button1, "class", "user-icon2 bg-white h-14 w-14 flex justify-center items-center\n      rounded-full border-2 border-blue-100 shadow hover:bg-blue-200\n      focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none\n      transition-colors duration-75 svelte-lab9ei");
-    			add_location(button1, file$b, 163, 4, 4308);
+    			add_location(button1, file$b, 169, 4, 4427);
     			attr_dev(section1, "class", "home-user home-user2 pt-6 svelte-lab9ei");
-    			add_location(section1, file$b, 122, 2, 2568);
+    			add_location(section1, file$b, 128, 2, 2717);
     			attr_dev(div10, "class", "relative bg-white h-full py-2 px-2 shadow rounded sm:rounded-lg\n      sm:px-10 text-left");
-    			add_location(div10, file$b, 174, 4, 4777);
+    			add_location(div10, file$b, 180, 4, 4896);
     			attr_dev(section2, "class", "home-habit-info pt-6 sm:mx-auto sm:w-full sm:max-w-md svelte-lab9ei");
-    			add_location(section2, file$b, 173, 2, 4701);
+    			add_location(section2, file$b, 179, 2, 4820);
     			attr_dev(section3, "class", "home-habit-select pt-3 grid grid-cols-3 grid-rows-1 gap-3 sm:mx-auto\n    sm:w-full sm:max-w-md");
-    			add_location(section3, file$b, 202, 2, 5947);
+    			add_location(section3, file$b, 208, 2, 6066);
     			attr_dev(div11, "class", "home-grid pb-2 overflow-y-scroll px-5 svelte-lab9ei");
-    			add_location(div11, file$b, 109, 0, 2130);
+    			add_location(div11, file$b, 115, 0, 2279);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -6147,7 +6333,6 @@ var app = (function () {
     			append_dev(section1, t12);
     			append_dev(section1, div8);
     			append_dev(div8, span3);
-    			append_dev(span3, t13);
     			append_dev(section1, t14);
     			append_dev(section1, div9);
     			append_dev(div9, span4);
@@ -6176,19 +6361,18 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
-    					listen_dev(button0, "click", /*handleButtonHistory*/ ctx[6], false, false, false),
-    					listen_dev(button1, "click", /*handleButtonSocial*/ ctx[9], false, false, false)
+    					listen_dev(button0, "click", /*handleButtonHistory*/ ctx[8], false, false, false),
+    					listen_dev(button1, "click", /*handleButtonSocial*/ ctx[11], false, false, false)
     				];
 
     				mounted = true;
     			}
     		},
     		p: function update(ctx, [dirty]) {
-    			if ((!current || dirty & /*$activeUserDetails*/ 1) && t6_value !== (t6_value = /*$activeUserDetails*/ ctx[0].detailName + "")) set_data_dev(t6, t6_value);
-    			if ((!current || dirty & /*$activeUserDetails*/ 1) && t8_value !== (t8_value = /*$activeUserDetails*/ ctx[0].detailTitle + "")) set_data_dev(t8, t8_value);
-    			if ((!current || dirty & /*$activeUserDetails*/ 1) && t11_value !== (t11_value = /*$activeUserDetails*/ ctx[0].detailInitials + "")) set_data_dev(t11, t11_value);
-    			if ((!current || dirty & /*$activeUserHabits*/ 2) && t13_value !== (t13_value = /*$activeUserHabits*/ ctx[1].length + "")) set_data_dev(t13, t13_value);
-    			if ((!current || dirty & /*$activeUserDetails*/ 1) && t15_value !== (t15_value = /*$activeUserDetails*/ ctx[0].habitIdsHistory.length + "")) set_data_dev(t15, t15_value);
+    			if ((!current || dirty & /*$userProfile*/ 4) && t6_value !== (t6_value = /*$userProfile*/ ctx[2].detailName + "")) set_data_dev(t6, t6_value);
+    			if ((!current || dirty & /*$userProfile*/ 4) && t8_value !== (t8_value = /*$userProfile*/ ctx[2].detailTitle + "")) set_data_dev(t8, t8_value);
+    			if ((!current || dirty & /*$userProfile*/ 4) && t11_value !== (t11_value = /*$userProfile*/ ctx[2].detailInitials + "")) set_data_dev(t11, t11_value);
+    			if ((!current || dirty & /*$userHabitsHistory*/ 8) && t15_value !== (t15_value = /*$userHabitsHistory*/ ctx[3].length + "")) set_data_dev(t15, t15_value);
 
     			if (current_block_type === (current_block_type = select_block_type(ctx, dirty)) && if_block0) {
     				if_block0.p(ctx, dirty);
@@ -6202,8 +6386,8 @@ var app = (function () {
     				}
     			}
 
-    			if (dirty & /*$activeUserHabits, $isObjectEmpty*/ 10) {
-    				each_value = /*$activeUserHabits*/ ctx[1];
+    			if (dirty & /*$userHabitsActive, $isObjectEmpty*/ 3) {
+    				each_value = /*$userHabitsActive*/ ctx[0];
     				validate_each_argument(each_value);
     				let i;
 
@@ -6230,11 +6414,11 @@ var app = (function () {
     				check_outros();
     			}
 
-    			if (/*$isNewSocialModal*/ ctx[4]) {
+    			if (/*$isNewSocialModal*/ ctx[5]) {
     				if (if_block1) {
     					if_block1.p(ctx, dirty);
 
-    					if (dirty & /*$isNewSocialModal*/ 16) {
+    					if (dirty & /*$isNewSocialModal*/ 32) {
     						transition_in(if_block1, 1);
     					}
     				} else {
@@ -6304,24 +6488,33 @@ var app = (function () {
     }
 
     function instance$c($$self, $$props, $$invalidate) {
-    	let $activeUserDetails;
-    	let $activeUserHabits;
-    	let $currentActiveHabit;
+    	let $userHabitsActive;
     	let $isObjectEmpty;
+    	let $userProfile;
+    	let $userHabitsHistory;
+    	let $currentActiveHabit;
     	let $isNewSocialModal;
-    	validate_store(activeUserDetails, "activeUserDetails");
-    	component_subscribe($$self, activeUserDetails, $$value => $$invalidate(0, $activeUserDetails = $$value));
-    	validate_store(activeUserHabits, "activeUserHabits");
-    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(1, $activeUserHabits = $$value));
-    	validate_store(currentActiveHabit, "currentActiveHabit");
-    	component_subscribe($$self, currentActiveHabit, $$value => $$invalidate(2, $currentActiveHabit = $$value));
+    	validate_store(userHabitsActive, "userHabitsActive");
+    	component_subscribe($$self, userHabitsActive, $$value => $$invalidate(0, $userHabitsActive = $$value));
     	validate_store(isObjectEmpty, "isObjectEmpty");
-    	component_subscribe($$self, isObjectEmpty, $$value => $$invalidate(3, $isObjectEmpty = $$value));
+    	component_subscribe($$self, isObjectEmpty, $$value => $$invalidate(1, $isObjectEmpty = $$value));
+    	validate_store(userProfile, "userProfile");
+    	component_subscribe($$self, userProfile, $$value => $$invalidate(2, $userProfile = $$value));
+    	validate_store(userHabitsHistory, "userHabitsHistory");
+    	component_subscribe($$self, userHabitsHistory, $$value => $$invalidate(3, $userHabitsHistory = $$value));
+    	validate_store(currentActiveHabit, "currentActiveHabit");
+    	component_subscribe($$self, currentActiveHabit, $$value => $$invalidate(4, $currentActiveHabit = $$value));
     	validate_store(isNewSocialModal, "isNewSocialModal");
-    	component_subscribe($$self, isNewSocialModal, $$value => $$invalidate(4, $isNewSocialModal = $$value));
+    	component_subscribe($$self, isNewSocialModal, $$value => $$invalidate(5, $isNewSocialModal = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ScreenHome", slots, []);
     	let selected;
+
+    	let userHabitsActiveClean = $userHabitsActive.filter(habit => {
+    		if (!$isObjectEmpty(habit)) {
+    			return habit;
+    		}
+    	});
 
     	const contentModalSocial = {
     		title: "Social Share Unavailable",
@@ -6360,8 +6553,9 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		currentActiveHabit,
     		isNewSocialModal,
-    		activeUserDetails,
-    		activeUserHabits,
+    		userProfile,
+    		userHabitsActive,
+    		userHabitsHistory,
     		API_ENDPOINT,
     		getUserHabitBlank,
     		isActiveHabitComplete,
@@ -6374,21 +6568,24 @@ var app = (function () {
     		HomeHabitButtonNull,
     		Modal,
     		selected,
+    		userHabitsActiveClean,
     		contentModalSocial,
     		contentModalHabitIsComplete,
     		handleButtonHistory,
     		handleHabitEdit,
     		handleModalSocialAction,
     		handleButtonSocial,
-    		$activeUserDetails,
-    		$activeUserHabits,
-    		$currentActiveHabit,
+    		$userHabitsActive,
     		$isObjectEmpty,
+    		$userProfile,
+    		$userHabitsHistory,
+    		$currentActiveHabit,
     		$isNewSocialModal
     	});
 
     	$$self.$inject_state = $$props => {
     		if ("selected" in $$props) selected = $$props.selected;
+    		if ("userHabitsActiveClean" in $$props) $$invalidate(6, userHabitsActiveClean = $$props.userHabitsActiveClean);
     	};
 
     	if ($$props && "$$inject" in $$props) {
@@ -6396,11 +6593,13 @@ var app = (function () {
     	}
 
     	return [
-    		$activeUserDetails,
-    		$activeUserHabits,
-    		$currentActiveHabit,
+    		$userHabitsActive,
     		$isObjectEmpty,
+    		$userProfile,
+    		$userHabitsHistory,
+    		$currentActiveHabit,
     		$isNewSocialModal,
+    		userHabitsActiveClean,
     		contentModalSocial,
     		handleButtonHistory,
     		handleHabitEdit,
@@ -7605,7 +7804,7 @@ var app = (function () {
     		contentHabitDetailCategory,
     		contentHabitDuration,
     		currentActiveHabit,
-    		activeUserHabits,
+    		userHabitsActive,
     		tempUserHabit,
     		getUserHabitBlank,
     		push,
@@ -7811,7 +8010,7 @@ var app = (function () {
     	let $currentActiveHabit;
     	let $adminIdUser;
     	let $API_ENDPOINT;
-    	let $activeUserHabits;
+    	let $userHabitsActive;
     	validate_store(getUserHabitBlank, "getUserHabitBlank");
     	component_subscribe($$self, getUserHabitBlank, $$value => $$invalidate(3, $getUserHabitBlank = $$value));
     	validate_store(currentActiveHabit, "currentActiveHabit");
@@ -7820,8 +8019,8 @@ var app = (function () {
     	component_subscribe($$self, adminIdUser, $$value => $$invalidate(5, $adminIdUser = $$value));
     	validate_store(API_ENDPOINT, "API_ENDPOINT");
     	component_subscribe($$self, API_ENDPOINT, $$value => $$invalidate(6, $API_ENDPOINT = $$value));
-    	validate_store(activeUserHabits, "activeUserHabits");
-    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(7, $activeUserHabits = $$value));
+    	validate_store(userHabitsActive, "userHabitsActive");
+    	component_subscribe($$self, userHabitsActive, $$value => $$invalidate(7, $userHabitsActive = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ScreenHabitAdd", slots, []);
     	let tempLocalUserHabit = $getUserHabitBlank();
@@ -7856,10 +8055,10 @@ var app = (function () {
     		};
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
-    			activeUserDetails.set(res.userDetails);
-    			let newHabitData = $activeUserHabits;
+    			userProfile.set(res.userDetails);
+    			let newHabitData = $userHabitsActive;
     			newHabitData[$currentActiveHabit] = res.newHabit;
-    			activeUserHabits.set(newHabitData);
+    			userHabitsActive.set(newHabitData);
     			isNewActiveUserHabitChange.set(true);
     		}).catch(err => {
     			console.clear();
@@ -7882,8 +8081,8 @@ var app = (function () {
     		getUserHabitBlank,
     		isNewActiveUserHabitChange,
     		adminIdUser,
-    		activeUserDetails,
-    		activeUserHabits,
+    		userProfile,
+    		userHabitsActive,
     		push,
     		AppHeader,
     		TwentyTwentyOne: _2021,
@@ -7895,7 +8094,7 @@ var app = (function () {
     		$currentActiveHabit,
     		$adminIdUser,
     		$API_ENDPOINT,
-    		$activeUserHabits
+    		$userHabitsActive
     	});
 
     	$$self.$inject_state = $$props => {
@@ -7996,7 +8195,7 @@ var app = (function () {
     			button.textContent = `${/*contentModalDelete*/ ctx[2].button}`;
     			attr_dev(button, "type", "button");
     			attr_dev(button, "class", "inline-flex justify-center w-full rounded-md border\n      border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-medium\n      text-white hover:bg-blue-500 focus:outline-none focus:ring-2\n      focus:ring-offset-2 focus:ring-blue-700 sm:text-sm");
-    			add_location(button, file$d, 127, 4, 3236);
+    			add_location(button, file$d, 127, 4, 3224);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
@@ -8116,18 +8315,18 @@ var app = (function () {
     }
 
     function instance$f($$self, $$props, $$invalidate) {
-    	let $activeUserHabits;
+    	let $userHabitsActive;
     	let $currentActiveHabit;
     	let $API_ENDPOINT;
-    	validate_store(activeUserHabits, "activeUserHabits");
-    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(6, $activeUserHabits = $$value));
+    	validate_store(userHabitsActive, "userHabitsActive");
+    	component_subscribe($$self, userHabitsActive, $$value => $$invalidate(6, $userHabitsActive = $$value));
     	validate_store(currentActiveHabit, "currentActiveHabit");
     	component_subscribe($$self, currentActiveHabit, $$value => $$invalidate(7, $currentActiveHabit = $$value));
     	validate_store(API_ENDPOINT, "API_ENDPOINT");
     	component_subscribe($$self, API_ENDPOINT, $$value => $$invalidate(8, $API_ENDPOINT = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ScreenHabitEdit", slots, []);
-    	let tempLocalUserHabit = $activeUserHabits[$currentActiveHabit];
+    	let tempLocalUserHabit = $userHabitsActive[$currentActiveHabit];
 
     	let contentModalDelete = {
     		title: "Are You Sure You Want to Delete?",
@@ -8156,10 +8355,10 @@ var app = (function () {
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
     			console.log("res", res);
-    			let newHabitData = $activeUserHabits;
+    			let newHabitData = $userHabitsActive;
     			newHabitData[$currentActiveHabit] = {};
-    			activeUserHabits.set(newHabitData);
-    			activeUserDetails.set(res.userProfile);
+    			userHabitsActive.set(newHabitData);
+    			userProfile.set(res.userProfile);
     			isNewActiveUserHabitChange.set(true);
     		}).catch(err => {
     			// console.clear();
@@ -8198,9 +8397,9 @@ var app = (function () {
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
     			console.log("res", res);
-    			let newHabitData = $activeUserHabits;
+    			let newHabitData = $userHabitsActive;
     			newHabitData[$currentActiveHabit] = res.updatedHabit;
-    			activeUserHabits.set(newHabitData);
+    			userHabitsActive.set(newHabitData);
     			isNewActiveUserHabitChange.set(true);
     		}).catch(err => {
     			// console.clear();
@@ -8224,8 +8423,8 @@ var app = (function () {
     		getUserHabitBlank,
     		isNewActiveUserHabitChange,
     		adminIdUser,
-    		activeUserHabits,
-    		activeUserDetails,
+    		userHabitsActive,
+    		userProfile,
     		tempUserHabit,
     		push,
     		AppHeader,
@@ -8238,7 +8437,7 @@ var app = (function () {
     		habitDeleteWarning,
     		handleDelete,
     		handleSubmitEditExistingHabit,
-    		$activeUserHabits,
+    		$userHabitsActive,
     		$currentActiveHabit,
     		$API_ENDPOINT
     	});
@@ -8282,7 +8481,7 @@ var app = (function () {
     const { Object: Object_1$3, console: console_1$6 } = globals;
     const file$e = "src/routes/ScreenHabitReflect.svelte";
 
-    // (246:12) {:else}
+    // (249:12) {:else}
     function create_else_block_5$1(ctx) {
     	let t;
 
@@ -8303,14 +8502,14 @@ var app = (function () {
     		block,
     		id: create_else_block_5$1.name,
     		type: "else",
-    		source: "(246:12) {:else}",
+    		source: "(249:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (244:65) 
+    // (247:65) 
     function create_if_block_8$1(ctx) {
     	let t;
 
@@ -8331,14 +8530,14 @@ var app = (function () {
     		block,
     		id: create_if_block_8$1.name,
     		type: "if",
-    		source: "(244:65) ",
+    		source: "(247:65) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (242:12) {#if tempLocalUserHabit.detailDuration > 86400}
+    // (245:12) {#if tempLocalUserHabit.detailDuration > 86400}
     function create_if_block_7$1(ctx) {
     	let t0_value = /*tempLocalUserHabit*/ ctx[0].detailDuration / 86400 + "";
     	let t0;
@@ -8366,14 +8565,14 @@ var app = (function () {
     		block,
     		id: create_if_block_7$1.name,
     		type: "if",
-    		source: "(242:12) {#if tempLocalUserHabit.detailDuration > 86400}",
+    		source: "(245:12) {#if tempLocalUserHabit.detailDuration > 86400}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (264:12) {:else}
+    // (267:12) {:else}
     function create_else_block_4$1(ctx) {
     	let t;
 
@@ -8394,14 +8593,14 @@ var app = (function () {
     		block,
     		id: create_else_block_4$1.name,
     		type: "else",
-    		source: "(264:12) {:else}",
+    		source: "(267:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (262:12) {#if tempLocalUserHabit.detailCode}
+    // (265:12) {#if tempLocalUserHabit.detailCode}
     function create_if_block_6$1(ctx) {
     	let t_value = /*tempLocalUserHabit*/ ctx[0].detailCode + "";
     	let t;
@@ -8425,14 +8624,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6$1.name,
     		type: "if",
-    		source: "(262:12) {#if tempLocalUserHabit.detailCode}",
+    		source: "(265:12) {#if tempLocalUserHabit.detailCode}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (289:12) {:else}
+    // (292:12) {:else}
     function create_else_block_3$1(ctx) {
     	let span;
 
@@ -8441,7 +8640,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "fail";
     			attr_dev(span, "class", "bg-red-100 text-red-700 px-2 rounded-sm");
-    			add_location(span, file$e, 289, 14, 7977);
+    			add_location(span, file$e, 292, 14, 8038);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -8455,14 +8654,14 @@ var app = (function () {
     		block,
     		id: create_else_block_3$1.name,
     		type: "else",
-    		source: "(289:12) {:else}",
+    		source: "(292:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (285:69) 
+    // (288:69) 
     function create_if_block_5$1(ctx) {
     	let span;
 
@@ -8471,7 +8670,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "active";
     			attr_dev(span, "class", "bg-blue-100 text-blue-700 px-2 rounded-sm");
-    			add_location(span, file$e, 285, 14, 7841);
+    			add_location(span, file$e, 288, 14, 7902);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -8485,14 +8684,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5$1.name,
     		type: "if",
-    		source: "(285:69) ",
+    		source: "(288:69) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (281:12) {#if tempLocalUserHabit.reflectIsSuccessful}
+    // (284:12) {#if tempLocalUserHabit.reflectIsSuccessful}
     function create_if_block_4$1(ctx) {
     	let span;
 
@@ -8501,7 +8700,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "success";
     			attr_dev(span, "class", "bg-green-100 text-green-700 py-1 px-2 rounded-sm");
-    			add_location(span, file$e, 281, 14, 7647);
+    			add_location(span, file$e, 284, 14, 7708);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -8515,14 +8714,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4$1.name,
     		type: "if",
-    		source: "(281:12) {#if tempLocalUserHabit.reflectIsSuccessful}",
+    		source: "(284:12) {#if tempLocalUserHabit.reflectIsSuccessful}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (313:10) {:else}
+    // (316:10) {:else}
     function create_else_block_2$2(ctx) {
     	let t;
 
@@ -8543,14 +8742,14 @@ var app = (function () {
     		block,
     		id: create_else_block_2$2.name,
     		type: "else",
-    		source: "(313:10) {:else}",
+    		source: "(316:10) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (311:10) {#if tempLocalUserHabit}
+    // (314:10) {#if tempLocalUserHabit}
     function create_if_block_3$2(ctx) {
     	let t_value = /*tempLocalUserHabit*/ ctx[0].detailDescription + "";
     	let t;
@@ -8574,14 +8773,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$2.name,
     		type: "if",
-    		source: "(311:10) {#if tempLocalUserHabit}",
+    		source: "(314:10) {#if tempLocalUserHabit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (385:12) {:else}
+    // (388:12) {:else}
     function create_else_block_1$3(ctx) {
     	let t;
 
@@ -8601,14 +8800,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1$3.name,
     		type: "else",
-    		source: "(385:12) {:else}",
+    		source: "(388:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (383:12) {#if tempLocalUserHabit.reflectIsSuccessful}
+    // (386:12) {#if tempLocalUserHabit.reflectIsSuccessful}
     function create_if_block_2$3(ctx) {
     	let t;
 
@@ -8628,14 +8827,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$3.name,
     		type: "if",
-    		source: "(383:12) {#if tempLocalUserHabit.reflectIsSuccessful}",
+    		source: "(386:12) {#if tempLocalUserHabit.reflectIsSuccessful}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (415:12) {:else}
+    // (418:12) {:else}
     function create_else_block$4(ctx) {
     	let t;
 
@@ -8655,14 +8854,14 @@ var app = (function () {
     		block,
     		id: create_else_block$4.name,
     		type: "else",
-    		source: "(415:12) {:else}",
+    		source: "(418:12) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (413:12) {#if tempLocalUserHabit.reflectRecommend}
+    // (416:12) {#if tempLocalUserHabit.reflectRecommend}
     function create_if_block_1$3(ctx) {
     	let t;
 
@@ -8682,14 +8881,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$3.name,
     		type: "if",
-    		source: "(413:12) {#if tempLocalUserHabit.reflectRecommend}",
+    		source: "(416:12) {#if tempLocalUserHabit.reflectRecommend}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (228:0) <ContentWrapper>
+    // (231:0) <ContentWrapper>
     function create_default_slot_1$4(ctx) {
     	let div21;
     	let form;
@@ -8927,59 +9126,59 @@ var app = (function () {
     			set_style(span0, "width", "28vw");
     			set_style(span0, "left", "calc(100% +\n              .5rem)");
     			attr_dev(span0, "class", "absolute text-blue-900 border-t-2 green-500");
-    			add_location(span0, file$e, 246, 12, 6224);
+    			add_location(span0, file$e, 249, 12, 6285);
     			set_style(span1, "left", "calc(100% + 28vw)");
     			attr_dev(span1, "class", "ml-2 p-2 rounded flex justify-center items-center absolute\n              top-0 bottom-0 leading-none text-xs font-extrabold text-gray-900\n              uppercase text-left");
-    			add_location(span1, file$e, 250, 12, 6408);
+    			add_location(span1, file$e, 253, 12, 6469);
     			attr_dev(div0, "class", "relative uppercase font-extrabold text-gray-900 text-xs\n            text-left");
-    			add_location(div0, file$e, 238, 10, 5865);
+    			add_location(div0, file$e, 241, 10, 5926);
     			set_style(span2, "height", "50%");
     			set_style(span2, "top", "50%");
     			set_style(span2, "width", "23vw");
     			set_style(span2, "left", "calc(100% +\n              .5rem)");
     			attr_dev(span2, "class", "absolute text-blue-900 border-t-2 green-500");
-    			add_location(span2, file$e, 264, 12, 6965);
+    			add_location(span2, file$e, 267, 12, 7026);
     			set_style(span3, "left", "calc(100% + 23vw)");
     			attr_dev(span3, "class", "ml-2 p-2 rounded flex justify-center items-center absolute\n              top-0 bottom-0 leading-none text-xs font-extrabold text-gray-900\n              uppercase text-left");
-    			add_location(span3, file$e, 268, 12, 7149);
+    			add_location(span3, file$e, 271, 12, 7210);
     			attr_dev(div1, "class", "relative mt-1 text-6xl font-extrabold text-center\n            text-blue-900");
-    			add_location(div1, file$e, 258, 10, 6731);
+    			add_location(div1, file$e, 261, 10, 6792);
     			set_style(span4, "height", "50%");
     			set_style(span4, "top", "50%");
     			set_style(span4, "width", "28vw");
     			set_style(span4, "left", "calc(100% +\n              .5rem)");
     			attr_dev(span4, "class", "absolute text-blue-900 border-t-2 green-500");
-    			add_location(span4, file$e, 291, 12, 8073);
+    			add_location(span4, file$e, 294, 12, 8134);
     			set_style(span5, "left", "calc(100% + 28vw)");
     			attr_dev(span5, "class", "ml-2 p-2 rounded flex justify-center items-center absolute\n              top-0 bottom-0 leading-none text-xs font-extrabold text-gray-900\n              uppercase text-left");
-    			add_location(span5, file$e, 295, 12, 8257);
+    			add_location(span5, file$e, 298, 12, 8318);
     			attr_dev(div2, "class", "relative mt-2 text-sm font-bold text-center text-gray-900\n            uppercase");
-    			add_location(div2, file$e, 277, 10, 7470);
+    			add_location(div2, file$e, 280, 10, 7531);
     			attr_dev(div3, "class", "flex flex-col mx-auto");
-    			add_location(div3, file$e, 237, 8, 5819);
+    			add_location(div3, file$e, 240, 8, 5880);
     			attr_dev(div4, "class", "w-1/3 bg-white py-1 px-2 border-2 border-blue-100 shadow\n        rounded-sm focus:outline-none");
-    			add_location(div4, file$e, 234, 6, 5694);
+    			add_location(div4, file$e, 237, 6, 5755);
     			attr_dev(h1, "class", "text-xl font-bold");
-    			add_location(h1, file$e, 308, 8, 8619);
+    			add_location(h1, file$e, 311, 8, 8680);
     			attr_dev(p, "class", "text-base mt-1 text-gray-700");
-    			add_location(p, file$e, 309, 8, 8695);
-    			add_location(div5, file$e, 307, 6, 8605);
+    			add_location(p, file$e, 312, 8, 8756);
+    			add_location(div5, file$e, 310, 6, 8666);
     			attr_dev(label0, "for", "habit-reflect-comment");
     			attr_dev(label0, "class", "block text-sm font-medium text-gray-900");
-    			add_location(label0, file$e, 320, 8, 9016);
+    			add_location(label0, file$e, 323, 8, 9077);
     			attr_dev(textarea, "id", "habit-reflect-comment");
     			attr_dev(textarea, "name", "habit-reflect-comment");
     			textarea.required = true;
     			attr_dev(textarea, "rows", "3");
     			attr_dev(textarea, "placeholder", "This is where you write a brief description of your\n            results.");
     			attr_dev(textarea, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n            rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n            focus:ring-blue-900 focus:border-blue-900 sm:text-sm");
-    			add_location(textarea, file$e, 326, 10, 9200);
+    			add_location(textarea, file$e, 329, 10, 9261);
     			attr_dev(div6, "class", "mt-1");
-    			add_location(div6, file$e, 325, 8, 9171);
-    			add_location(div7, file$e, 319, 6, 9002);
+    			add_location(div6, file$e, 328, 8, 9232);
+    			add_location(div7, file$e, 322, 6, 9063);
     			attr_dev(label1, "for", "habit-reflect-difficulty");
     			attr_dev(label1, "class", "block text-sm font-medium text-gray-900");
-    			add_location(label1, file$e, 341, 8, 9762);
+    			add_location(label1, file$e, 344, 8, 9823);
     			attr_dev(input, "type", "range");
     			attr_dev(input, "id", "habit-reflect-difficulty");
     			attr_dev(input, "name", "habit-reflect-difficulty");
@@ -8987,80 +9186,80 @@ var app = (function () {
     			attr_dev(input, "max", "10");
     			attr_dev(input, "step", "1");
     			attr_dev(input, "class", "h-8 w-full svelte-1qra9fn");
-    			add_location(input, file$e, 348, 10, 9991);
+    			add_location(input, file$e, 351, 10, 10052);
     			attr_dev(div8, "class", "mt-1");
-    			add_location(div8, file$e, 347, 8, 9962);
-    			add_location(div9, file$e, 340, 6, 9748);
+    			add_location(div8, file$e, 350, 8, 10023);
+    			add_location(div9, file$e, 343, 6, 9809);
     			attr_dev(span6, "class", "sr-only");
-    			add_location(span6, file$e, 372, 10, 10901);
+    			add_location(span6, file$e, 375, 10, 10962);
     			attr_dev(span7, "aria-hidden", "true");
     			attr_dev(span7, "class", "translate-x-5 inline-block h-5 w-5 rounded-full bg-white\n            shadow transform ring-0 transition ease-in-out duration-200");
     			toggle_class(span7, "translate-x-5", /*tempLocalUserHabit*/ ctx[0].reflectIsSuccessful);
-    			add_location(span7, file$e, 373, 10, 10952);
+    			add_location(span7, file$e, 376, 10, 11013);
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "aria-pressed", "false");
     			attr_dev(button0, "aria-labelledby", "toggleLabel");
     			attr_dev(button0, "class", "bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11\n          border-2 border-transparent rounded-full cursor-pointer\n          transition-colors ease-in-out duration-200 focus:outline-none\n          focus:ring-2 focus:ring-offset-2 focus:ring-blue-900");
     			toggle_class(button0, "bg-blue-900", /*tempLocalUserHabit*/ ctx[0].reflectIsSuccessful);
-    			add_location(button0, file$e, 362, 8, 10397);
+    			add_location(button0, file$e, 365, 8, 10458);
     			attr_dev(span8, "class", "text-sm font-medium text-gray-900");
-    			add_location(span8, file$e, 381, 10, 11288);
+    			add_location(span8, file$e, 384, 10, 11349);
     			attr_dev(span9, "class", "ml-3");
     			attr_dev(span9, "id", "toggleLabel");
-    			add_location(span9, file$e, 380, 8, 11241);
+    			add_location(span9, file$e, 383, 8, 11302);
     			attr_dev(div10, "class", "flex items-center");
-    			add_location(div10, file$e, 360, 6, 10302);
+    			add_location(div10, file$e, 363, 6, 10363);
     			attr_dev(span10, "class", "sr-only");
-    			add_location(span10, file$e, 402, 10, 12210);
+    			add_location(span10, file$e, 405, 10, 12271);
     			attr_dev(span11, "aria-hidden", "true");
     			attr_dev(span11, "class", "translate-x-5 inline-block h-5 w-5 rounded-full bg-white\n            shadow transform ring-0 transition ease-in-out duration-200");
     			toggle_class(span11, "translate-x-5", /*tempLocalUserHabit*/ ctx[0].reflectRecommend);
-    			add_location(span11, file$e, 403, 10, 12261);
+    			add_location(span11, file$e, 406, 10, 12322);
     			attr_dev(button1, "type", "button");
     			attr_dev(button1, "aria-pressed", "false");
     			attr_dev(button1, "aria-labelledby", "toggleLabel");
     			attr_dev(button1, "class", "bg-gray-200 relative inline-flex flex-shrink-0 h-6 w-11\n          border-2 border-transparent rounded-full cursor-pointer\n          transition-colors ease-in-out duration-200 focus:outline-none\n          focus:ring-2 focus:ring-offset-2 focus:ring-blue-900");
     			toggle_class(button1, "bg-blue-900", /*tempLocalUserHabit*/ ctx[0].reflectRecommend);
-    			add_location(button1, file$e, 392, 8, 11707);
+    			add_location(button1, file$e, 395, 8, 11768);
     			attr_dev(span12, "class", "text-sm font-medium text-gray-900");
-    			add_location(span12, file$e, 411, 10, 12594);
+    			add_location(span12, file$e, 414, 10, 12655);
     			attr_dev(span13, "class", "ml-3");
     			attr_dev(span13, "id", "toggleLabel");
-    			add_location(span13, file$e, 410, 8, 12547);
+    			add_location(span13, file$e, 413, 8, 12608);
     			attr_dev(div11, "class", "flex items-center");
-    			add_location(div11, file$e, 390, 6, 11612);
+    			add_location(div11, file$e, 393, 6, 11673);
     			attr_dev(button2, "type", "submit");
     			attr_dev(button2, "class", "w-full flex justify-center py-2 px-4 border border-transparent\n          rounded-md shadow-sm text-sm font-bold text-white bg-blue-900\n          hover:bg-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2\n          focus:ring-blue-900");
-    			add_location(button2, file$e, 421, 8, 12955);
+    			add_location(button2, file$e, 424, 8, 13016);
     			attr_dev(div12, "class", "mt-6");
-    			add_location(div12, file$e, 420, 6, 12928);
+    			add_location(div12, file$e, 423, 6, 12989);
     			attr_dev(form, "class", "space-y-6");
-    			add_location(form, file$e, 231, 4, 5597);
+    			add_location(form, file$e, 234, 4, 5658);
     			attr_dev(div13, "class", "w-full border-t border-gray-300");
-    			add_location(div13, file$e, 434, 10, 13439);
+    			add_location(div13, file$e, 437, 10, 13500);
     			attr_dev(div14, "class", "absolute inset-0 flex items-center");
-    			add_location(div14, file$e, 433, 8, 13380);
+    			add_location(div14, file$e, 436, 8, 13441);
     			attr_dev(span14, "class", "px-2 bg-white text-gray-900");
-    			add_location(span14, file$e, 437, 10, 13571);
+    			add_location(span14, file$e, 440, 10, 13632);
     			attr_dev(div15, "class", "relative flex justify-center text-sm");
-    			add_location(div15, file$e, 436, 8, 13510);
+    			add_location(div15, file$e, 439, 8, 13571);
     			attr_dev(div16, "class", "relative");
-    			add_location(div16, file$e, 432, 6, 13349);
+    			add_location(div16, file$e, 435, 6, 13410);
     			attr_dev(span15, "class", "");
-    			add_location(span15, file$e, 448, 12, 13976);
+    			add_location(span15, file$e, 451, 12, 14037);
     			attr_dev(button3, "class", "w-full inline-flex justify-center py-2 px-4 border\n            border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n            text-gray-900 hover:bg-gray-50");
-    			add_location(button3, file$e, 443, 10, 13724);
-    			add_location(div17, file$e, 442, 8, 13708);
+    			add_location(button3, file$e, 446, 10, 13785);
+    			add_location(div17, file$e, 445, 8, 13769);
     			attr_dev(span16, "class", "");
-    			add_location(span16, file$e, 457, 12, 14311);
+    			add_location(span16, file$e, 460, 12, 14372);
     			attr_dev(button4, "class", "w-full inline-flex justify-center py-2 px-4 border\n            border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n            text-gray-900 hover:bg-gray-50");
-    			add_location(button4, file$e, 452, 10, 14062);
-    			add_location(div18, file$e, 451, 8, 14046);
+    			add_location(button4, file$e, 455, 10, 14123);
+    			add_location(div18, file$e, 454, 8, 14107);
     			attr_dev(div19, "class", "mt-6 grid grid-cols-2 gap-3");
-    			add_location(div19, file$e, 441, 6, 13658);
+    			add_location(div19, file$e, 444, 6, 13719);
     			attr_dev(div20, "class", "mt-6");
-    			add_location(div20, file$e, 431, 4, 13324);
-    			add_location(div21, file$e, 229, 2, 5586);
+    			add_location(div20, file$e, 434, 4, 13385);
+    			add_location(div21, file$e, 232, 2, 5647);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div21, anchor);
@@ -9278,14 +9477,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$4.name,
     		type: "slot",
-    		source: "(228:0) <ContentWrapper>",
+    		source: "(231:0) <ContentWrapper>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (468:0) {#if habitDeleteWarning}
+    // (471:0) {#if habitDeleteWarning}
     function create_if_block$6(ctx) {
     	let modal;
     	let current;
@@ -9334,14 +9533,14 @@ var app = (function () {
     		block,
     		id: create_if_block$6.name,
     		type: "if",
-    		source: "(468:0) {#if habitDeleteWarning}",
+    		source: "(471:0) {#if habitDeleteWarning}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (469:2) <Modal contentModal={contentModalDelete}>
+    // (472:2) <Modal contentModal={contentModalDelete}>
     function create_default_slot$7(ctx) {
     	let button0;
     	let t1;
@@ -9379,25 +9578,25 @@ var app = (function () {
     			span1.textContent = "Back";
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "class", "inline-flex justify-center w-full rounded-md border\n      border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-medium\n      text-white hover:bg-blue-500 focus:outline-none focus:ring-2\n      focus:ring-offset-2 focus:ring-blue-700 sm:text-sm");
-    			add_location(button0, file$e, 469, 4, 14502);
+    			add_location(button0, file$e, 472, 4, 14563);
     			attr_dev(div0, "class", "w-full border-t border-gray-300");
-    			add_location(div0, file$e, 481, 10, 15008);
+    			add_location(div0, file$e, 484, 10, 15069);
     			attr_dev(div1, "class", "absolute inset-0 flex items-center");
-    			add_location(div1, file$e, 480, 8, 14949);
+    			add_location(div1, file$e, 483, 8, 15010);
     			attr_dev(span0, "class", "px-2 bg-white text-gray-900");
-    			add_location(span0, file$e, 484, 10, 15140);
+    			add_location(span0, file$e, 487, 10, 15201);
     			attr_dev(div2, "class", "relative flex justify-center text-sm");
-    			add_location(div2, file$e, 483, 8, 15079);
+    			add_location(div2, file$e, 486, 8, 15140);
     			attr_dev(div3, "class", "relative");
-    			add_location(div3, file$e, 479, 6, 14918);
+    			add_location(div3, file$e, 482, 6, 14979);
     			attr_dev(span1, "class", "");
-    			add_location(span1, file$e, 495, 10, 15494);
+    			add_location(span1, file$e, 498, 10, 15555);
     			attr_dev(button1, "class", "w-full inline-flex justify-center py-2 px-4 border\n          border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n          text-gray-900 hover:bg-gray-50");
-    			add_location(button1, file$e, 490, 8, 15255);
+    			add_location(button1, file$e, 493, 8, 15316);
     			attr_dev(div4, "class", "mt-6");
-    			add_location(div4, file$e, 488, 6, 15227);
+    			add_location(div4, file$e, 491, 6, 15288);
     			attr_dev(div5, "class", "mt-6");
-    			add_location(div5, file$e, 478, 4, 14893);
+    			add_location(div5, file$e, 481, 4, 14954);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button0, anchor);
@@ -9437,7 +9636,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$7.name,
     		type: "slot",
-    		source: "(469:2) <Modal contentModal={contentModalDelete}>",
+    		source: "(472:2) <Modal contentModal={contentModalDelete}>",
     		ctx
     	});
 
@@ -9540,11 +9739,11 @@ var app = (function () {
     }
 
     function instance$g($$self, $$props, $$invalidate) {
-    	let $activeUserHabits;
+    	let $userHabitsActive;
     	let $currentActiveHabit;
     	let $API_ENDPOINT;
-    	validate_store(activeUserHabits, "activeUserHabits");
-    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(11, $activeUserHabits = $$value));
+    	validate_store(userHabitsActive, "userHabitsActive");
+    	component_subscribe($$self, userHabitsActive, $$value => $$invalidate(11, $userHabitsActive = $$value));
     	validate_store(currentActiveHabit, "currentActiveHabit");
     	component_subscribe($$self, currentActiveHabit, $$value => $$invalidate(12, $currentActiveHabit = $$value));
     	validate_store(API_ENDPOINT, "API_ENDPOINT");
@@ -9558,7 +9757,7 @@ var app = (function () {
     		button: "Delete Habit Data"
     	};
 
-    	let tempLocalUserHabit = $activeUserHabits[$currentActiveHabit];
+    	let tempLocalUserHabit = $userHabitsActive[$currentActiveHabit];
     	tempLocalUserHabit.reflectIsSuccessful = true;
     	tempLocalUserHabit.reflectDifficulty = 5;
     	tempLocalUserHabit.reflectRecommend = true;
@@ -9578,14 +9777,12 @@ var app = (function () {
     	};
 
     	const handleModalDeleteAction = async () => {
-    		const fetchURL = $API_ENDPOINT + "/deleteExistingHabit";
+    		const fetchURL = $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
 
     		const fetchOptions = {
-    			method: "POST",
+    			method: "DELETE",
     			headers: { "content-type": "application/json" },
-    			body: JSON.stringify({
-    				adminHabitId: tempLocalUserHabit.adminHabitId
-    			})
+    			body: JSON.stringify({ ...tempLocalUserHabit })
     		};
 
     		const handleErrors = res => {
@@ -9599,15 +9796,16 @@ var app = (function () {
     		};
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
-    			// res = null
-    			let newHabitData = $activeUserHabits;
-
-    			newHabitData[$currentActiveHabit] = null;
-    			activeUserHabits.set(newHabitData);
+    			console.log("res", res);
+    			let newHabitData = $userHabitsActive;
+    			newHabitData[$currentActiveHabit] = {};
+    			userHabitsActive.set(newHabitData);
+    			userProfile.set(res.userProfile);
     			isNewActiveUserHabitChange.set(true);
     		}).catch(err => {
-    			console.clear();
+    			// console.clear();
     			errMessage.set(err);
+
     			push(`/error`);
     		});
 
@@ -9640,10 +9838,10 @@ var app = (function () {
 
     		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
     			console.log("res", res);
-    			let newHabitData = $activeUserHabits;
-    			newHabitData[$currentActiveHabit] = res.updatedHabit;
-    			activeUserHabits.set(newHabitData);
-    			activeUserDetails.set(res.updatedUser);
+    			let newHabitData = $userHabitsActive;
+    			newHabitData[$currentActiveHabit] = {};
+    			userHabitsActive.set(newHabitData);
+    			userProfile.set(res.updatedUser);
     			isNewActiveUserHabitChange.set(true);
     		}).catch(err => {
     			console.clear();
@@ -9676,10 +9874,11 @@ var app = (function () {
     		API_ENDPOINT,
     		currentActiveHabit,
     		getUserHabitBlank,
+    		isHabitHistoryUpdated,
     		isNewActiveUserHabitChange,
     		adminIdUser,
-    		activeUserHabits,
-    		activeUserDetails,
+    		userHabitsActive,
+    		userProfile,
     		tempUserHabit,
     		push,
     		AppHeader,
@@ -9694,7 +9893,7 @@ var app = (function () {
     		handleDelete,
     		handleModalDeleteAction,
     		handleModalHabitIsComplete,
-    		$activeUserHabits,
+    		$userHabitsActive,
     		$currentActiveHabit,
     		$API_ENDPOINT
     	});
@@ -9751,18 +9950,922 @@ var app = (function () {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[2] = list[i];
+    	child_ctx[11] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[5] = list[i];
-    	child_ctx[7] = i;
+    	child_ctx[14] = list[i];
+    	child_ctx[16] = i;
     	return child_ctx;
     }
 
-    // (11:4) {#if habit}
+    function get_each_context_2(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[11] = list[i];
+    	return child_ctx;
+    }
+
+    function get_each_context_3(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[14] = list[i];
+    	child_ctx[16] = i;
+    	return child_ctx;
+    }
+
+    // (64:4) {#if habit && !$isObjectEmpty(habit)}
+    function create_if_block_12(ctx) {
+    	let div9;
+    	let div4;
+    	let div3;
+    	let div0;
+    	let t0;
+    	let div1;
+    	let t1;
+    	let div2;
+    	let t2;
+    	let div8;
+    	let div5;
+    	let t3_value = /*habit*/ ctx[11].detailTitle + "";
+    	let t3;
+    	let t4;
+    	let div6;
+    	let t5;
+    	let t6_value = /*habit*/ ctx[11].adminDateEndUTCString.slice(0, 16) + "";
+    	let t6;
+    	let t7;
+    	let div7;
+    	let t8;
+    	let t9_value = /*habit*/ ctx[11].adminDateStartUTCString.slice(0, 16) + "";
+    	let t9;
+    	let t10;
+    	let ul;
+    	let mounted;
+    	let dispose;
+
+    	function select_block_type(ctx, dirty) {
+    		if (/*habit*/ ctx[11].detailDuration > 86400) return create_if_block_19;
+    		if (/*habit*/ ctx[11].detailDuration == 86400) return create_if_block_20;
+    		if (/*habit*/ ctx[11].detailDuration > 3600) return create_if_block_21;
+    		if (/*habit*/ ctx[11].detailDuration == 3600) return create_if_block_22;
+    		if (/*habit*/ ctx[11].detailDuration > 60) return create_if_block_23;
+    		return create_else_block_7;
+    	}
+
+    	let current_block_type = select_block_type(ctx);
+    	let if_block0 = current_block_type(ctx);
+
+    	function select_block_type_1(ctx, dirty) {
+    		if (/*habit*/ ctx[11].detailCode) return create_if_block_18;
+    		return create_else_block_6;
+    	}
+
+    	let current_block_type_1 = select_block_type_1(ctx);
+    	let if_block1 = current_block_type_1(ctx);
+
+    	function select_block_type_2(ctx, dirty) {
+    		if (/*habit*/ ctx[11].reflectIsSuccessful) return create_if_block_16;
+    		if (/*habit*/ ctx[11].reflectIsSuccessful == null) return create_if_block_17;
+    		return create_else_block_5$2;
+    	}
+
+    	let current_block_type_2 = select_block_type_2(ctx);
+    	let if_block2 = current_block_type_2(ctx);
+    	let each_value_3 = /*habit*/ ctx[11].checks;
+    	validate_each_argument(each_value_3);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_3.length; i += 1) {
+    		each_blocks[i] = create_each_block_3(get_each_context_3(ctx, each_value_3, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			div9 = element("div");
+    			div4 = element("div");
+    			div3 = element("div");
+    			div0 = element("div");
+    			if_block0.c();
+    			t0 = space();
+    			div1 = element("div");
+    			if_block1.c();
+    			t1 = space();
+    			div2 = element("div");
+    			if_block2.c();
+    			t2 = space();
+    			div8 = element("div");
+    			div5 = element("div");
+    			t3 = text(t3_value);
+    			t4 = space();
+    			div6 = element("div");
+    			t5 = text("Start: ");
+    			t6 = text(t6_value);
+    			t7 = space();
+    			div7 = element("div");
+    			t8 = text("End: ");
+    			t9 = text(t9_value);
+    			t10 = space();
+    			ul = element("ul");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			attr_dev(div0, "class", "relative uppercase font-extrabold text-gray-900 text-xs\n              text-left");
+    			add_location(div0, file$f, 72, 12, 1885);
+    			attr_dev(div1, "class", "relative mt-1 text-6xl font-extrabold text-center\n              text-blue-900");
+    			add_location(div1, file$f, 87, 12, 2520);
+    			attr_dev(div2, "class", "relative mt-2 text-sm font-bold text-center text-gray-900\n              uppercase");
+    			add_location(div2, file$f, 93, 12, 2726);
+    			attr_dev(div3, "class", "flex flex-col mx-auto");
+    			add_location(div3, file$f, 71, 10, 1837);
+    			attr_dev(div4, "class", "w-1/3 py-1 px-2 ");
+    			add_location(div4, file$f, 68, 8, 1723);
+    			attr_dev(div5, "class", "ml-2 pl-2 pt-3 ltext-xs font-extrabold text-gray-900\n            uppercase text-left");
+    			add_location(div5, file$f, 114, 10, 3444);
+    			attr_dev(div6, "class", "ml-2 pl-2 pt-0 text-xs font-extrabold text-gray-500 uppercase\n            text-left");
+    			add_location(div6, file$f, 119, 10, 3614);
+    			attr_dev(div7, "class", "ml-2 pl-2 text-xs font-extrabold text-gray-500 uppercase\n            text-left");
+    			add_location(div7, file$f, 124, 10, 3813);
+    			attr_dev(ul, "class", "ml-2 pt-1 place-items-center grid grid-cols-8 grid-cols-2\n            w-4/5 leading-tight");
+    			add_location(ul, file$f, 129, 10, 4007);
+    			attr_dev(div8, "class", "w-full");
+    			add_location(div8, file$f, 113, 8, 3413);
+    			attr_dev(div9, "class", "mx-auto flex py-1 border-2 border-blue-100 shadow rounded-sm\n        bg-white hover:bg-blue-200 focus:ring-2 focus:ring-offset-2\n        focus:ring-blue-900 focus:outline-none transition-colors duration-75");
+    			add_location(div9, file$f, 64, 6, 1487);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div9, anchor);
+    			append_dev(div9, div4);
+    			append_dev(div4, div3);
+    			append_dev(div3, div0);
+    			if_block0.m(div0, null);
+    			append_dev(div3, t0);
+    			append_dev(div3, div1);
+    			if_block1.m(div1, null);
+    			append_dev(div3, t1);
+    			append_dev(div3, div2);
+    			if_block2.m(div2, null);
+    			append_dev(div9, t2);
+    			append_dev(div9, div8);
+    			append_dev(div8, div5);
+    			append_dev(div5, t3);
+    			append_dev(div8, t4);
+    			append_dev(div8, div6);
+    			append_dev(div6, t5);
+    			append_dev(div6, t6);
+    			append_dev(div8, t7);
+    			append_dev(div8, div7);
+    			append_dev(div7, t8);
+    			append_dev(div7, t9);
+    			append_dev(div8, t10);
+    			append_dev(div8, ul);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(ul, null);
+    			}
+
+    			if (!mounted) {
+    				dispose = listen_dev(div4, "click", /*click_handler*/ ctx[4], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, dirty) {
+    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block0) {
+    				if_block0.p(ctx, dirty);
+    			} else {
+    				if_block0.d(1);
+    				if_block0 = current_block_type(ctx);
+
+    				if (if_block0) {
+    					if_block0.c();
+    					if_block0.m(div0, null);
+    				}
+    			}
+
+    			if (current_block_type_1 === (current_block_type_1 = select_block_type_1(ctx)) && if_block1) {
+    				if_block1.p(ctx, dirty);
+    			} else {
+    				if_block1.d(1);
+    				if_block1 = current_block_type_1(ctx);
+
+    				if (if_block1) {
+    					if_block1.c();
+    					if_block1.m(div1, null);
+    				}
+    			}
+
+    			if (current_block_type_2 !== (current_block_type_2 = select_block_type_2(ctx))) {
+    				if_block2.d(1);
+    				if_block2 = current_block_type_2(ctx);
+
+    				if (if_block2) {
+    					if_block2.c();
+    					if_block2.m(div2, null);
+    				}
+    			}
+
+    			if (dirty & /*$userHabitsActive*/ 2 && t3_value !== (t3_value = /*habit*/ ctx[11].detailTitle + "")) set_data_dev(t3, t3_value);
+    			if (dirty & /*$userHabitsActive*/ 2 && t6_value !== (t6_value = /*habit*/ ctx[11].adminDateEndUTCString.slice(0, 16) + "")) set_data_dev(t6, t6_value);
+    			if (dirty & /*$userHabitsActive*/ 2 && t9_value !== (t9_value = /*habit*/ ctx[11].adminDateStartUTCString.slice(0, 16) + "")) set_data_dev(t9, t9_value);
+
+    			if (dirty & /*$userHabitsActive*/ 2) {
+    				each_value_3 = /*habit*/ ctx[11].checks;
+    				validate_each_argument(each_value_3);
+    				let i;
+
+    				for (i = 0; i < each_value_3.length; i += 1) {
+    					const child_ctx = get_each_context_3(ctx, each_value_3, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block_3(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(ul, null);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value_3.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div9);
+    			if_block0.d();
+    			if_block1.d();
+    			if_block2.d();
+    			destroy_each(each_blocks, detaching);
+    			mounted = false;
+    			dispose();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_12.name,
+    		type: "if",
+    		source: "(64:4) {#if habit && !$isObjectEmpty(habit)}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (86:14) {:else}
+    function create_else_block_7(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("1 min");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_7.name,
+    		type: "else",
+    		source: "(86:14) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (84:50) 
+    function create_if_block_23(ctx) {
+    	let t0_value = /*habit*/ ctx[11].detailDuration / 60 + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text(t0_value);
+    			t1 = text(" mins");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$userHabitsActive*/ 2 && t0_value !== (t0_value = /*habit*/ ctx[11].detailDuration / 60 + "")) set_data_dev(t0, t0_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_23.name,
+    		type: "if",
+    		source: "(84:50) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (82:53) 
+    function create_if_block_22(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("60 mins");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_22.name,
+    		type: "if",
+    		source: "(82:53) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (80:52) 
+    function create_if_block_21(ctx) {
+    	let t0_value = /*habit*/ ctx[11].detailDuration / 3600 + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text(t0_value);
+    			t1 = text(" hours");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$userHabitsActive*/ 2 && t0_value !== (t0_value = /*habit*/ ctx[11].detailDuration / 3600 + "")) set_data_dev(t0, t0_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_21.name,
+    		type: "if",
+    		source: "(80:52) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (78:54) 
+    function create_if_block_20(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("24 hours");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_20.name,
+    		type: "if",
+    		source: "(78:54) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (76:14) {#if habit.detailDuration > 86400}
+    function create_if_block_19(ctx) {
+    	let t0_value = /*habit*/ ctx[11].detailDuration / 86400 + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text(t0_value);
+    			t1 = text(" days");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$userHabitsActive*/ 2 && t0_value !== (t0_value = /*habit*/ ctx[11].detailDuration / 86400 + "")) set_data_dev(t0, t0_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_19.name,
+    		type: "if",
+    		source: "(76:14) {#if habit.detailDuration > 86400}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (91:54) {:else}
+    function create_else_block_6(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("+");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_6.name,
+    		type: "else",
+    		source: "(91:54) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (91:14) {#if habit.detailCode}
+    function create_if_block_18(ctx) {
+    	let t_value = /*habit*/ ctx[11].detailCode + "";
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text(t_value);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$userHabitsActive*/ 2 && t_value !== (t_value = /*habit*/ ctx[11].detailCode + "")) set_data_dev(t, t_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_18.name,
+    		type: "if",
+    		source: "(91:14) {#if habit.detailCode}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (105:14) {:else}
+    function create_else_block_5$2(ctx) {
+    	let span;
+
+    	const block = {
+    		c: function create() {
+    			span = element("span");
+    			span.textContent = "fail";
+    			attr_dev(span, "class", "bg-red-100 text-red-700 px-2 rounded-sm");
+    			add_location(span, file$f, 105, 16, 3231);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, span, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(span);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_5$2.name,
+    		type: "else",
+    		source: "(105:14) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (101:58) 
+    function create_if_block_17(ctx) {
+    	let span;
+
+    	const block = {
+    		c: function create() {
+    			span = element("span");
+    			span.textContent = "active";
+    			attr_dev(span, "class", "bg-blue-100 text-blue-700 px-2 rounded-sm");
+    			add_location(span, file$f, 101, 16, 3087);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, span, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(span);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_17.name,
+    		type: "if",
+    		source: "(101:58) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (97:14) {#if habit.reflectIsSuccessful}
+    function create_if_block_16(ctx) {
+    	let span;
+
+    	const block = {
+    		c: function create() {
+    			span = element("span");
+    			span.textContent = "success";
+    			attr_dev(span, "class", "bg-green-100 text-green-700 py-1 px-2 rounded-sm");
+    			add_location(span, file$f, 97, 16, 2898);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, span, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(span);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_16.name,
+    		type: "if",
+    		source: "(97:14) {#if habit.reflectIsSuccessful}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (134:14) {#if i < 15}
+    function create_if_block_14(ctx) {
+    	let li;
+
+    	function select_block_type_3(ctx, dirty) {
+    		if (/*check*/ ctx[14].checkIsOk) return create_if_block_15;
+    		return create_else_block_4$2;
+    	}
+
+    	let current_block_type = select_block_type_3(ctx);
+    	let if_block = current_block_type(ctx);
+
+    	const block = {
+    		c: function create() {
+    			li = element("li");
+    			if_block.c();
+    			add_location(li, file$f, 134, 16, 4210);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, li, anchor);
+    			if_block.m(li, null);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (current_block_type !== (current_block_type = select_block_type_3(ctx))) {
+    				if_block.d(1);
+    				if_block = current_block_type(ctx);
+
+    				if (if_block) {
+    					if_block.c();
+    					if_block.m(li, null);
+    				}
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(li);
+    			if_block.d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_14.name,
+    		type: "if",
+    		source: "(134:14) {#if i < 15}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (138:18) {:else}
+    function create_else_block_4$2(ctx) {
+    	let i;
+
+    	const block = {
+    		c: function create() {
+    			i = element("i");
+    			attr_dev(i, "class", "bg-red-100 far fa-1x fa-window-close");
+    			add_location(i, file$f, 138, 20, 4374);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, i, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(i);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block_4$2.name,
+    		type: "else",
+    		source: "(138:18) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (136:18) {#if check.checkIsOk}
+    function create_if_block_15(ctx) {
+    	let i;
+
+    	const block = {
+    		c: function create() {
+    			i = element("i");
+    			attr_dev(i, "class", "bg-green-100 far fa-1x fa-check-square");
+    			add_location(i, file$f, 136, 20, 4275);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, i, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(i);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_15.name,
+    		type: "if",
+    		source: "(136:18) {#if check.checkIsOk}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (143:14) {#if i === 15}
+    function create_if_block_13(ctx) {
+    	let div;
+
+    	const block = {
+    		c: function create() {
+    			div = element("div");
+    			div.textContent = "...";
+    			attr_dev(div, "class", "w-full text-xs font-extrabold text-gray-900 uppercase\n                  text-center");
+    			add_location(div, file$f, 143, 16, 4536);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_13.name,
+    		type: "if",
+    		source: "(143:14) {#if i === 15}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (133:12) {#each habit.checks as check, i}
+    function create_each_block_3(ctx) {
+    	let t;
+    	let if_block1_anchor;
+    	let if_block0 = /*i*/ ctx[16] < 15 && create_if_block_14(ctx);
+    	let if_block1 = /*i*/ ctx[16] === 15 && create_if_block_13(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block0) if_block0.c();
+    			t = space();
+    			if (if_block1) if_block1.c();
+    			if_block1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block0) if_block0.m(target, anchor);
+    			insert_dev(target, t, anchor);
+    			if (if_block1) if_block1.m(target, anchor);
+    			insert_dev(target, if_block1_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (/*i*/ ctx[16] < 15) if_block0.p(ctx, dirty);
+    		},
+    		d: function destroy(detaching) {
+    			if (if_block0) if_block0.d(detaching);
+    			if (detaching) detach_dev(t);
+    			if (if_block1) if_block1.d(detaching);
+    			if (detaching) detach_dev(if_block1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_3.name,
+    		type: "each",
+    		source: "(133:12) {#each habit.checks as check, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (63:2) {#each $userHabitsActive as habit}
+    function create_each_block_2(ctx) {
+    	let show_if = /*habit*/ ctx[11] && !/*$isObjectEmpty*/ ctx[2](/*habit*/ ctx[11]);
+    	let if_block_anchor;
+    	let if_block = show_if && create_if_block_12(ctx);
+
+    	const block = {
+    		c: function create() {
+    			if (if_block) if_block.c();
+    			if_block_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			if (if_block) if_block.m(target, anchor);
+    			insert_dev(target, if_block_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$userHabitsActive, $isObjectEmpty*/ 6) show_if = /*habit*/ ctx[11] && !/*$isObjectEmpty*/ ctx[2](/*habit*/ ctx[11]);
+
+    			if (show_if) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+    				} else {
+    					if_block = create_if_block_12(ctx);
+    					if_block.c();
+    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				}
+    			} else if (if_block) {
+    				if_block.d(1);
+    				if_block = null;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			if (if_block) if_block.d(detaching);
+    			if (detaching) detach_dev(if_block_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block_2.name,
+    		type: "each",
+    		source: "(63:2) {#each $userHabitsActive as habit}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (1:0) <script>   import {     userProfile,     userHabitsActive,     userHabitsHistory,     isObjectEmpty,     API_ENDPOINT,     errMessage,     adminIdUser,     isNewDataLoaded,     isHabitHistoryUpdated   }
+    function create_catch_block(ctx) {
+    	const block = { c: noop, m: noop, p: noop, d: noop };
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_catch_block.name,
+    		type: "catch",
+    		source: "(1:0) <script>   import {     userProfile,     userHabitsActive,     userHabitsHistory,     isObjectEmpty,     API_ENDPOINT,     errMessage,     adminIdUser,     isNewDataLoaded,     isHabitHistoryUpdated   }",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (158:2) {:then}
+    function create_then_block(ctx) {
+    	let each_1_anchor;
+    	let each_value = /*$userHabitsHistory*/ ctx[3];
+    	validate_each_argument(each_value);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value.length; i += 1) {
+    		each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
+    	}
+
+    	const block = {
+    		c: function create() {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			each_1_anchor = empty();
+    		},
+    		m: function mount(target, anchor) {
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(target, anchor);
+    			}
+
+    			insert_dev(target, each_1_anchor, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$userHabitsHistory, console, $isObjectEmpty*/ 12) {
+    				each_value = /*$userHabitsHistory*/ ctx[3];
+    				validate_each_argument(each_value);
+    				let i;
+
+    				for (i = 0; i < each_value.length; i += 1) {
+    					const child_ctx = get_each_context$2(ctx, each_value, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    					} else {
+    						each_blocks[i] = create_each_block$2(child_ctx);
+    						each_blocks[i].c();
+    						each_blocks[i].m(each_1_anchor.parentNode, each_1_anchor);
+    					}
+    				}
+
+    				for (; i < each_blocks.length; i += 1) {
+    					each_blocks[i].d(1);
+    				}
+
+    				each_blocks.length = each_value.length;
+    			}
+    		},
+    		d: function destroy(detaching) {
+    			destroy_each(each_blocks, detaching);
+    			if (detaching) detach_dev(each_1_anchor);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_then_block.name,
+    		type: "then",
+    		source: "(158:2) {:then}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (160:6) {#if habit && !$isObjectEmpty(habit)}
     function create_if_block$7(ctx) {
     	let div9;
     	let div4;
@@ -9775,17 +10878,17 @@ var app = (function () {
     	let t2;
     	let div8;
     	let div5;
-    	let t3_value = /*habit*/ ctx[2].detailTitle + "";
+    	let t3_value = /*habit*/ ctx[11].detailTitle + "";
     	let t3;
     	let t4;
     	let div6;
     	let t5;
-    	let t6_value = /*habit*/ ctx[2].detailDateEndUTCString.slice(0, 16) + "";
+    	let t6_value = /*habit*/ ctx[11].adminDateEndUTCString.slice(0, 16) + "";
     	let t6;
     	let t7;
     	let div7;
     	let t8;
-    	let t9_value = /*habit*/ ctx[2].detailDateStartUTCString.slice(0, 16) + "";
+    	let t9_value = /*habit*/ ctx[11].adminDateStartUTCString.slice(0, 16) + "";
     	let t9;
     	let t10;
     	let ul;
@@ -9793,32 +10896,35 @@ var app = (function () {
     	let mounted;
     	let dispose;
 
-    	function select_block_type(ctx, dirty) {
-    		if (/*habit*/ ctx[2].detailDuration > 86400) return create_if_block_7$2;
-    		if (/*habit*/ ctx[2].detailDuration == 86400) return create_if_block_8$2;
+    	function select_block_type_4(ctx, dirty) {
+    		if (/*habit*/ ctx[11].detailDuration > 86400) return create_if_block_7$2;
+    		if (/*habit*/ ctx[11].detailDuration == 86400) return create_if_block_8$2;
+    		if (/*habit*/ ctx[11].detailDuration > 3600) return create_if_block_9$1;
+    		if (/*habit*/ ctx[11].detailDuration == 3600) return create_if_block_10$1;
+    		if (/*habit*/ ctx[11].detailDuration > 60) return create_if_block_11$1;
     		return create_else_block_3$2;
     	}
 
-    	let current_block_type = select_block_type(ctx);
+    	let current_block_type = select_block_type_4(ctx);
     	let if_block0 = current_block_type(ctx);
 
-    	function select_block_type_1(ctx, dirty) {
-    		if (/*habit*/ ctx[2].detailCode) return create_if_block_6$2;
+    	function select_block_type_5(ctx, dirty) {
+    		if (/*habit*/ ctx[11].detailCode) return create_if_block_6$2;
     		return create_else_block_2$3;
     	}
 
-    	let current_block_type_1 = select_block_type_1(ctx);
+    	let current_block_type_1 = select_block_type_5(ctx);
     	let if_block1 = current_block_type_1(ctx);
 
-    	function select_block_type_2(ctx, dirty) {
-    		if (/*habit*/ ctx[2].reflectionIsSuccessful) return create_if_block_4$2;
-    		if (/*habit*/ ctx[2].reflectionIsSuccessful == null) return create_if_block_5$2;
+    	function select_block_type_6(ctx, dirty) {
+    		if (/*habit*/ ctx[11].reflectIsSuccessful) return create_if_block_4$2;
+    		if (/*habit*/ ctx[11].reflectIsSuccessful == null) return create_if_block_5$2;
     		return create_else_block_1$4;
     	}
 
-    	let current_block_type_2 = select_block_type_2(ctx);
+    	let current_block_type_2 = select_block_type_6(ctx);
     	let if_block2 = current_block_type_2(ctx);
-    	let each_value_1 = /*habit*/ ctx[2].checks;
+    	let each_value_1 = /*habit*/ ctx[11].checks;
     	validate_each_argument(each_value_1);
     	let each_blocks = [];
 
@@ -9859,28 +10965,28 @@ var app = (function () {
     			}
 
     			t11 = space();
-    			attr_dev(div0, "class", "relative uppercase font-extrabold text-gray-900 text-xs\n              text-left");
-    			add_location(div0, file$f, 19, 12, 662);
-    			attr_dev(div1, "class", "relative mt-1 text-6xl font-extrabold text-center\n              text-blue-900");
-    			add_location(div1, file$f, 26, 12, 983);
-    			attr_dev(div2, "class", "relative mt-2 text-sm font-bold text-center text-gray-900\n              uppercase");
-    			add_location(div2, file$f, 32, 12, 1189);
+    			attr_dev(div0, "class", "relative uppercase font-extrabold text-gray-900 text-xs\n                text-left");
+    			add_location(div0, file$f, 168, 14, 5366);
+    			attr_dev(div1, "class", "relative mt-1 text-6xl font-extrabold text-center\n                text-blue-900");
+    			add_location(div1, file$f, 183, 14, 6031);
+    			attr_dev(div2, "class", "relative mt-2 text-sm font-bold text-center text-gray-900\n                uppercase");
+    			add_location(div2, file$f, 189, 14, 6247);
     			attr_dev(div3, "class", "flex flex-col mx-auto");
-    			add_location(div3, file$f, 18, 10, 614);
+    			add_location(div3, file$f, 167, 12, 5316);
     			attr_dev(div4, "class", "w-1/3 py-1 px-2 ");
-    			add_location(div4, file$f, 15, 8, 500);
-    			attr_dev(div5, "class", "ml-2 pl-2 pt-3 ltext-xs font-extrabold text-gray-900\n            uppercase text-left");
-    			add_location(div5, file$f, 53, 10, 1913);
-    			attr_dev(div6, "class", "ml-2 pl-2 pt-0 text-xs font-extrabold text-gray-500 uppercase\n            text-left");
-    			add_location(div6, file$f, 58, 10, 2083);
-    			attr_dev(div7, "class", "ml-2 pl-2 text-xs font-extrabold text-gray-500 uppercase\n            text-left");
-    			add_location(div7, file$f, 63, 10, 2283);
-    			attr_dev(ul, "class", "ml-2 pt-1 place-items-center grid grid-cols-8 grid-cols-2\n            w-4/5 leading-tight");
-    			add_location(ul, file$f, 68, 10, 2478);
+    			add_location(div4, file$f, 164, 10, 5196);
+    			attr_dev(div5, "class", "ml-2 pl-2 pt-3 ltext-xs font-extrabold text-gray-900\n              uppercase text-left");
+    			add_location(div5, file$f, 211, 12, 7025);
+    			attr_dev(div6, "class", "ml-2 pl-2 pt-0 text-xs font-extrabold text-gray-500\n              uppercase text-left");
+    			add_location(div6, file$f, 216, 12, 7205);
+    			attr_dev(div7, "class", "ml-2 pl-2 text-xs font-extrabold text-gray-500 uppercase\n              text-left");
+    			add_location(div7, file$f, 221, 12, 7414);
+    			attr_dev(ul, "class", "ml-2 pt-1 place-items-center grid grid-cols-8 grid-cols-2\n              w-4/5 leading-tight");
+    			add_location(ul, file$f, 226, 12, 7618);
     			attr_dev(div8, "class", "w-full");
-    			add_location(div8, file$f, 52, 8, 1882);
-    			attr_dev(div9, "class", "mx-auto flex py-1 border-2 border-blue-100 shadow rounded-sm\n        bg-white hover:bg-blue-200 focus:ring-2 focus:ring-offset-2\n        focus:ring-blue-900 focus:outline-none transition-colors duration-75");
-    			add_location(div9, file$f, 11, 6, 264);
+    			add_location(div8, file$f, 210, 10, 6992);
+    			attr_dev(div9, "class", "mx-auto flex py-1 border-2 border-blue-100 shadow rounded-sm\n          bg-white hover:bg-blue-200 focus:ring-2 focus:ring-offset-2\n          focus:ring-blue-900 focus:outline-none transition-colors duration-75");
+    			add_location(div9, file$f, 160, 8, 4952);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div9, anchor);
@@ -9916,12 +11022,12 @@ var app = (function () {
     			append_dev(div9, t11);
 
     			if (!mounted) {
-    				dispose = listen_dev(div4, "click", /*click_handler*/ ctx[1], false, false, false);
+    				dispose = listen_dev(div4, "click", /*click_handler_1*/ ctx[5], false, false, false);
     				mounted = true;
     			}
     		},
     		p: function update(ctx, dirty) {
-    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block0) {
+    			if (current_block_type === (current_block_type = select_block_type_4(ctx)) && if_block0) {
     				if_block0.p(ctx, dirty);
     			} else {
     				if_block0.d(1);
@@ -9933,7 +11039,7 @@ var app = (function () {
     				}
     			}
 
-    			if (current_block_type_1 === (current_block_type_1 = select_block_type_1(ctx)) && if_block1) {
+    			if (current_block_type_1 === (current_block_type_1 = select_block_type_5(ctx)) && if_block1) {
     				if_block1.p(ctx, dirty);
     			} else {
     				if_block1.d(1);
@@ -9945,7 +11051,7 @@ var app = (function () {
     				}
     			}
 
-    			if (current_block_type_2 !== (current_block_type_2 = select_block_type_2(ctx))) {
+    			if (current_block_type_2 !== (current_block_type_2 = select_block_type_6(ctx))) {
     				if_block2.d(1);
     				if_block2 = current_block_type_2(ctx);
 
@@ -9955,12 +11061,12 @@ var app = (function () {
     				}
     			}
 
-    			if (dirty & /*$activeUserHabits*/ 1 && t3_value !== (t3_value = /*habit*/ ctx[2].detailTitle + "")) set_data_dev(t3, t3_value);
-    			if (dirty & /*$activeUserHabits*/ 1 && t6_value !== (t6_value = /*habit*/ ctx[2].detailDateEndUTCString.slice(0, 16) + "")) set_data_dev(t6, t6_value);
-    			if (dirty & /*$activeUserHabits*/ 1 && t9_value !== (t9_value = /*habit*/ ctx[2].detailDateStartUTCString.slice(0, 16) + "")) set_data_dev(t9, t9_value);
+    			if (dirty & /*$userHabitsHistory*/ 8 && t3_value !== (t3_value = /*habit*/ ctx[11].detailTitle + "")) set_data_dev(t3, t3_value);
+    			if (dirty & /*$userHabitsHistory*/ 8 && t6_value !== (t6_value = /*habit*/ ctx[11].adminDateEndUTCString.slice(0, 16) + "")) set_data_dev(t6, t6_value);
+    			if (dirty & /*$userHabitsHistory*/ 8 && t9_value !== (t9_value = /*habit*/ ctx[11].adminDateStartUTCString.slice(0, 16) + "")) set_data_dev(t9, t9_value);
 
-    			if (dirty & /*$activeUserHabits*/ 1) {
-    				each_value_1 = /*habit*/ ctx[2].checks;
+    			if (dirty & /*$userHabitsHistory*/ 8) {
+    				each_value_1 = /*habit*/ ctx[11].checks;
     				validate_each_argument(each_value_1);
     				let i;
 
@@ -9998,20 +11104,20 @@ var app = (function () {
     		block,
     		id: create_if_block$7.name,
     		type: "if",
-    		source: "(11:4) {#if habit}",
+    		source: "(160:6) {#if habit && !$isObjectEmpty(habit)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (25:62) {:else}
+    // (182:16) {:else}
     function create_else_block_3$2(ctx) {
     	let t;
 
     	const block = {
     		c: function create() {
-    			t = text("1 hour");
+    			t = text("1 min");
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, t, anchor);
@@ -10026,14 +11132,112 @@ var app = (function () {
     		block,
     		id: create_else_block_3$2.name,
     		type: "else",
-    		source: "(25:62) {:else}",
+    		source: "(182:16) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (25:54) 
+    // (180:52) 
+    function create_if_block_11$1(ctx) {
+    	let t0_value = /*habit*/ ctx[11].detailDuration / 60 + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text(t0_value);
+    			t1 = text(" mins");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$userHabitsHistory*/ 8 && t0_value !== (t0_value = /*habit*/ ctx[11].detailDuration / 60 + "")) set_data_dev(t0, t0_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_11$1.name,
+    		type: "if",
+    		source: "(180:52) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (178:55) 
+    function create_if_block_10$1(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("60 mins");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_10$1.name,
+    		type: "if",
+    		source: "(178:55) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (176:54) 
+    function create_if_block_9$1(ctx) {
+    	let t0_value = /*habit*/ ctx[11].detailDuration / 3600 + "";
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text(t0_value);
+    			t1 = text(" hours");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*$userHabitsHistory*/ 8 && t0_value !== (t0_value = /*habit*/ ctx[11].detailDuration / 3600 + "")) set_data_dev(t0, t0_value);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_9$1.name,
+    		type: "if",
+    		source: "(176:54) ",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (174:56) 
     function create_if_block_8$2(ctx) {
     	let t;
 
@@ -10054,16 +11258,16 @@ var app = (function () {
     		block,
     		id: create_if_block_8$2.name,
     		type: "if",
-    		source: "(25:54) ",
+    		source: "(174:56) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (23:14) {#if habit.detailDuration > 86400}
+    // (172:16) {#if habit.detailDuration > 86400}
     function create_if_block_7$2(ctx) {
-    	let t0_value = /*habit*/ ctx[2].detailDuration / 86400 + "";
+    	let t0_value = /*habit*/ ctx[11].detailDuration / 86400 + "";
     	let t0;
     	let t1;
 
@@ -10077,7 +11281,7 @@ var app = (function () {
     			insert_dev(target, t1, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$activeUserHabits*/ 1 && t0_value !== (t0_value = /*habit*/ ctx[2].detailDuration / 86400 + "")) set_data_dev(t0, t0_value);
+    			if (dirty & /*$userHabitsHistory*/ 8 && t0_value !== (t0_value = /*habit*/ ctx[11].detailDuration / 86400 + "")) set_data_dev(t0, t0_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t0);
@@ -10089,14 +11293,14 @@ var app = (function () {
     		block,
     		id: create_if_block_7$2.name,
     		type: "if",
-    		source: "(23:14) {#if habit.detailDuration > 86400}",
+    		source: "(172:16) {#if habit.detailDuration > 86400}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (30:54) {:else}
+    // (187:56) {:else}
     function create_else_block_2$3(ctx) {
     	let t;
 
@@ -10117,16 +11321,16 @@ var app = (function () {
     		block,
     		id: create_else_block_2$3.name,
     		type: "else",
-    		source: "(30:54) {:else}",
+    		source: "(187:56) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (30:14) {#if habit.detailCode}
+    // (187:16) {#if habit.detailCode}
     function create_if_block_6$2(ctx) {
-    	let t_value = /*habit*/ ctx[2].detailCode + "";
+    	let t_value = /*habit*/ ctx[11].detailCode + "";
     	let t;
 
     	const block = {
@@ -10137,7 +11341,7 @@ var app = (function () {
     			insert_dev(target, t, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*$activeUserHabits*/ 1 && t_value !== (t_value = /*habit*/ ctx[2].detailCode + "")) set_data_dev(t, t_value);
+    			if (dirty & /*$userHabitsHistory*/ 8 && t_value !== (t_value = /*habit*/ ctx[11].detailCode + "")) set_data_dev(t, t_value);
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(t);
@@ -10148,14 +11352,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6$2.name,
     		type: "if",
-    		source: "(30:14) {#if habit.detailCode}",
+    		source: "(187:16) {#if habit.detailCode}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (44:14) {:else}
+    // (202:16) {:else}
     function create_else_block_1$4(ctx) {
     	let span;
 
@@ -10164,7 +11368,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "fail";
     			attr_dev(span, "class", "bg-red-100 text-red-700 px-2 rounded-sm");
-    			add_location(span, file$f, 44, 16, 1700);
+    			add_location(span, file$f, 202, 18, 6796);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -10178,14 +11382,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1$4.name,
     		type: "else",
-    		source: "(44:14) {:else}",
+    		source: "(202:16) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (40:61) 
+    // (198:60) 
     function create_if_block_5$2(ctx) {
     	let span;
 
@@ -10194,7 +11398,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "active";
     			attr_dev(span, "class", "bg-blue-100 text-blue-700 px-2 rounded-sm");
-    			add_location(span, file$f, 40, 16, 1556);
+    			add_location(span, file$f, 198, 18, 6644);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -10208,14 +11412,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5$2.name,
     		type: "if",
-    		source: "(40:61) ",
+    		source: "(198:60) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (36:14) {#if habit.reflectionIsSuccessful}
+    // (193:16) {#if habit.reflectIsSuccessful}
     function create_if_block_4$2(ctx) {
     	let span;
 
@@ -10224,7 +11428,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "success";
     			attr_dev(span, "class", "bg-green-100 text-green-700 py-1 px-2 rounded-sm");
-    			add_location(span, file$f, 36, 16, 1364);
+    			add_location(span, file$f, 193, 18, 6427);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -10238,37 +11442,37 @@ var app = (function () {
     		block,
     		id: create_if_block_4$2.name,
     		type: "if",
-    		source: "(36:14) {#if habit.reflectionIsSuccessful}",
+    		source: "(193:16) {#if habit.reflectIsSuccessful}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (73:14) {#if i < 15}
+    // (231:16) {#if i < 15}
     function create_if_block_2$4(ctx) {
     	let li;
 
-    	function select_block_type_3(ctx, dirty) {
-    		if (/*check*/ ctx[5].checkIsOk) return create_if_block_3$3;
+    	function select_block_type_7(ctx, dirty) {
+    		if (/*check*/ ctx[14].checkIsOk) return create_if_block_3$3;
     		return create_else_block$5;
     	}
 
-    	let current_block_type = select_block_type_3(ctx);
+    	let current_block_type = select_block_type_7(ctx);
     	let if_block = current_block_type(ctx);
 
     	const block = {
     		c: function create() {
     			li = element("li");
     			if_block.c();
-    			add_location(li, file$f, 73, 16, 2681);
+    			add_location(li, file$f, 231, 18, 7831);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
     			if_block.m(li, null);
     		},
     		p: function update(ctx, dirty) {
-    			if (current_block_type !== (current_block_type = select_block_type_3(ctx))) {
+    			if (current_block_type !== (current_block_type = select_block_type_7(ctx))) {
     				if_block.d(1);
     				if_block = current_block_type(ctx);
 
@@ -10288,14 +11492,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$4.name,
     		type: "if",
-    		source: "(73:14) {#if i < 15}",
+    		source: "(231:16) {#if i < 15}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (77:18) {:else}
+    // (235:20) {:else}
     function create_else_block$5(ctx) {
     	let i;
 
@@ -10303,7 +11507,7 @@ var app = (function () {
     		c: function create() {
     			i = element("i");
     			attr_dev(i, "class", "bg-red-100 far fa-1x fa-window-close");
-    			add_location(i, file$f, 77, 20, 2845);
+    			add_location(i, file$f, 235, 22, 8003);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -10317,14 +11521,14 @@ var app = (function () {
     		block,
     		id: create_else_block$5.name,
     		type: "else",
-    		source: "(77:18) {:else}",
+    		source: "(235:20) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (75:18) {#if check.checkIsOk}
+    // (233:20) {#if check.checkIsOk}
     function create_if_block_3$3(ctx) {
     	let i;
 
@@ -10332,7 +11536,7 @@ var app = (function () {
     		c: function create() {
     			i = element("i");
     			attr_dev(i, "class", "bg-green-100 far fa-1x fa-check-square");
-    			add_location(i, file$f, 75, 20, 2746);
+    			add_location(i, file$f, 233, 22, 7900);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, i, anchor);
@@ -10346,23 +11550,23 @@ var app = (function () {
     		block,
     		id: create_if_block_3$3.name,
     		type: "if",
-    		source: "(75:18) {#if check.checkIsOk}",
+    		source: "(233:20) {#if check.checkIsOk}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (82:14) {#if i === 15}
+    // (240:16) {#if i === 15}
     function create_if_block_1$4(ctx) {
     	let div;
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			div.textContent = "...\n                ";
-    			attr_dev(div, "class", "w-full text-xs font-extrabold text-gray-900 uppercase\n                  text-center");
-    			add_location(div, file$f, 82, 16, 3007);
+    			div.textContent = "...\n                  ";
+    			attr_dev(div, "class", "w-full text-xs font-extrabold text-gray-900 uppercase\n                    text-center");
+    			add_location(div, file$f, 240, 18, 8175);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -10376,19 +11580,19 @@ var app = (function () {
     		block,
     		id: create_if_block_1$4.name,
     		type: "if",
-    		source: "(82:14) {#if i === 15}",
+    		source: "(240:16) {#if i === 15}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (72:12) {#each habit.checks as check, i}
+    // (230:14) {#each habit.checks as check, i}
     function create_each_block_1$1(ctx) {
     	let t;
     	let if_block1_anchor;
-    	let if_block0 = /*i*/ ctx[7] < 15 && create_if_block_2$4(ctx);
-    	let if_block1 = /*i*/ ctx[7] === 15 && create_if_block_1$4(ctx);
+    	let if_block0 = /*i*/ ctx[16] < 15 && create_if_block_2$4(ctx);
+    	let if_block1 = /*i*/ ctx[16] === 15 && create_if_block_1$4(ctx);
 
     	const block = {
     		c: function create() {
@@ -10404,7 +11608,7 @@ var app = (function () {
     			insert_dev(target, if_block1_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (/*i*/ ctx[7] < 15) if_block0.p(ctx, dirty);
+    			if (/*i*/ ctx[16] < 15) if_block0.p(ctx, dirty);
     		},
     		d: function destroy(detaching) {
     			if (if_block0) if_block0.d(detaching);
@@ -10418,17 +11622,18 @@ var app = (function () {
     		block,
     		id: create_each_block_1$1.name,
     		type: "each",
-    		source: "(72:12) {#each habit.checks as check, i}",
+    		source: "(230:14) {#each habit.checks as check, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (10:2) {#each $activeUserHabits as habit}
+    // (159:4) {#each $userHabitsHistory as habit}
     function create_each_block$2(ctx) {
+    	let show_if = /*habit*/ ctx[11] && !/*$isObjectEmpty*/ ctx[2](/*habit*/ ctx[11]);
     	let if_block_anchor;
-    	let if_block = /*habit*/ ctx[2] && create_if_block$7(ctx);
+    	let if_block = show_if && create_if_block$7(ctx);
 
     	const block = {
     		c: function create() {
@@ -10440,7 +11645,9 @@ var app = (function () {
     			insert_dev(target, if_block_anchor, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (/*habit*/ ctx[2]) {
+    			if (dirty & /*$userHabitsHistory, $isObjectEmpty*/ 12) show_if = /*habit*/ ctx[11] && !/*$isObjectEmpty*/ ctx[2](/*habit*/ ctx[11]);
+
+    			if (show_if) {
     				if (if_block) {
     					if_block.p(ctx, dirty);
     				} else {
@@ -10463,7 +11670,35 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(10:2) {#each $activeUserHabits as habit}",
+    		source: "(159:4) {#each $userHabitsHistory as habit}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (156:33)      Loading...   {:then}
+    function create_pending_block(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Loading...");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_pending_block.name,
+    		type: "pending",
+    		source: "(156:33)      Loading...   {:then}",
     		ctx
     	});
 
@@ -10472,14 +11707,28 @@ var app = (function () {
 
     function create_fragment$h(ctx) {
     	let div;
+    	let t;
+    	let promise;
     	let div_intro;
-    	let each_value = /*$activeUserHabits*/ ctx[0];
-    	validate_each_argument(each_value);
+    	let each_value_2 = /*$userHabitsActive*/ ctx[1];
+    	validate_each_argument(each_value_2);
     	let each_blocks = [];
 
-    	for (let i = 0; i < each_value.length; i += 1) {
-    		each_blocks[i] = create_each_block$2(get_each_context$2(ctx, each_value, i));
+    	for (let i = 0; i < each_value_2.length; i += 1) {
+    		each_blocks[i] = create_each_block_2(get_each_context_2(ctx, each_value_2, i));
     	}
+
+    	let info = {
+    		ctx,
+    		current: null,
+    		token: null,
+    		hasCatch: false,
+    		pending: create_pending_block,
+    		then: create_then_block,
+    		catch: create_catch_block
+    	};
+
+    	handle_promise(promise = /*$isHabitHistoryUpdated*/ ctx[0], info);
 
     	const block = {
     		c: function create() {
@@ -10489,8 +11738,10 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
+    			t = space();
+    			info.block.c();
     			attr_dev(div, "class", "pb-2 px-5 space-y-3 sm:w-full sm:max-w-md mt-8 mb-2 sm:mx-auto");
-    			add_location(div, file$f, 5, 0, 115);
+    			add_location(div, file$f, 58, 0, 1312);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -10501,22 +11752,29 @@ var app = (function () {
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(div, null);
     			}
+
+    			append_dev(div, t);
+    			info.block.m(div, info.anchor = null);
+    			info.mount = () => div;
+    			info.anchor = null;
     		},
-    		p: function update(ctx, [dirty]) {
-    			if (dirty & /*$activeUserHabits, console*/ 1) {
-    				each_value = /*$activeUserHabits*/ ctx[0];
-    				validate_each_argument(each_value);
+    		p: function update(new_ctx, [dirty]) {
+    			ctx = new_ctx;
+
+    			if (dirty & /*$userHabitsActive, console, $isObjectEmpty*/ 6) {
+    				each_value_2 = /*$userHabitsActive*/ ctx[1];
+    				validate_each_argument(each_value_2);
     				let i;
 
-    				for (i = 0; i < each_value.length; i += 1) {
-    					const child_ctx = get_each_context$2(ctx, each_value, i);
+    				for (i = 0; i < each_value_2.length; i += 1) {
+    					const child_ctx = get_each_context_2(ctx, each_value_2, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     					} else {
-    						each_blocks[i] = create_each_block$2(child_ctx);
+    						each_blocks[i] = create_each_block_2(child_ctx);
     						each_blocks[i].c();
-    						each_blocks[i].m(div, null);
+    						each_blocks[i].m(div, t);
     					}
     				}
 
@@ -10524,7 +11782,14 @@ var app = (function () {
     					each_blocks[i].d(1);
     				}
 
-    				each_blocks.length = each_value.length;
+    				each_blocks.length = each_value_2.length;
+    			}
+
+    			info.ctx = ctx;
+
+    			if (dirty & /*$isHabitHistoryUpdated*/ 1 && promise !== (promise = /*$isHabitHistoryUpdated*/ ctx[0]) && handle_promise(promise, info)) ; else {
+    				const child_ctx = ctx.slice();
+    				info.block.p(child_ctx, dirty);
     			}
     		},
     		i: function intro(local) {
@@ -10539,6 +11804,9 @@ var app = (function () {
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(div);
     			destroy_each(each_blocks, detaching);
+    			info.block.d();
+    			info.token = null;
+    			info = null;
     		}
     	};
 
@@ -10554,11 +11822,69 @@ var app = (function () {
     }
 
     function instance$h($$self, $$props, $$invalidate) {
-    	let $activeUserHabits;
-    	validate_store(activeUserHabits, "activeUserHabits");
-    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(0, $activeUserHabits = $$value));
+    	let $API_ENDPOINT;
+    	let $adminIdUser;
+    	let $userProfile;
+    	let $isHabitHistoryUpdated;
+    	let $userHabitsActive;
+    	let $isObjectEmpty;
+    	let $userHabitsHistory;
+    	validate_store(API_ENDPOINT, "API_ENDPOINT");
+    	component_subscribe($$self, API_ENDPOINT, $$value => $$invalidate(6, $API_ENDPOINT = $$value));
+    	validate_store(adminIdUser, "adminIdUser");
+    	component_subscribe($$self, adminIdUser, $$value => $$invalidate(7, $adminIdUser = $$value));
+    	validate_store(userProfile, "userProfile");
+    	component_subscribe($$self, userProfile, $$value => $$invalidate(8, $userProfile = $$value));
+    	validate_store(isHabitHistoryUpdated, "isHabitHistoryUpdated");
+    	component_subscribe($$self, isHabitHistoryUpdated, $$value => $$invalidate(0, $isHabitHistoryUpdated = $$value));
+    	validate_store(userHabitsActive, "userHabitsActive");
+    	component_subscribe($$self, userHabitsActive, $$value => $$invalidate(1, $userHabitsActive = $$value));
+    	validate_store(isObjectEmpty, "isObjectEmpty");
+    	component_subscribe($$self, isObjectEmpty, $$value => $$invalidate(2, $isObjectEmpty = $$value));
+    	validate_store(userHabitsHistory, "userHabitsHistory");
+    	component_subscribe($$self, userHabitsHistory, $$value => $$invalidate(3, $userHabitsHistory = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("ScreenHabitHistory", slots, []);
+    	let isHistoryLoaded = false;
+
+    	const getHabitHistory = async () => {
+    		const fetchURL = $API_ENDPOINT + `/habits/${$adminIdUser}/history`;
+
+    		const fetchOptions = {
+    			method: "POST",
+    			headers: { "content-type": "application/json" },
+    			body: JSON.stringify({
+    				habitIdsHistory: $userProfile.habitIdsHistory
+    			})
+    		};
+
+    		const handleErrors = res => {
+    			if (!res.ok) {
+    				return res.text().then(text => {
+    					throw text;
+    				});
+    			}
+
+    			return res.json();
+    		};
+
+    		await fetch(fetchURL, fetchOptions).then(handleErrors).then(res => {
+    			console.log("res", res);
+    			userHabitsHistory.set(res.userHabitsHistory);
+    			isNewDataLoaded.set(true);
+    			isHabitHistoryUpdated.set(true);
+    		}).catch(err => {
+    			// console.clear();
+    			errMessage.set(err);
+
+    			push(`/error`);
+    		});
+    	};
+
+    	if (!$isHabitHistoryUpdated) {
+    		getHabitHistory();
+    	}
+
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
@@ -10566,14 +11892,47 @@ var app = (function () {
     	});
 
     	const click_handler = () => console.log("Habit button clicked");
+    	const click_handler_1 = () => console.log("Habit button clicked");
 
     	$$self.$capture_state = () => ({
-    		activeUserHabits,
+    		userProfile,
+    		userHabitsActive,
+    		userHabitsHistory,
+    		isObjectEmpty,
+    		API_ENDPOINT,
+    		errMessage,
+    		adminIdUser,
+    		isNewDataLoaded,
+    		isHabitHistoryUpdated,
+    		push,
     		fade,
-    		$activeUserHabits
+    		isHistoryLoaded,
+    		getHabitHistory,
+    		$API_ENDPOINT,
+    		$adminIdUser,
+    		$userProfile,
+    		$isHabitHistoryUpdated,
+    		$userHabitsActive,
+    		$isObjectEmpty,
+    		$userHabitsHistory
     	});
 
-    	return [$activeUserHabits, click_handler];
+    	$$self.$inject_state = $$props => {
+    		if ("isHistoryLoaded" in $$props) isHistoryLoaded = $$props.isHistoryLoaded;
+    	};
+
+    	if ($$props && "$$inject" in $$props) {
+    		$$self.$inject_state($$props.$$inject);
+    	}
+
+    	return [
+    		$isHabitHistoryUpdated,
+    		$userHabitsActive,
+    		$isObjectEmpty,
+    		$userHabitsHistory,
+    		click_handler,
+    		click_handler_1
+    	];
     }
 
     class ScreenHabitHistory extends SvelteComponentDev {
@@ -10630,7 +11989,7 @@ var app = (function () {
     			create_component(router.$$.fragment);
     			attr_dev(div, "class", "bg-repeat h-screen w-screen overflow-x-hidden relative");
     			set_style(div, "background-image", "url(/static/subtle-bg/greek-vase.png)");
-    			add_location(div, file$g, 68, 0, 2025);
+    			add_location(div, file$g, 90, 0, 2885);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -10671,57 +12030,67 @@ var app = (function () {
     	let $getIsLocalStorage;
     	let $isLocalStorage;
     	let $LSisUserDefined;
-    	let $LSuserDetails;
-    	let $LSactiveHabits;
+    	let $LSuserProfile;
+    	let $LSuserHabitsActive;
+    	let $LSuserHabitsHistory;
     	let $activeUserAuth;
-    	let $activeUserDetails;
-    	let $activeUserHabits;
+    	let $userProfile;
+    	let $userHabitsActive;
+    	let $userHabitsHistory;
     	let $isNewActiveUserHabitChange;
     	let $isActiveHabitComplete;
+    	let $isNewDataLoaded;
     	let $isActiveUserLive;
     	let $adminIdUser;
     	validate_store(getIsLocalStorage, "getIsLocalStorage");
-    	component_subscribe($$self, getIsLocalStorage, $$value => $$invalidate(5, $getIsLocalStorage = $$value));
+    	component_subscribe($$self, getIsLocalStorage, $$value => $$invalidate(7, $getIsLocalStorage = $$value));
     	validate_store(isLocalStorage, "isLocalStorage");
-    	component_subscribe($$self, isLocalStorage, $$value => $$invalidate(6, $isLocalStorage = $$value));
+    	component_subscribe($$self, isLocalStorage, $$value => $$invalidate(8, $isLocalStorage = $$value));
     	validate_store(LSisUserDefined, "LSisUserDefined");
-    	component_subscribe($$self, LSisUserDefined, $$value => $$invalidate(7, $LSisUserDefined = $$value));
-    	validate_store(LSuserDetails, "LSuserDetails");
-    	component_subscribe($$self, LSuserDetails, $$value => $$invalidate(8, $LSuserDetails = $$value));
-    	validate_store(LSactiveHabits, "LSactiveHabits");
-    	component_subscribe($$self, LSactiveHabits, $$value => $$invalidate(9, $LSactiveHabits = $$value));
+    	component_subscribe($$self, LSisUserDefined, $$value => $$invalidate(9, $LSisUserDefined = $$value));
+    	validate_store(LSuserProfile, "LSuserProfile");
+    	component_subscribe($$self, LSuserProfile, $$value => $$invalidate(10, $LSuserProfile = $$value));
+    	validate_store(LSuserHabitsActive, "LSuserHabitsActive");
+    	component_subscribe($$self, LSuserHabitsActive, $$value => $$invalidate(11, $LSuserHabitsActive = $$value));
+    	validate_store(LSuserHabitsHistory, "LSuserHabitsHistory");
+    	component_subscribe($$self, LSuserHabitsHistory, $$value => $$invalidate(12, $LSuserHabitsHistory = $$value));
     	validate_store(activeUserAuth, "activeUserAuth");
-    	component_subscribe($$self, activeUserAuth, $$value => $$invalidate(10, $activeUserAuth = $$value));
-    	validate_store(activeUserDetails, "activeUserDetails");
-    	component_subscribe($$self, activeUserDetails, $$value => $$invalidate(0, $activeUserDetails = $$value));
-    	validate_store(activeUserHabits, "activeUserHabits");
-    	component_subscribe($$self, activeUserHabits, $$value => $$invalidate(1, $activeUserHabits = $$value));
+    	component_subscribe($$self, activeUserAuth, $$value => $$invalidate(13, $activeUserAuth = $$value));
+    	validate_store(userProfile, "userProfile");
+    	component_subscribe($$self, userProfile, $$value => $$invalidate(0, $userProfile = $$value));
+    	validate_store(userHabitsActive, "userHabitsActive");
+    	component_subscribe($$self, userHabitsActive, $$value => $$invalidate(1, $userHabitsActive = $$value));
+    	validate_store(userHabitsHistory, "userHabitsHistory");
+    	component_subscribe($$self, userHabitsHistory, $$value => $$invalidate(2, $userHabitsHistory = $$value));
     	validate_store(isNewActiveUserHabitChange, "isNewActiveUserHabitChange");
-    	component_subscribe($$self, isNewActiveUserHabitChange, $$value => $$invalidate(2, $isNewActiveUserHabitChange = $$value));
+    	component_subscribe($$self, isNewActiveUserHabitChange, $$value => $$invalidate(3, $isNewActiveUserHabitChange = $$value));
     	validate_store(isActiveHabitComplete, "isActiveHabitComplete");
-    	component_subscribe($$self, isActiveHabitComplete, $$value => $$invalidate(11, $isActiveHabitComplete = $$value));
+    	component_subscribe($$self, isActiveHabitComplete, $$value => $$invalidate(14, $isActiveHabitComplete = $$value));
+    	validate_store(isNewDataLoaded, "isNewDataLoaded");
+    	component_subscribe($$self, isNewDataLoaded, $$value => $$invalidate(4, $isNewDataLoaded = $$value));
     	validate_store(isActiveUserLive, "isActiveUserLive");
-    	component_subscribe($$self, isActiveUserLive, $$value => $$invalidate(3, $isActiveUserLive = $$value));
+    	component_subscribe($$self, isActiveUserLive, $$value => $$invalidate(5, $isActiveUserLive = $$value));
     	validate_store(adminIdUser, "adminIdUser");
-    	component_subscribe($$self, adminIdUser, $$value => $$invalidate(4, $adminIdUser = $$value));
+    	component_subscribe($$self, adminIdUser, $$value => $$invalidate(6, $adminIdUser = $$value));
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("App", slots, []);
     	isLocalStorage.set($getIsLocalStorage());
 
     	if ($isLocalStorage && $LSisUserDefined) {
-    		adminIdUser.set($LSuserDetails.adminIdUser);
-    		activeUserDetails.set($LSuserDetails);
-    		let activeHabitsClean = $LSactiveHabits;
+    		adminIdUser.set($LSuserProfile.adminIdUser);
+    		userProfile.set($LSuserProfile);
+    		let activeHabitsClean = $LSuserHabitsActive;
 
     		while (activeHabitsClean.length < 3) {
     			activeHabitsClean.push(null);
     		}
 
-    		activeUserHabits.set(activeHabitsClean);
+    		userHabitsActive.set(activeHabitsClean);
+    		userHabitsHistory.set($LSuserHabitsHistory);
 
     		// console.log("$LSuserAuth", $LSuserAuth);
-    		// console.log("$LSuserDetails", $LSuserDetails);
-    		// console.log("$LSactiveHabits", $LSactiveHabits);
+    		// console.log("$LSuserProfile", $LSuserProfile);
+    		// console.log("$LSuserHabitsActive", $LSuserHabitsActive);
     		// console.log("$adminIdUser", $adminIdUser);
     		replace("/");
     	} else {
@@ -10731,8 +12100,9 @@ var app = (function () {
     	const updateLocalStorage = () => {
     		if ($isLocalStorage) {
     			LSuserAuth.set($activeUserAuth);
-    			LSuserDetails.set($activeUserDetails);
-    			LSactiveHabits.set($activeUserHabits);
+    			LSuserProfile.set($userProfile);
+    			LSuserHabitsActive.set($userHabitsActive);
+    			LSuserHabitsHistory.set($userHabitsHistory);
     			LSisUserDefined.set(true);
     		}
 
@@ -10744,7 +12114,28 @@ var app = (function () {
     		? isActiveHabitComplete.set(false)
     		: "";
 
+    		$isNewDataLoaded ? isNewDataLoaded.set(false) : "";
     		replace("/");
+    	};
+
+    	const updateLocalStorageWithoutRouteChange = () => {
+    		if ($isLocalStorage) {
+    			LSuserAuth.set($activeUserAuth);
+    			LSuserProfile.set($userProfile);
+    			LSuserHabitsActive.set($userHabitsActive);
+    			LSuserHabitsHistory.set($userHabitsHistory);
+    			LSisUserDefined.set(true);
+    		}
+
+    		$isNewActiveUserHabitChange
+    		? isNewActiveUserHabitChange.set(false)
+    		: "";
+
+    		$isActiveHabitComplete
+    		? isActiveHabitComplete.set(false)
+    		: "";
+
+    		$isNewDataLoaded ? isNewDataLoaded.set(false) : "";
     	};
 
     	onDestroy(() => {
@@ -10767,50 +12158,67 @@ var app = (function () {
     		isActiveUserLive,
     		isNewActiveUserHabitChange,
     		activeUserAuth,
-    		activeUserDetails,
-    		activeUserHabits,
+    		userProfile,
+    		userHabitsActive,
+    		userHabitsHistory,
     		isActiveHabitComplete,
     		adminIdUser,
+    		isNewDataLoaded,
     		LSisUserDefined,
     		LSuserAuth,
-    		LSuserDetails,
-    		LSactiveHabits,
+    		LSuserProfile,
+    		LSuserHabitsActive,
+    		LSuserHabitsHistory,
     		updateLocalStorage,
+    		updateLocalStorageWithoutRouteChange,
     		$getIsLocalStorage,
     		$isLocalStorage,
     		$LSisUserDefined,
-    		$LSuserDetails,
-    		$LSactiveHabits,
+    		$LSuserProfile,
+    		$LSuserHabitsActive,
+    		$LSuserHabitsHistory,
     		$activeUserAuth,
-    		$activeUserDetails,
-    		$activeUserHabits,
+    		$userProfile,
+    		$userHabitsActive,
+    		$userHabitsHistory,
     		$isNewActiveUserHabitChange,
     		$isActiveHabitComplete,
+    		$isNewDataLoaded,
     		$isActiveUserLive,
     		$adminIdUser
     	});
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty & /*$isActiveUserLive*/ 8) {
+    		if ($$self.$$.dirty & /*$isActiveUserLive*/ 32) {
     			 $isActiveUserLive == true ? updateLocalStorage() : "";
     		}
 
-    		if ($$self.$$.dirty & /*$isNewActiveUserHabitChange*/ 4) {
+    		if ($$self.$$.dirty & /*$isNewActiveUserHabitChange*/ 8) {
     			 $isNewActiveUserHabitChange == true
     			? updateLocalStorage()
     			: "";
     		}
 
-    		if ($$self.$$.dirty & /*$activeUserDetails*/ 1) {
-    			 console.log("$activeUserDetails", $activeUserDetails);
+    		if ($$self.$$.dirty & /*$isNewDataLoaded*/ 16) {
+    			 $isNewDataLoaded == true
+    			? updateLocalStorageWithoutRouteChange()
+    			: "";
     		}
 
-    		if ($$self.$$.dirty & /*$activeUserHabits*/ 2) {
-    			 console.log("$activeUserHabits", $activeUserHabits);
-    		}
-
-    		if ($$self.$$.dirty & /*$adminIdUser*/ 16) {
+    		if ($$self.$$.dirty & /*$adminIdUser*/ 64) {
     			 console.log("$adminIdUser", $adminIdUser);
+    		}
+
+    		if ($$self.$$.dirty & /*$userProfile*/ 1) {
+    			 console.log("$userProfile", $userProfile);
+    		}
+
+    		if ($$self.$$.dirty & /*$userHabitsActive*/ 2) {
+    			 console.log("$userHabitsActive", $userHabitsActive);
+    		}
+
+    		if ($$self.$$.dirty & /*$userHabitsHistory*/ 4) {
+    			 console.log("$userHabitsHistory", $userHabitsHistory);
     		}
     	};
 
@@ -10819,9 +12227,11 @@ var app = (function () {
     	: "";
 
     	return [
-    		$activeUserDetails,
-    		$activeUserHabits,
+    		$userProfile,
+    		$userHabitsActive,
+    		$userHabitsHistory,
     		$isNewActiveUserHabitChange,
+    		$isNewDataLoaded,
     		$isActiveUserLive,
     		$adminIdUser
     	];

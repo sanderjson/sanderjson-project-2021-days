@@ -22,6 +22,7 @@ const contentHabitDetailCategoryData = [
 ];
 
 const contentHabitDurationData = [
+	{ disabled: false, value: 300, text: `5 min` },
 	{ disabled: false, value: 3600, text: `1 hour` },
 	{ disabled: false, value: 3600 * 24, text: `24 hours` },
 	{ disabled: false, value: 3600 * 24 * 3, text: `3 days` },
@@ -31,7 +32,11 @@ const contentHabitDurationData = [
 	{ disabled: true, value: 3600 * 24 * 365, text: `1 year` },
 ];
 
-// function to test if local storage is enabled
+export const contentHabitDetailCategory = readable(
+	contentHabitDetailCategoryData
+);
+export const contentHabitDuration = readable(contentHabitDurationData);
+
 const isLocalStorageFun = () => {
 	if (typeof localStorage !== "undefined") {
 		try {
@@ -53,6 +58,15 @@ const isLocalStorageFun = () => {
 		return false;
 	}
 };
+
+const isObjectEmptyFun = (obj) => {
+	for (let i in obj) return false;
+	return true;
+};
+
+export const getIsLocalStorage = readable(isLocalStorageFun);
+export const isLocalStorage = writable(null);
+export const isObjectEmpty = readable(isObjectEmptyFun);
 
 const getUserProfileBlankFun = () => {
 	return {
@@ -104,14 +118,8 @@ const getUserHabitBlankFun = () => {
 	};
 };
 
-// content edit
-export const contentHabitDetailCategory = readable(
-	contentHabitDetailCategoryData
-);
-export const contentHabitDuration = readable(contentHabitDurationData);
-
-export const getIsLocalStorage = readable(isLocalStorageFun);
-export const isLocalStorage = writable(null);
+export const getUserProfileBlank = readable(getUserProfileBlankFun);
+export const getUserHabitBlank = readable(getUserHabitBlankFun);
 
 export const errMessage = writable(null);
 export const API_ENDPOINT = readable(
@@ -132,17 +140,16 @@ const tempUserDetailsData = {};
 const tempActiveHabitsData = [{}, {}, {}];
 
 // active...Data is what the app uses -> see App.svelte
-const activeUserDetailsData = getUserProfileBlankFun();
-const activeUserHabitsData = [null, null, null];
-
-export const getUserProfileBlank = readable(getUserProfileBlankFun);
-export const getUserHabitBlank = readable(getUserHabitBlankFun);
+const userProfileData = getUserProfileBlankFun();
+const userHabitsActiveData = [null, null, null];
+const userHabitsHistoryData = [];
 
 export const tempIsUserDefined = writable(false);
 export const tempUserDetails = writable(tempUserDetailsData);
 export const tempActiveHabits = writable(tempActiveHabitsData);
-export const activeUserDetails = writable(activeUserDetailsData);
-export const activeUserHabits = writable(activeUserHabitsData);
+export const userProfile = writable(userProfileData);
+export const userHabitsActive = writable(userHabitsActiveData);
+export const userHabitsHistory = writable(userHabitsHistoryData);
 
 // for iterating over active habits
 export const currentActiveHabit = writable(0);
@@ -156,12 +163,5 @@ export const isNewActiveUserHabitChange = writable(false);
 export const tempUserHabit = writable({});
 export const isActiveHabitComplete = writable(false);
 
-//
-// API REWRITE :)
-//
-
-const isObjectEmptyFun = (obj) => {
-	for (let i in obj) return false;
-	return true;
-};
-export const isObjectEmpty = readable(isObjectEmptyFun);
+export const isNewDataLoaded = writable(false);
+export const isHabitHistoryUpdated = writable(false);

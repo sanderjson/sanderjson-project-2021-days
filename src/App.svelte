@@ -9,31 +9,36 @@
     isActiveUserLive,
     isNewActiveUserHabitChange,
     activeUserAuth,
-    activeUserDetails,
-    activeUserHabits,
+    userProfile,
+    userHabitsActive,
+    userHabitsHistory,
     isActiveHabitComplete,
-    adminIdUser
+    adminIdUser,
+    isNewDataLoaded
   } from "./stores.js";
   import {
     LSisUserDefined,
     LSuserAuth,
-    LSuserDetails,
-    LSactiveHabits
+    LSuserProfile,
+    LSuserHabitsActive,
+    LSuserHabitsHistory
   } from "./localStorage.js";
 
   // loads user profile from local storage
   isLocalStorage.set($getIsLocalStorage());
   if ($isLocalStorage && $LSisUserDefined) {
-    adminIdUser.set($LSuserDetails.adminIdUser);
-    activeUserDetails.set($LSuserDetails);
-    let activeHabitsClean = $LSactiveHabits;
+    adminIdUser.set($LSuserProfile.adminIdUser);
+    userProfile.set($LSuserProfile);
+    let activeHabitsClean = $LSuserHabitsActive;
     while (activeHabitsClean.length < 3) {
       activeHabitsClean.push(null);
     }
-    activeUserHabits.set(activeHabitsClean);
+    userHabitsActive.set(activeHabitsClean);
+    userHabitsHistory.set($LSuserHabitsHistory);
+
     // console.log("$LSuserAuth", $LSuserAuth);
-    // console.log("$LSuserDetails", $LSuserDetails);
-    // console.log("$LSactiveHabits", $LSactiveHabits);
+    // console.log("$LSuserProfile", $LSuserProfile);
+    // console.log("$LSuserHabitsActive", $LSuserHabitsActive);
     // console.log("$adminIdUser", $adminIdUser);
     replace("/");
   } else {
@@ -43,23 +48,40 @@
   const updateLocalStorage = () => {
     if ($isLocalStorage) {
       LSuserAuth.set($activeUserAuth);
-      LSuserDetails.set($activeUserDetails);
-      LSactiveHabits.set($activeUserHabits);
+      LSuserProfile.set($userProfile);
+      LSuserHabitsActive.set($userHabitsActive);
+      LSuserHabitsHistory.set($userHabitsHistory);
       LSisUserDefined.set(true);
     }
     $isNewActiveUserHabitChange ? isNewActiveUserHabitChange.set(false) : "";
     $isActiveHabitComplete ? isActiveHabitComplete.set(false) : "";
+    $isNewDataLoaded ? isNewDataLoaded.set(false) : "";
 
     replace("/");
+  };
+
+  const updateLocalStorageWithoutRouteChange = () => {
+    if ($isLocalStorage) {
+      LSuserAuth.set($activeUserAuth);
+      LSuserProfile.set($userProfile);
+      LSuserHabitsActive.set($userHabitsActive);
+      LSuserHabitsHistory.set($userHabitsHistory);
+      LSisUserDefined.set(true);
+    }
+    $isNewActiveUserHabitChange ? isNewActiveUserHabitChange.set(false) : "";
+    $isActiveHabitComplete ? isActiveHabitComplete.set(false) : "";
+    $isNewDataLoaded ? isNewDataLoaded.set(false) : "";
   };
 
   $: $isActiveUserLive == true ? updateLocalStorage() : "";
   $: $isNewActiveUserHabitChange == true ? updateLocalStorage() : "";
   $: isActiveHabitComplete == true ? updateLocalStorage() : "";
+  $: $isNewDataLoaded == true ? updateLocalStorageWithoutRouteChange() : "";
 
-  $: console.log("$activeUserDetails", $activeUserDetails);
-  $: console.log("$activeUserHabits", $activeUserHabits);
   $: console.log("$adminIdUser", $adminIdUser);
+  $: console.log("$userProfile", $userProfile);
+  $: console.log("$userHabitsActive", $userHabitsActive);
+  $: console.log("$userHabitsHistory", $userHabitsHistory);
 
   onDestroy(() => {
     isActiveUserLive.set(false);

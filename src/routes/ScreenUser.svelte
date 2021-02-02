@@ -2,7 +2,7 @@
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeader from "../components/AppHeader.svelte";
   import Counter from "../components/Counter.svelte";
-  import { activeUserDetails } from "../stores.js";
+  import { userProfile } from "../stores.js";
 
   export let params;
 
@@ -23,9 +23,9 @@
   }, 1000);
 
   let dateStart = new Date(
-    $activeUserDetails.habitDateStartUTCString
+    $userProfile.habitDateStartUTCString
   ).getTime();
-  let dateEnd = new Date($activeUserDetails.habitDateEndUTCString).getTime();
+  let dateEnd = new Date($userProfile.habitDateEndUTCString).getTime();
   let dateCurrent = new Date().getTime();
   let daysIn = calDaysIn(dateStart, dateCurrent);
   let updateTime = dateEnd - dateCurrent;
@@ -41,14 +41,14 @@
 <ContentWrapper>
   <div class="space-y-6">
     <p class="text-sm font-bold text-gray-700">
-      Hey {$activeUserDetails.name}!
+      Hey {$userProfile.name}!
     </p>
     <p class="text-sm font-medium text-gray-500 ">
-      You have challenged yourself to {$activeUserDetails.habitType ? 'start' : 'kick'}
-      {$activeUserDetails.habit}. You made this decision here {$activeUserDetails.habitDateStartUTCString}.
+      You have challenged yourself to {$userProfile.habitType ? 'start' : 'kick'}
+      {$userProfile.habit}. You made this decision here {$userProfile.habitDateStartUTCString}.
     </p>
     <p class="text-sm font-medium text-gray-500 ">
-      By {$activeUserDetails.habitDateEndUTCString} you will have achieved your
+      By {$userProfile.habitDateEndUTCString} you will have achieved your
       twenty-one day goal.
     </p>
     <div class="text-center text-gray-300">{updateTime} seconds</div>

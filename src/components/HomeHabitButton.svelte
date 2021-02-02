@@ -3,7 +3,7 @@
     currentActiveHabit,
     errMessage,
     API_ENDPOINT,
-    activeUserHabits,
+    userHabitsActive,
     isNewActiveUserHabitChange,
     getUserHabitBlank
   } from "../stores.js";
@@ -59,9 +59,9 @@
       .then(handleErrors)
       .then(res => {
         // console.log("res", res);
-        let newHabitData = $activeUserHabits;
+        let newHabitData = $userHabitsActive;
         newHabitData[$currentActiveHabit] = res.updatedHabit;
-        activeUserHabits.set(newHabitData);
+        userHabitsActive.set(newHabitData);
         isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {
@@ -72,9 +72,9 @@
   };
 
   const handleHabitIsComplete = () => {
-    let newHabitData = $activeUserHabits;
+    let newHabitData = $userHabitsActive;
     newHabitData[i].adminIsActive = false;
-    activeUserHabits.set(newHabitData);
+    userHabitsActive.set(newHabitData);
   };
 
   const getTimeRemaining = (endTime, curTime) => {
@@ -135,7 +135,15 @@
         {#if habit}
           {#if habit.detailDuration > 86400}
             {habit.detailDuration / 86400} days
-          {:else if habit.detailDuration == 86400}24 hours{:else}1 hour{/if}
+          {:else if habit.detailDuration == 86400}
+            24 hours
+          {:else if habit.detailDuration > 3600}
+            {habit.detailDuration / 3600} hours
+          {:else if habit.detailDuration == 3600}
+            60 mins
+          {:else if habit.detailDuration > 60}
+            {habit.detailDuration / 60} mins
+          {:else}1 min{/if}
         {:else}Time{/if}
       </div>
       <div class="mt-1 text-6xl font-extrabold text-center text-blue-900">

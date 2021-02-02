@@ -2,8 +2,9 @@
   import {
     currentActiveHabit,
     isNewSocialModal,
-    activeUserDetails,
-    activeUserHabits,
+    userProfile,
+    userHabitsActive,
+    userHabitsHistory,
     API_ENDPOINT,
     getUserHabitBlank,
     isActiveHabitComplete,
@@ -19,6 +20,11 @@
   import Modal from "../components/Modal.svelte";
 
   let selected;
+  let userHabitsActiveClean = $userHabitsActive.filter(habit => {
+    if (!$isObjectEmpty(habit)) {
+      return habit;
+    }
+  });
 
   const contentModalSocial = {
     title: "Social Share Unavailable",
@@ -119,10 +125,10 @@
   <section class="home-user home-user2 pt-6">
     <h1 class="user-title text-center ">
       <div class="text-lg font-bold leading-tight">
-        {$activeUserDetails.detailName}
+        {$userProfile.detailName}
       </div>
       <div class="text-sm font-extrabold leading-tight text-blue-900">
-        {$activeUserDetails.detailTitle}
+        {$userProfile.detailTitle}
       </div>
     </h1>
     <div class="user-img relative">
@@ -135,18 +141,18 @@
         style="font-family: 'Bungee', cursive; width: 168px; height 168px;"
         class="relative rounded-full m-1 z-0 text-9xl flex justify-center
         items-center h-full">
-        <span>{$activeUserDetails.detailInitials}</span>
+        <span>{$userProfile.detailInitials}</span>
       </div>
     </div>
     <div
       class="user-stat1 bg-white text-lg border-1 h-10 w-10 flex justify-center
       items-center rounded-full border-blue-100 font-extrabold shadow ml-5">
-      <span>{$activeUserHabits.length}</span>
+      <span>{userHabitsActiveClean.length}</span>
     </div>
     <div
       class="user-stat2 bg-white text-lg border-1 h-10 w-10 flex justify-center
       items-center rounded-full border-blue-100 font-extrabold shadow mr-5">
-      <span>{$activeUserDetails.habitIdsHistory.length}</span>
+      <span>{$userHabitsHistory.length}</span>
     </div>
     <button
       on:click={handleButtonHistory}
@@ -171,12 +177,12 @@
     <div
       class="relative bg-white h-full py-2 px-2 shadow rounded sm:rounded-lg
       sm:px-10 text-left">
-      {#if $activeUserHabits[$currentActiveHabit] && !$isObjectEmpty($activeUserHabits[$currentActiveHabit])}
+      {#if $userHabitsActive[$currentActiveHabit] && !$isObjectEmpty($userHabitsActive[$currentActiveHabit])}
         <h1 class="text-xl font-bold">
-          {$activeUserHabits[$currentActiveHabit].detailTitle}
+          {$userHabitsActive[$currentActiveHabit].detailTitle}
         </h1>
         <p class="text-base mt-1 text-gray-700">
-          {$activeUserHabits[$currentActiveHabit].detailDescription}
+          {$userHabitsActive[$currentActiveHabit].detailDescription}
         </p>
         <button
           on:click={handleHabitEdit}
@@ -199,7 +205,7 @@
   <section
     class="home-habit-select pt-3 grid grid-cols-3 grid-rows-1 gap-3 sm:mx-auto
     sm:w-full sm:max-w-md">
-    {#each $activeUserHabits as habit, i}
+    {#each $userHabitsActive as habit, i}
       {#if habit && !$isObjectEmpty(habit)}
         <HomeHabitButton {habit} {i} />
       {:else}

@@ -5,10 +5,11 @@
     API_ENDPOINT,
     currentActiveHabit,
     getUserHabitBlank,
+    isHabitHistoryUpdated,
     isNewActiveUserHabitChange,
     adminIdUser,
-    activeUserHabits,
-    activeUserDetails,
+    userHabitsActive,
+    userProfile,
     tempUserHabit
   } from "../stores.js";
   import { push } from "svelte-spa-router";
@@ -23,7 +24,7 @@
     button: "Delete Habit Data"
   };
 
-  let tempLocalUserHabit = $activeUserHabits[$currentActiveHabit];
+  let tempLocalUserHabit = $userHabitsActive[$currentActiveHabit];
   tempLocalUserHabit.reflectIsSuccessful = true;
   tempLocalUserHabit.reflectDifficulty = 5;
   tempLocalUserHabit.reflectRecommend = true;
@@ -41,15 +42,16 @@
   };
 
   const handleModalDeleteAction = async () => {
-    const fetchURL = $API_ENDPOINT + "/deleteExistingHabit";
+    const fetchURL =
+      $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
     const fetchOptions = {
-      method: "POST",
+      method: "DELETE",
       headers: {
         "content-type": "application/json"
       },
 
       body: JSON.stringify({
-        adminHabitId: tempLocalUserHabit.adminHabitId
+        ...tempLocalUserHabit
       })
     };
 
@@ -65,14 +67,15 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        // res = null
-        let newHabitData = $activeUserHabits;
-        newHabitData[$currentActiveHabit] = null;
-        activeUserHabits.set(newHabitData);
+        console.log("res", res);
+        let newHabitData = $userHabitsActive;
+        newHabitData[$currentActiveHabit] = {};
+        userHabitsActive.set(newHabitData);
+        userProfile.set(res.userProfile);
         isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {
-        console.clear();
+        // console.clear();
         errMessage.set(err);
         push(`/error`);
       });
@@ -111,10 +114,10 @@
       .then(handleErrors)
       .then(res => {
         console.log("res", res);
-        let newHabitData = $activeUserHabits;
-        newHabitData[$currentActiveHabit] = res.updatedHabit;
-        activeUserHabits.set(newHabitData);
-        activeUserDetails.set(res.updatedUser);
+        let newHabitData = $userHabitsActive;
+        newHabitData[$currentActiveHabit] = {};
+        userHabitsActive.set(newHabitData);
+        userProfile.set(res.updatedUser);
         isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {

@@ -12,15 +12,16 @@
     getUserHabitBlank,
     activeUserAuth,
     adminIdUser,
-    activeUserDetails,
-    activeUserHabits,
+    userProfile,
+    userHabitsActive,
+    userHabitsHistory,
     isActiveUserLive
   } from "../stores.js";
   import {
     LSisUserDefined,
     LSuserAuth,
-    LSuserDetails,
-    LSactiveHabits
+    LSuserProfile,
+    LSuserHabitsActive
   } from "../localStorage.js";
 
   let userTemp = {
@@ -54,18 +55,17 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        console.log("res", res);
-
-        let activeHabitsRes = res.userActiveHabits;
+        // console.log("res", res);
+        activeUserAuth.set(res.userAuth);
+        userProfile.set(res.userProfile);
+        adminIdUser.set(res.userProfile.adminIdUser);
+        let activeHabitsRes = res.userHabitsHistory;
         let activeHabitsClean = [{}, {}, {}];
         for (const [index, habit] of activeHabitsRes.entries()) {
           activeHabitsClean[habit.adminActivePosition] = habit;
         }
-
-        activeUserAuth.set(res.userAuth);
-        activeUserDetails.set(res.userDetails);
-        adminIdUser.set(res.userDetails.adminIdUser);
-        activeUserHabits.set(activeHabitsClean);
+        userHabitsActive.set(activeHabitsClean);
+        userHabitsHistory.set(res.userHabitsHistory);
         isActiveUserLive.set(true);
       })
       .catch(err => {
@@ -79,16 +79,10 @@
     // clean all local storage on start screen
     if ($isLocalStorage) {
       LSuserAuth.set(null);
-      LSuserDetails.set(null);
-      LSactiveHabits.set([null, null, null]);
+      LSuserProfile.set(null);
+      LSuserHabitsActive.set([null, null, null]);
       LSisUserDefined.set(false);
     }
-    // already set to the initial values
-    // console.log("$activeUserAuth", $activeUserAuth);
-    // console.log("$adminIdUser", $adminIdUser);
-    // console.log("$activeUserDetails", $activeUserDetails);
-    // console.log("$activeUserHabits", $activeUserHabits);
-    // console.log("$isActiveUserLive", $isActiveUserLive);
   });
 </script>
 

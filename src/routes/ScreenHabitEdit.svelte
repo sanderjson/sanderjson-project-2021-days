@@ -7,8 +7,8 @@
     getUserHabitBlank,
     isNewActiveUserHabitChange,
     adminIdUser,
-    activeUserHabits,
-    activeUserDetails,
+    userHabitsActive,
+    userProfile,
     tempUserHabit
   } from "../stores.js";
   import { push } from "svelte-spa-router";
@@ -17,7 +17,7 @@
   import Modal from "../components/Modal.svelte";
   import AddEditDeleteHabit from "../components/AddEditDeleteHabit.svelte";
 
-  let tempLocalUserHabit = $activeUserHabits[$currentActiveHabit];
+  let tempLocalUserHabit = $userHabitsActive[$currentActiveHabit];
 
   let contentModalDelete = {
     title: "Are You Sure You Want to Delete?",
@@ -52,10 +52,10 @@
       .then(handleErrors)
       .then(res => {
         console.log("res", res);
-        let newHabitData = $activeUserHabits;
+        let newHabitData = $userHabitsActive;
         newHabitData[$currentActiveHabit] = {};
-        activeUserHabits.set(newHabitData);
-        activeUserDetails.set(res.userProfile);
+        userHabitsActive.set(newHabitData);
+        userProfile.set(res.userProfile);
         isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {
@@ -99,9 +99,9 @@
       .then(handleErrors)
       .then(res => {
         console.log("res", res);
-        let newHabitData = $activeUserHabits;
+        let newHabitData = $userHabitsActive;
         newHabitData[$currentActiveHabit] = res.updatedHabit;
-        activeUserHabits.set(newHabitData);
+        userHabitsActive.set(newHabitData);
         isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {

@@ -7,8 +7,8 @@
     getUserHabitBlank,
     isNewActiveUserHabitChange,
     adminIdUser,
-    activeUserDetails,
-    activeUserHabits
+    userProfile,
+    userHabitsActive
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
@@ -52,10 +52,10 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        activeUserDetails.set(res.userDetails);
-        let newHabitData = $activeUserHabits;
+        userProfile.set(res.userDetails);
+        let newHabitData = $userHabitsActive;
         newHabitData[$currentActiveHabit] = res.newHabit;
-        activeUserHabits.set(newHabitData);
+        userHabitsActive.set(newHabitData);
         isNewActiveUserHabitChange.set(true);
       })
       .catch(err => {

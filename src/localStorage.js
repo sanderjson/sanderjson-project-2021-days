@@ -6,16 +6,25 @@ const LSuserAuthData = {
 	prop3: null,
 };
 
-const LSuserDetailsData = {
-	name: "",
-	habit: "",
-	habitType: null,
-	habitCategory: [],
-	habitDateStartUTCString: "",
-	habitDateEndUTCString: "",
+const LSuserProfileData = {
+	adminDateCreated: null,
+	adminOther: {},
+	adminIdPod: null,
+	adminIdUser: null,
+	adminScoreUser: 0,
+	detailEmail: "",
+	detailImage: "",
+	detailInitials: "",
+	detailIsAccountPrivate: null,
+	detailName: "",
+	detailPassword: "",
+	detailSocialAccounts: {},
+	detailTitle: "",
+	habitIdsActive: [],
+	habitIdsHistory: [],
 };
 
-const LSactiveHabitsData = [
+const LSuserHabitsActiveData = [
 	{
 		prop1: 1,
 	},
@@ -27,7 +36,11 @@ const LSactiveHabitsData = [
 	},
 ];
 
-export const LSisUserDefined = writable("isUserDefined", false);
-export const LSuserAuth = writable("userAuth", LSuserAuthData);
-export const LSuserDetails = writable("userDetails", LSuserDetailsData);
-export const LSactiveHabits = writable("activeHabits", LSactiveHabitsData);
+export const LSisUserDefined = writable("LSisUserDefined", false);
+export const LSuserAuth = writable("LSuserAuth", LSuserAuthData);
+export const LSuserProfile = writable("LSuserProfile", LSuserProfileData);
+export const LSuserHabitsActive = writable(
+	"LSuserHabitsActive",
+	LSuserHabitsActiveData
+);
+export const LSuserHabitsHistory = writable("LSuserHabitsHistory", []);

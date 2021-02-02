@@ -4,7 +4,7 @@
     contentHabitDetailCategory,
     contentHabitDuration,
     currentActiveHabit,
-    activeUserHabits,
+    userHabitsActive,
     tempUserHabit,
     getUserHabitBlank
   } from "../stores.js";
