@@ -10,7 +10,7 @@ const LSuserProfileData = {
 	adminDateCreated: null,
 	adminOther: {},
 	adminIdPod: null,
-	adminIdUser: null,
+	userId: null,
 	adminScoreUser: 0,
 	detailEmail: "",
 	detailImage: "",

@@ -1,10 +1,8 @@
-import ScreenUser from "./routes/ScreenUser.svelte";
-import ScreenStart from "./routes/ScreenStart.svelte";
-import ScreenSignUp from "./routes/ScreenSignUp.svelte";
-import ScreenAbout from "./routes/ScreenAbout.svelte";
 import ScreenError from "./routes/ScreenError.svelte";
+import ScreenAbout from "./routes/ScreenAbout.svelte";
+import ScreenSignUp from "./routes/ScreenSignUp.svelte";
+import ScreenStart from "./routes/ScreenStart.svelte";
 import ScreenHome from "./routes/ScreenHome.svelte";
-// import ScreenHabitAddEditDelete from "./routes/ScreenHabitAddEditDelete.svelte";
 import ScreenHabitAdd from "./routes/ScreenHabitAdd.svelte";
 import ScreenHabitEdit from "./routes/ScreenHabitEdit.svelte";
 import ScreenHabitReflect from "./routes/ScreenHabitReflect.svelte";

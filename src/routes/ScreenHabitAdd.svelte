@@ -3,12 +3,12 @@
   import {
     errMessage,
     API_ENDPOINT,
-    currentActiveHabit,
+    indexActiveHabit,
     getUserHabitBlank,
-    isNewActiveUserHabitChange,
-    adminIdUser,
+    userId,
     userProfile,
-    userHabitsActive
+    userHabitsActive,
+    isDataOutdated
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
@@ -24,11 +24,11 @@
 
   const handleSubmitCreateNewHabit = async () => {
     Object.assign(tempLocalUserHabit, {
-      adminActivePosition: $currentActiveHabit,
-      adminIdUser: $adminIdUser
+      adminActivePosition: $indexActiveHabit,
+      userId: $userId
     });
 
-    const fetchURL = $API_ENDPOINT + `/habits/${$adminIdUser}`;
+    const fetchURL = $API_ENDPOINT + `/habits/${$userId}`;
     const fetchOptions = {
       method: "POST",
       headers: {
@@ -52,11 +52,12 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
+        // console.log("res", res);
         userProfile.set(res.userDetails);
         let newHabitData = $userHabitsActive;
-        newHabitData[$currentActiveHabit] = res.newHabit;
+        newHabitData[$indexActiveHabit] = res.newHabit;
         userHabitsActive.set(newHabitData);
-        isNewActiveUserHabitChange.set(true);
+        isDataOutdated.set(true);
       })
       .catch(err => {
         console.clear();

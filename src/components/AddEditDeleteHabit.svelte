@@ -2,11 +2,7 @@
   import { onMount } from "svelte";
   import {
     contentHabitDetailCategory,
-    contentHabitDuration,
-    currentActiveHabit,
-    userHabitsActive,
-    tempUserHabit,
-    getUserHabitBlank
+    contentHabitDuration
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import ContentWrapper from "../components/ContentWrapper.svelte";
@@ -36,15 +32,11 @@
     tempLocalUserHabit.adminDateStartUTCString = dateStart.toUTCString();
     tempLocalUserHabit.adminDateEndUTCString = dateEnd.toUTCString();
     tempLocalUserHabit.detailDuration = option.value;
-    // console.log("after toUTCString() dateStart", dateStart);
-    // console.log("after toUTCString() dateEnd", dateEnd);
   };
 
   const handleToggleHabit = () => {
     tempLocalUserHabit.detailIsNewHabit = !tempLocalUserHabit.detailIsNewHabit;
   };
-
-  // $: console.log("tempLocalUserHabit", tempLocalUserHabit);
 
   onMount(() => {
     tempLocalUserHabit.adminIsActive

@@ -32,11 +32,6 @@ const contentHabitDurationData = [
 	{ disabled: true, value: 3600 * 24 * 365, text: `1 year` },
 ];
 
-export const contentHabitDetailCategory = readable(
-	contentHabitDetailCategoryData
-);
-export const contentHabitDuration = readable(contentHabitDurationData);
-
 const isLocalStorageFun = () => {
 	if (typeof localStorage !== "undefined") {
 		try {
@@ -64,16 +59,12 @@ const isObjectEmptyFun = (obj) => {
 	return true;
 };
 
-export const getIsLocalStorage = readable(isLocalStorageFun);
-export const isLocalStorage = writable(null);
-export const isObjectEmpty = readable(isObjectEmptyFun);
-
 const getUserProfileBlankFun = () => {
 	return {
 		adminDateCreated: null,
 		adminOther: {},
 		adminIdPod: null,
-		adminIdUser: null,
+		userId: null,
 		adminScoreUser: 0,
 		detailEmail: "",
 		detailImage: "",
@@ -93,7 +84,7 @@ const getUserHabitBlankFun = () => {
 		adminActivePosition: null,
 		adminDateEndUTCString: "",
 		adminDateStartUTCString: "",
-		adminIdUser: null,
+		userId: null,
 		adminIdHabit: null,
 		adminIdSeries: null,
 		adminIsActive: null,
@@ -118,50 +109,40 @@ const getUserHabitBlankFun = () => {
 	};
 };
 
-export const getUserProfileBlank = readable(getUserProfileBlankFun);
-export const getUserHabitBlank = readable(getUserHabitBlankFun);
-
-export const errMessage = writable(null);
-export const API_ENDPOINT = readable(
-	"https://sanderjson-pr-2021-days.builtwithdark.com"
-);
-
-const activeUserAuthData = {
+const userAuthData = {
 	prop1: null,
 	prop2: null,
 	prop3: null,
 };
 
-export const activeUserAuth = writable(activeUserAuthData);
-export const isActiveUserLive = writable(false);
-
-// temp...Data to be used if LS is not available
-const tempUserDetailsData = {};
-const tempActiveHabitsData = [{}, {}, {}];
-
-// active...Data is what the app uses -> see App.svelte
 const userProfileData = getUserProfileBlankFun();
 const userHabitsActiveData = [null, null, null];
 const userHabitsHistoryData = [];
 
-export const tempIsUserDefined = writable(false);
-export const tempUserDetails = writable(tempUserDetailsData);
-export const tempActiveHabits = writable(tempActiveHabitsData);
+export const contentHabitDetailCategory = readable(
+	contentHabitDetailCategoryData
+);
+export const contentHabitDuration = readable(contentHabitDurationData);
+
+export const userId = writable(null);
+export const userAuth = writable(userAuthData);
 export const userProfile = writable(userProfileData);
 export const userHabitsActive = writable(userHabitsActiveData);
 export const userHabitsHistory = writable(userHabitsHistoryData);
 
-// for iterating over active habits
-export const currentActiveHabit = writable(0);
-// flag for social media
+export const indexActiveHabit = writable(0);
+
 export const isNewSocialModal = writable(false);
+export const isDataOutdated = writable(true);
+export const isDataOutdatedHistory = writable(true);
+export const isLocalStorage = writable(null);
+export const isObjectEmpty = readable(isObjectEmptyFun);
 
-export const adminIdUser = writable(null);
+export const getUserProfileBlank = readable(getUserProfileBlankFun);
+export const getUserHabitBlank = readable(getUserHabitBlankFun);
+export const getIsLocalStorage = readable(isLocalStorageFun);
 
-// adding new habits
-export const isNewActiveUserHabitChange = writable(false);
-export const tempUserHabit = writable({});
-export const isActiveHabitComplete = writable(false);
-
-export const isNewDataLoaded = writable(false);
-export const isHabitHistoryUpdated = writable(false);
+export const errMessage = writable(null);
+export const API_ENDPOINT = readable(
+	"https://sanderjson-pr-2021-days.builtwithdark.com"
+);

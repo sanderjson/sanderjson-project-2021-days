@@ -3,13 +3,10 @@
   import {
     errMessage,
     API_ENDPOINT,
-    currentActiveHabit,
-    getUserHabitBlank,
-    isNewActiveUserHabitChange,
-    adminIdUser,
+    indexActiveHabit,
     userHabitsActive,
     userProfile,
-    tempUserHabit
+    isDataOutdated
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
@@ -17,7 +14,7 @@
   import Modal from "../components/Modal.svelte";
   import AddEditDeleteHabit from "../components/AddEditDeleteHabit.svelte";
 
-  let tempLocalUserHabit = $userHabitsActive[$currentActiveHabit];
+  let tempLocalUserHabit = $userHabitsActive[$indexActiveHabit];
 
   let contentModalDelete = {
     title: "Are You Sure You Want to Delete?",
@@ -53,10 +50,10 @@
       .then(res => {
         console.log("res", res);
         let newHabitData = $userHabitsActive;
-        newHabitData[$currentActiveHabit] = {};
+        newHabitData[$indexActiveHabit] = {};
         userHabitsActive.set(newHabitData);
         userProfile.set(res.userProfile);
-        isNewActiveUserHabitChange.set(true);
+        isDataOutdated.set(true);
       })
       .catch(err => {
         // console.clear();
@@ -98,11 +95,11 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        console.log("res", res);
+        // console.log("res", res);
         let newHabitData = $userHabitsActive;
-        newHabitData[$currentActiveHabit] = res.updatedHabit;
+        newHabitData[$indexActiveHabit] = res.updatedHabit;
         userHabitsActive.set(newHabitData);
-        isNewActiveUserHabitChange.set(true);
+        isDataOutdated.set(true);
       })
       .catch(err => {
         // console.clear();

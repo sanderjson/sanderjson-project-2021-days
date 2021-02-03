@@ -1,13 +1,11 @@
 <script>
   import {
-    currentActiveHabit,
+    indexActiveHabit,
     isNewSocialModal,
     userProfile,
     userHabitsActive,
     userHabitsHistory,
     API_ENDPOINT,
-    getUserHabitBlank,
-    isActiveHabitComplete,
     isObjectEmpty
   } from "../stores.js";
   import { fade } from "svelte/transition";
@@ -177,12 +175,12 @@
     <div
       class="relative bg-white h-full py-2 px-2 shadow rounded sm:rounded-lg
       sm:px-10 text-left">
-      {#if $userHabitsActive[$currentActiveHabit] && !$isObjectEmpty($userHabitsActive[$currentActiveHabit])}
+      {#if $userHabitsActive[$indexActiveHabit] && !$isObjectEmpty($userHabitsActive[$indexActiveHabit])}
         <h1 class="text-xl font-bold">
-          {$userHabitsActive[$currentActiveHabit].detailTitle}
+          {$userHabitsActive[$indexActiveHabit].detailTitle}
         </h1>
         <p class="text-base mt-1 text-gray-700">
-          {$userHabitsActive[$currentActiveHabit].detailDescription}
+          {$userHabitsActive[$indexActiveHabit].detailDescription}
         </p>
         <button
           on:click={handleHabitEdit}

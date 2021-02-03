@@ -10,18 +10,19 @@
     API_ENDPOINT,
     isLocalStorage,
     getUserHabitBlank,
-    activeUserAuth,
-    adminIdUser,
+    userAuth,
+    userId,
     userProfile,
     userHabitsActive,
     userHabitsHistory,
-    isActiveUserLive
+    isDataOutdated
   } from "../stores.js";
   import {
     LSisUserDefined,
     LSuserAuth,
     LSuserProfile,
-    LSuserHabitsActive
+    LSuserHabitsActive,
+    LSuserHabitsHistory
   } from "../localStorage.js";
 
   let userTemp = {
@@ -56,9 +57,9 @@
       .then(handleErrors)
       .then(res => {
         // console.log("res", res);
-        activeUserAuth.set(res.userAuth);
+        userAuth.set(res.userAuth);
         userProfile.set(res.userProfile);
-        adminIdUser.set(res.userProfile.adminIdUser);
+        userId.set(res.userProfile.userId);
         let activeHabitsRes = res.userHabitsHistory;
         let activeHabitsClean = [{}, {}, {}];
         for (const [index, habit] of activeHabitsRes.entries()) {
@@ -66,7 +67,7 @@
         }
         userHabitsActive.set(activeHabitsClean);
         userHabitsHistory.set(res.userHabitsHistory);
-        isActiveUserLive.set(true);
+        isDataOutdated.set(true);
       })
       .catch(err => {
         console.clear();
@@ -81,6 +82,7 @@
       LSuserAuth.set(null);
       LSuserProfile.set(null);
       LSuserHabitsActive.set([null, null, null]);
+      LSuserHabitsHistory.set([]);
       LSisUserDefined.set(false);
     }
   });

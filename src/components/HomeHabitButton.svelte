@@ -1,11 +1,10 @@
 <script>
   import {
-    currentActiveHabit,
+    indexActiveHabit,
     errMessage,
     API_ENDPOINT,
     userHabitsActive,
-    isNewActiveUserHabitChange,
-    getUserHabitBlank
+    isDataOutdated
   } from "../stores.js";
   import { push } from "svelte-spa-router";
 
@@ -13,7 +12,7 @@
   export let i;
 
   const handleClick = () => {
-    currentActiveHabit.set(i);
+    indexActiveHabit.set(i);
   };
 
   const handleHabitAdd = () => {
@@ -60,9 +59,9 @@
       .then(res => {
         // console.log("res", res);
         let newHabitData = $userHabitsActive;
-        newHabitData[$currentActiveHabit] = res.updatedHabit;
+        newHabitData[$indexActiveHabit] = res.updatedHabit;
         userHabitsActive.set(newHabitData);
-        isNewActiveUserHabitChange.set(true);
+        isDataOutdated.set(true);
       })
       .catch(err => {
         // console.clear();
@@ -125,7 +124,7 @@
 
 <div class="flex flex-col">
   <button
-    class:selected={$currentActiveHabit === i || ($currentActiveHabit === null && !habit.adminIsActive)}
+    class:selected={$indexActiveHabit === i || ($indexActiveHabit === null && !habit.adminIsActive)}
     on:click={handleClick}
     class="bg-white py-1 px-2 border-2 border-blue-100 shadow rounded-sm
     hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700
@@ -159,7 +158,7 @@
 
   <div class="bg-white mt-2 shadow rounded-sm sm:rounded-lg sm:px-10">
     {#if habit}
-      {#if !habit.adminIsActive && $currentActiveHabit === i}
+      {#if !habit.adminIsActive && $indexActiveHabit === i}
         <div class="py-1 flex justify-center items-center space-x-2">
           <button
             style="height: 32px"
@@ -174,7 +173,7 @@
             </span>
           </button>
         </div>
-      {:else if $currentActiveHabit === i}
+      {:else if $indexActiveHabit === i}
         <div class="py-1 flex justify-center items-center space-x-2">
           <button
             on:click={() => handleHabitCheck(true)}

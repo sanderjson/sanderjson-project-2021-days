@@ -10,12 +10,11 @@
     API_ENDPOINT,
     contentHabitDetailCategory,
     getUserProfileBlank,
-    getUserHabitBlank,
-    activeUserAuth,
-    adminIdUser,
+    userAuth,
+    userId,
     userProfile,
     userHabitsActive,
-    isActiveUserLive
+    isDataOutdated
   } from "../stores.js";
 
   let tempLocalUserProfile = $getUserProfileBlank();
@@ -50,12 +49,12 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        console.log("res", res);
-        activeUserAuth.set(res.userAuth);
+        // console.log("res", res);
+        userAuth.set(res.userAuth);
         userProfile.set(res.userDetails);
-        adminIdUser.set(res.userDetails.adminIdUser);
+        userId.set(res.userDetails.userId);
         userHabitsActive.set([{}, {}, {}]);
-        isActiveUserLive.set(true);
+        isDataOutdated.set(true);
       })
       .catch(err => {
         console.clear();

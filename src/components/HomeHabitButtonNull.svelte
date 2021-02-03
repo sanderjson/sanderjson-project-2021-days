@@ -1,11 +1,11 @@
 <script>
-  import { currentActiveHabit } from "../stores.js";
+  import { indexActiveHabit } from "../stores.js";
   import { push } from "svelte-spa-router";
 
   export let i;
 
   const handleClick = () => {
-    currentActiveHabit.set(i);
+    indexActiveHabit.set(i);
   };
 
   const handleHabitAdd = () => {
@@ -21,7 +21,7 @@
 
 <div class="flex flex-col">
   <button
-    class:selected={$currentActiveHabit === i || ($currentActiveHabit === null && !habit.adminIsActive)}
+    class:selected={$indexActiveHabit === i || ($indexActiveHabit === null && !habit.adminIsActive)}
     on:click={handleClick}
     class="bg-white py-1 px-2 border-2 border-blue-100 shadow rounded-sm
     hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700
@@ -40,7 +40,7 @@
   </button>
 
   <div class="bg-white mt-2 shadow rounded-sm sm:rounded-lg sm:px-10">
-    {#if $currentActiveHabit === i}
+    {#if $indexActiveHabit === i}
       <div class="py-1 flex justify-center items-center space-x-2">
         <button
           style="height: 32px"

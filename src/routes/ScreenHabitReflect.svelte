@@ -3,14 +3,12 @@
   import {
     errMessage,
     API_ENDPOINT,
-    currentActiveHabit,
-    getUserHabitBlank,
-    isHabitHistoryUpdated,
-    isNewActiveUserHabitChange,
-    adminIdUser,
+    indexActiveHabit,
+    userId,
     userHabitsActive,
     userProfile,
-    tempUserHabit
+    isDataOutdated,
+    isDataOutdatedHistory
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
@@ -24,7 +22,7 @@
     button: "Delete Habit Data"
   };
 
-  let tempLocalUserHabit = $userHabitsActive[$currentActiveHabit];
+  let tempLocalUserHabit = $userHabitsActive[$indexActiveHabit];
   tempLocalUserHabit.reflectIsSuccessful = true;
   tempLocalUserHabit.reflectDifficulty = 5;
   tempLocalUserHabit.reflectRecommend = true;
@@ -69,10 +67,10 @@
       .then(res => {
         console.log("res", res);
         let newHabitData = $userHabitsActive;
-        newHabitData[$currentActiveHabit] = {};
+        newHabitData[$indexActiveHabit] = {};
         userHabitsActive.set(newHabitData);
         userProfile.set(res.userProfile);
-        isNewActiveUserHabitChange.set(true);
+        isDataOutdated.set(true);
       })
       .catch(err => {
         // console.clear();
@@ -115,10 +113,11 @@
       .then(res => {
         console.log("res", res);
         let newHabitData = $userHabitsActive;
-        newHabitData[$currentActiveHabit] = {};
+        newHabitData[$indexActiveHabit] = {};
         userHabitsActive.set(newHabitData);
         userProfile.set(res.updatedUser);
-        isNewActiveUserHabitChange.set(true);
+        isDataOutdatedHistory.set(true);
+        isDataOutdated.set(true);
       })
       .catch(err => {
         console.clear();
@@ -126,8 +125,6 @@
         push(`/error`);
       });
   };
-
-  $: console.log("tempLocalUserHabit", tempLocalUserHabit);
 </script>
 
 <style>
