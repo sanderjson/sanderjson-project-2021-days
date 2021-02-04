@@ -1,15 +1,22 @@
 <script>
   import {
-    indexActiveHabit,
     errMessage,
     API_ENDPOINT,
+    indexActiveHabit,
     userHabitsActive,
-    isDataOutdated
+    isLSDataOutdated
   } from "../stores.js";
   import { push } from "svelte-spa-router";
 
   export let habit;
   export let i;
+
+  let dateStart = new Date(habit.adminDateStartUTCString).getTime();
+  let dateEnd = new Date(habit.adminDateEndUTCString).getTime();
+  let dateCurrent = new Date().getTime();
+
+  let timeRemaining = Math.round((dateEnd - dateCurrent) / 1000);
+  let isTimeUpdating = true;
 
   const handleClick = () => {
     indexActiveHabit.set(i);
@@ -24,13 +31,14 @@
   };
 
   const handleComplete = () => {
-    console.log("complete");
+    console.log("COMPLETE ", i);
+    isTimeUpdating = false;
   };
   const handleHabitCheck = async val => {
     let tempLocalUserHabit = habit;
     tempLocalUserHabit.checks.push({
       date: new Date(),
-      isOK: val
+      isOk: val
     });
     const fetchURL =
       $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
@@ -58,10 +66,10 @@
       .then(handleErrors)
       .then(res => {
         // console.log("res", res);
-        let newHabitData = $userHabitsActive;
-        newHabitData[$indexActiveHabit] = res.updatedHabit;
-        userHabitsActive.set(newHabitData);
-        isDataOutdated.set(true);
+        let tempHabitsActive = $userHabitsActive;
+        tempHabitsActive[$indexActiveHabit] = res.updatedHabit;
+        userHabitsActive.set(tempHabitsActive);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
         // console.clear();
@@ -71,49 +79,49 @@
   };
 
   const handleHabitIsComplete = () => {
-    let newHabitData = $userHabitsActive;
-    newHabitData[i].adminIsActive = false;
-    userHabitsActive.set(newHabitData);
+    let tempHabitsActive = $userHabitsActive;
+    tempHabitsActive[i].adminIsActive = false;
+    userHabitsActive.set(tempHabitsActive);
   };
 
-  const getTimeRemaining = (endTime, curTime) => {
-    if (habit.adminIsActive) {
-      let timeToReport = (endTime - curTime) / 1000;
-      let val, unit;
-      while (timeToReport > 0) {
-        if (timeToReport > 86400) {
-          val = timeToReport / 3600 / 24;
-          unit = "days";
-        } else if (timeToReport > 3600) {
-          val = timeToReport / 3600;
-          unit = "hrs";
-        } else if (timeToReport > 60) {
-          val = timeToReport / 60;
-          unit = "min";
-        } else {
-          val = timeToReport;
-          unit = "sec";
-        }
-        return `${val.toFixed(0)} ${unit}`;
-      }
-      if (timeToReport <= 0) {
-        console.log("FIRE", i);
-        handleHabitIsComplete();
-      }
+  let val, unit;
+  const formatTimeRemaining = time => {
+    if (time > 86400) {
+      val = time / 3600 / 24;
+      unit = "days";
+    } else if (time > 3600) {
+      val = time / 3600;
+      unit = "hrs";
+    } else if (time > 60) {
+      val = time / 60;
+      unit = "min";
+    } else {
+      val = time;
+      unit = "sec";
+    }
+    return `${val.toFixed(0)} ${unit}`;
+  };
+
+  const updateTimeInterval = setInterval(() => {
+    if (isTimeUpdating) {
+      timeRemaining--;
+    }
+  }, 1000);
+
+  let timeUpdateFormat = formatTimeRemaining(timeRemaining);
+
+  const updateTime = () => {
+    if (timeRemaining > 0) {
+      timeUpdateFormat = formatTimeRemaining(timeRemaining);
+    } else {
+      dateCurrent = false;
+      timeUpdateFormat = 0;
+      clearInterval(updateTimeInterval);
+      handleHabitIsComplete();
     }
   };
 
-  const update = setInterval(() => {
-    dateCurrent++;
-  }, 1000);
-
-  let dateStart = new Date(habit.adminDateStartUTCString).getTime();
-  let dateEnd = new Date(habit.adminDateEndUTCString).getTime();
-  let dateCurrent = new Date().getTime();
-  let timeRemaining = getTimeRemaining(dateEnd, dateCurrent);
-
-  $: dateCurrent;
-  $: timeRemaining = getTimeRemaining(dateEnd, dateCurrent);
+  $: timeRemaining && isTimeUpdating ? updateTime() : "";
 </script>
 
 <style>
@@ -150,7 +158,7 @@
       </div>
       <div class="mt-2 text-sm font-bold text-center text-gray-500 uppercase">
         {#if habit}
-          {#if habit.adminIsActive}{timeRemaining}{:else}complete{/if}
+          {#if habit.adminIsActive}{timeUpdateFormat}{:else}complete{/if}
         {:else}info{/if}
       </div>
     </div>

@@ -8,7 +8,7 @@
     userId,
     userProfile,
     userHabitsActive,
-    isDataOutdated
+    isLSDataOutdated
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
@@ -25,7 +25,7 @@
   const handleSubmitCreateNewHabit = async () => {
     Object.assign(tempLocalUserHabit, {
       adminActivePosition: $indexActiveHabit,
-      userId: $userId
+      adminIdUser: $userId
     });
 
     const fetchURL = $API_ENDPOINT + `/habits/${$userId}`;
@@ -57,10 +57,10 @@
         let newHabitData = $userHabitsActive;
         newHabitData[$indexActiveHabit] = res.newHabit;
         userHabitsActive.set(newHabitData);
-        isDataOutdated.set(true);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
-        console.clear();
+        // console.clear();
         errMessage.set(err);
         push(`/error`);
       });

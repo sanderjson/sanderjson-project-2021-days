@@ -9,12 +9,13 @@
     errMessage,
     API_ENDPOINT,
     contentHabitDetailCategory,
-    getUserProfileBlank,
-    userAuth,
     userId,
+    userAuth,
     userProfile,
     userHabitsActive,
-    isDataOutdated
+    userHabitsHistory,
+    isLSDataOutdated,
+    getUserProfileBlank
   } from "../stores.js";
 
   let tempLocalUserProfile = $getUserProfileBlank();
@@ -51,13 +52,14 @@
       .then(res => {
         // console.log("res", res);
         userAuth.set(res.userAuth);
-        userProfile.set(res.userDetails);
-        userId.set(res.userDetails.userId);
+        userId.set(res.userProfile.adminIdUser);
+        userProfile.set(res.userProfile);
         userHabitsActive.set([{}, {}, {}]);
-        isDataOutdated.set(true);
+        userHabitsHistory.set([]);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
-        console.clear();
+        // console.clear();
         errMessage.set(err);
         push(`/error`);
       });

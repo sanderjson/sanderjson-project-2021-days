@@ -6,9 +6,9 @@
     indexActiveHabit,
     userId,
     userHabitsActive,
+    userHabitsHistory,
     userProfile,
-    isDataOutdated,
-    isDataOutdatedHistory
+    isLSDataOutdated
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
@@ -65,12 +65,12 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        console.log("res", res);
-        let newHabitData = $userHabitsActive;
-        newHabitData[$indexActiveHabit] = {};
-        userHabitsActive.set(newHabitData);
-        userProfile.set(res.userProfile);
-        isDataOutdated.set(true);
+        // console.log("res", res);
+        let tempHabitsActive = $userHabitsActive;
+        tempHabitsActive[$indexActiveHabit] = {};
+        userHabitsActive.set(tempHabitsActive);
+        userProfile.set(res.updatedUser);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
         // console.clear();
@@ -111,13 +111,18 @@
     const postData = await fetch(fetchURL, fetchOptions)
       .then(handleErrors)
       .then(res => {
-        console.log("res", res);
-        let newHabitData = $userHabitsActive;
-        newHabitData[$indexActiveHabit] = {};
-        userHabitsActive.set(newHabitData);
+        // console.log("res", res);
+        let tempHabitsActive = $userHabitsActive;
+        let tempHabitsHistory = $userHabitsHistory;
+
+        tempHabitsHistory.push(tempLocalUserHabit);
+        userHabitsHistory.set(tempHabitsHistory);
+
+        tempHabitsActive[$indexActiveHabit] = {};
+        userHabitsActive.set(tempHabitsActive);
+
         userProfile.set(res.updatedUser);
-        isDataOutdatedHistory.set(true);
-        isDataOutdated.set(true);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
         console.clear();

@@ -4,14 +4,15 @@
   import { replace } from "svelte-spa-router";
   import { onDestroy } from "svelte";
   import {
-    getIsLocalStorage,
-    isLocalStorage,
+    userId,
     userAuth,
     userProfile,
     userHabitsActive,
     userHabitsHistory,
-    userId,
-    isDataOutdated
+    isLSDataOutdated,
+    isDataOutdatedHistory,
+    isLocalStorage,
+    getIsLocalStorage
   } from "./stores.js";
   import {
     LSisUserDefined,
@@ -24,7 +25,7 @@
   // loads user profile from local storage
   isLocalStorage.set($getIsLocalStorage());
   if ($isLocalStorage && $LSisUserDefined) {
-    userId.set($LSuserProfile.userId);
+    userId.set($LSuserProfile.adminIdUser);
     userProfile.set($LSuserProfile);
     let activeHabitsClean = $LSuserHabitsActive;
     while (activeHabitsClean.length < 3) {
@@ -45,19 +46,26 @@
       LSuserHabitsHistory.set($userHabitsHistory);
       LSisUserDefined.set(true);
     }
-    $isDataOutdated ? isDataOutdated.set(false) : "";
-    // replace("/");
+    $isLSDataOutdated ? isLSDataOutdated.set(false) : "";
+    $isDataOutdatedHistory ? isDataOutdatedHistory.set(false) : "";
   };
 
-  $: $isDataOutdated == true ? updateLocalStorage() : "";
+  const updateLSAndRouteHome = () => {
+    updateLocalStorage();
+    replace("/");
+  };
 
-  $: console.log("$userId", $userId);
-  $: console.log("$userProfile", $userProfile);
-  $: console.log("$userHabitsActive", $userHabitsActive);
-  $: console.log("$userHabitsHistory", $userHabitsHistory);
+  $: $isLSDataOutdated == true ? updateLSAndRouteHome() : "";
+  $: $isDataOutdatedHistory == true ? updateLocalStorage() : "";
+
+  // $: console.log("$userId", $userId);
+  // $: console.log("$userProfile", $userProfile);
+  // $: console.log("$userHabitsActive", $userHabitsActive);
+  // $: console.log("$userHabitsHistory", $userHabitsHistory);
+  // $: console.log("$isLSDataOutdated", $isLSDataOutdated);
 
   onDestroy(() => {
-    isDataOutdated.set(false);
+    isLSDataOutdated.set(false);
   });
 </script>
 

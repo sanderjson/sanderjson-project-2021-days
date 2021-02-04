@@ -15,7 +15,7 @@
     userProfile,
     userHabitsActive,
     userHabitsHistory,
-    isDataOutdated
+    isLSDataOutdated
   } from "../stores.js";
   import {
     LSisUserDefined,
@@ -59,18 +59,18 @@
         // console.log("res", res);
         userAuth.set(res.userAuth);
         userProfile.set(res.userProfile);
-        userId.set(res.userProfile.userId);
-        let activeHabitsRes = res.userHabitsHistory;
-        let activeHabitsClean = [{}, {}, {}];
-        for (const [index, habit] of activeHabitsRes.entries()) {
-          activeHabitsClean[habit.adminActivePosition] = habit;
+        userId.set(res.userProfile.adminIdUser);
+        let tempHabitsActive = res.userHabitsActive;
+        let tempHabitsActiveClean = [{}, {}, {}];
+        for (const habit of tempHabitsActive) {
+          tempHabitsActiveClean[habit.adminActivePosition] = habit;
         }
-        userHabitsActive.set(activeHabitsClean);
+        userHabitsActive.set(tempHabitsActiveClean);
         userHabitsHistory.set(res.userHabitsHistory);
-        isDataOutdated.set(true);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
-        console.clear();
+        // console.clear();
         errMessage.set(err);
         push(`/error`);
       });

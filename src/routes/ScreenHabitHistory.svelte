@@ -7,7 +7,7 @@
     API_ENDPOINT,
     errMessage,
     userId,
-    isDataOutdated,
+    isLSDataOutdated,
     isDataOutdatedHistory
   } from "../stores.js";
   import { push } from "svelte-spa-router";
@@ -43,7 +43,7 @@
         console.log("res", res);
         userHabitsHistory.set(res.userHabitsHistory);
         isDataOutdatedHistory.set(false);
-        isDataOutdated.set(true);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
         console.clear();

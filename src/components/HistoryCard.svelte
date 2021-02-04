@@ -66,7 +66,7 @@
       {#each habit.checks as check, i}
         {#if i < 15}
           <li>
-            {#if check.checkIsOk}
+            {#if check.isOk}
               <i class="bg-green-100 far fa-1x fa-check-square" />
             {:else}
               <i class="bg-red-100 far fa-1x fa-window-close" />

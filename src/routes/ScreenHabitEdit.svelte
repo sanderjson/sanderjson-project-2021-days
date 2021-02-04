@@ -6,7 +6,7 @@
     indexActiveHabit,
     userHabitsActive,
     userProfile,
-    isDataOutdated
+    isLSDataOutdated
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
@@ -53,7 +53,7 @@
         newHabitData[$indexActiveHabit] = {};
         userHabitsActive.set(newHabitData);
         userProfile.set(res.userProfile);
-        isDataOutdated.set(true);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
         // console.clear();
@@ -99,7 +99,7 @@
         let newHabitData = $userHabitsActive;
         newHabitData[$indexActiveHabit] = res.updatedHabit;
         userHabitsActive.set(newHabitData);
-        isDataOutdated.set(true);
+        isLSDataOutdated.set(true);
       })
       .catch(err => {
         // console.clear();

@@ -22,8 +22,9 @@ const contentHabitDetailCategoryData = [
 ];
 
 const contentHabitDurationData = [
-	{ disabled: false, value: 300, text: `5 min` },
-	{ disabled: false, value: 3600, text: `1 hour` },
+	// { disabled: false, value: 60, text: `1 min` },
+	// { disabled: false, value: 300, text: `5 min` },
+	// { disabled: false, value: 3600, text: `1 hour` },
 	{ disabled: false, value: 3600 * 24, text: `24 hours` },
 	{ disabled: false, value: 3600 * 24 * 3, text: `3 days` },
 	{ disabled: true, value: 3600 * 24 * 7, text: `7 days` },
@@ -64,7 +65,7 @@ const getUserProfileBlankFun = () => {
 		adminDateCreated: null,
 		adminOther: {},
 		adminIdPod: null,
-		userId: null,
+		adminIdUser: null,
 		adminScoreUser: 0,
 		detailEmail: "",
 		detailImage: "",
@@ -84,9 +85,9 @@ const getUserHabitBlankFun = () => {
 		adminActivePosition: null,
 		adminDateEndUTCString: "",
 		adminDateStartUTCString: "",
-		userId: null,
 		adminIdHabit: null,
 		adminIdSeries: null,
+		adminIdUser: null,
 		adminIsActive: null,
 		adminScore: 0,
 		detailCategory: {
@@ -133,8 +134,8 @@ export const userHabitsHistory = writable(userHabitsHistoryData);
 export const indexActiveHabit = writable(0);
 
 export const isNewSocialModal = writable(false);
-export const isDataOutdated = writable(true);
-export const isDataOutdatedHistory = writable(true);
+export const isLSDataOutdated = writable(false);
+export const isDataOutdatedHistory = writable(false);
 export const isLocalStorage = writable(null);
 export const isObjectEmpty = readable(isObjectEmptyFun);
 

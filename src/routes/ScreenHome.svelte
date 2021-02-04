@@ -51,6 +51,9 @@
   const handleButtonSocial = () => {
     isNewSocialModal.set(true);
   };
+
+  $: $userHabitsActive;
+  $: $userHabitsHistory;
 </script>
 
 <style>
