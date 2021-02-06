@@ -134,6 +134,8 @@ export const userHabitsHistory = writable(userHabitsHistoryData);
 export const indexActiveHabit = writable(0);
 
 export const isNewSocialModal = writable(false);
+export const isNewHabitCheckModal = writable(false);
+
 export const isLSDataOutdated = writable(false);
 export const isDataOutdatedHistory = writable(false);
 export const isLocalStorage = writable(null);

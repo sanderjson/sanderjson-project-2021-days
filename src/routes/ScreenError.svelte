@@ -10,6 +10,8 @@
 </AppHeader>
 
 <ContentWrapper>
-  <div>Error: {$errMessage}</div>
-  <a href="/#/start">Click here</a>
+  <div>
+    <div>Error: {$errMessage}</div>
+    <a href="/#/start">Click here</a>
+  </div>
 </ContentWrapper>

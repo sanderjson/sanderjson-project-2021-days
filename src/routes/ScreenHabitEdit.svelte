@@ -12,7 +12,10 @@
   import AppHeader from "../components/AppHeader.svelte";
   import TwentyTwentyOne from "../svg/2021.svelte";
   import Modal from "../components/Modal.svelte";
-  import AddEditDeleteHabit from "../components/AddEditDeleteHabit.svelte";
+  import HabitFormAddEditDelete from "../components/HabitFormAddEditDelete.svelte";
+  import ContentWrapper from "../components/ContentWrapper.svelte";
+  import AppHeaderLocalScore from "../components/AppHeaderLocalScore.svelte";
+  import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
 
   let tempLocalUserHabit = $userHabitsActive[$indexActiveHabit];
 
@@ -113,12 +116,22 @@
   <TwentyTwentyOne />
 </AppHeader> -->
 
-<AddEditDeleteHabit
-  {tempLocalUserHabit}
-  actionTitle="Update Habit"
-  handleSubmit={handleSubmitEditExistingHabit}
-  altActionTitle="Delete"
-  handleAltAction={handleDelete} />
+<ContentWrapper>
+  <div>
+    <AppHeaderLocalScore />
+    <AppHeaderLocalTitle
+      title={'Edit Habit'}
+      subtitle={'Fill out this form to edit'} />
+    <div class="mt-6">
+      <HabitFormAddEditDelete
+        {tempLocalUserHabit}
+        actionTitle="Update Habit"
+        handleSubmit={handleSubmitEditExistingHabit}
+        altActionTitle="Delete"
+        handleAltAction={handleDelete} />
+    </div>
+  </div>
+</ContentWrapper>
 
 {#if habitDeleteWarning}
   <Modal contentModal={contentModalDelete}>

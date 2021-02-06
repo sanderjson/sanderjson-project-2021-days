@@ -4,12 +4,19 @@
     API_ENDPOINT,
     indexActiveHabit,
     userHabitsActive,
-    isLSDataOutdated
+    isLSDataOutdated,
+    isNewHabitCheckModal
   } from "../stores.js";
   import { push } from "svelte-spa-router";
+  import HabitCard from "./HabitCard.svelte";
+  import AppButton from "./AppButton.svelte";
 
   export let habit;
   export let i;
+
+  const handleTriggerHabitCheck = () => {
+    isNewHabitCheckModal.set(true);
+  };
 
   let dateStart = new Date(habit.adminDateStartUTCString).getTime();
   let dateEnd = new Date(habit.adminDateEndUTCString).getTime();
@@ -126,7 +133,7 @@
 
 <style>
   .selected {
-    @apply bg-blue-100;
+    @apply bg-blue-100 opacity-50;
   }
 </style>
 
@@ -137,84 +144,24 @@
     class="bg-white py-1 px-2 border-2 border-blue-100 shadow rounded-sm
     hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700
     focus:outline-none transition-colors duration-75">
-    <div class="flex flex-col mx-auto">
-      <div class="uppercase font-extrabold text-gray-900 text-xs text-left">
-        {#if habit}
-          {#if habit.detailDuration > 86400}
-            {habit.detailDuration / 86400} days
-          {:else if habit.detailDuration == 86400}
-            24 hours
-          {:else if habit.detailDuration > 3600}
-            {habit.detailDuration / 3600} hours
-          {:else if habit.detailDuration == 3600}
-            60 mins
-          {:else if habit.detailDuration > 60}
-            {habit.detailDuration / 60} mins
-          {:else}1 min{/if}
-        {:else}Time{/if}
-      </div>
-      <div class="mt-1 text-6xl font-extrabold text-center text-blue-900">
-        {#if habit}{habit.detailCode}{:else}+{/if}
-      </div>
-      <div class="mt-2 text-sm font-bold text-center text-gray-500 uppercase">
-        {#if habit}
-          {#if habit.adminIsActive}{timeUpdateFormat}{:else}complete{/if}
-        {:else}info{/if}
-      </div>
-    </div>
+    <HabitCard
+      duration={habit.detailDuration}
+      code={habit.detailCode}
+      leaders={false}>
+      {#if habit.adminIsActive}{timeUpdateFormat}{:else}complete{/if}
+    </HabitCard>
   </button>
 
-  <div class="bg-white mt-2 shadow rounded-sm sm:rounded-lg sm:px-10">
-    {#if habit}
-      {#if !habit.adminIsActive && $indexActiveHabit === i}
-        <div class="py-1 flex justify-center items-center space-x-2">
-          <button
-            style="height: 32px"
-            on:click={handleHabitReflect}
-            class="flex justify-center items-center focus:ring-1 outline-none
-            focus:ring-offset-1 focus:ring-green-500 focus:outline-none
-            transition-colors duration-75">
-            <span
-              class="border-2 rounded-sm border-black bg-green-100 p-1 text-xs
-              font-extrabold align-middle">
-              Reflect
-            </span>
-          </button>
-        </div>
-      {:else if $indexActiveHabit === i}
-        <div class="py-1 flex justify-center items-center space-x-2">
-          <button
-            on:click={() => handleHabitCheck(true)}
-            class="flex justify-center items-center focus:ring-1 outline-none
-            focus:ring-offset-1 focus:ring-green-500 focus:outline-none
-            transition-colors duration-75">
-            <!-- <ActionCheck /> -->
-            <i class="bg-green-100 far fa-2x fa-check-square" />
-          </button>
-          <button
-            on:click={() => handleHabitCheck(false)}
-            class="flex justify-center items-center focus:ring-1 outline-none
-            focus:ring-offset-1 focus:ring-red-500 focus:outline-none
-            transition-colors duration-75">
-            <i class="bg-red-100 far fa-2x fa-window-close" />
-          </button>
-        </div>
-      {/if}
-    {:else}
-      <div class="py-1 flex justify-center items-center space-x-2">
-        <button
-          style="height: 32px"
-          on:click={handleHabitAdd}
-          class="flex justify-center items-center focus:ring-1 outline-none
-          focus:ring-offset-1 focus:ring-green-500 focus:outline-none
-          transition-colors duration-75">
-          <span
-            class="border-2 rounded-sm border-black bg-green-100 p-1 text-xs
-            font-extrabold align-middle">
-            ADD
-          </span>
-        </button>
+  <div>
+    {#if $indexActiveHabit === i}
+      <div class="sm:bg-white mt-2 sm:shadow sm:rounded-lg sm:px-6 sm:py-2">
+        {#if !habit.adminIsActive}
+          <AppButton handleFun={handleHabitReflect} text="Reflect" />
+        {:else}
+          <AppButton handleFun={handleTriggerHabitCheck} text="Check In" />
+        {/if}
       </div>
     {/if}
   </div>
+
 </div>

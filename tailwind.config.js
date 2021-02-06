@@ -1,5 +1,11 @@
 module.exports = {
-	purge: ["./src/**/*.svelte"],
+	purge: {
+		content: [
+			"./src/**/*.svelte",
+			// may also want to include base index.html
+		],
+		// enabled: production,
+	},
 	theme: {
 		extend: {
 			fontSize: {
@@ -12,5 +18,4 @@ module.exports = {
 	variants: {},
 	// plugins: [require("@tailwindcss/aspect-ratio")],
 	plugins: [require("@tailwindcss/forms")],
-
 };

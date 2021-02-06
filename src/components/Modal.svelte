@@ -2,6 +2,7 @@
   import { fade, fly } from "svelte/transition";
 
   export let contentModal;
+  export let modalDualButton;
 </script>
 
 <div in:fade class="fixed z-10 inset-0 overflow-y-auto">
@@ -58,9 +59,17 @@
         </div>
       </div>
 
-      <div class="mt-5 sm:mt-6">
-        <slot />
-      </div>
+      {#if modalDualButton}
+        <div
+          class="mt-5 space-y-2 sm:space-y-0 sm:mt-6 sm:grid sm:grid-cols-2
+          sm:gap-3 sm:grid-flow-row-dense">
+          <slot />
+        </div>
+      {:else}
+        <div class="mt-5 sm:mt-6">
+          <slot />
+        </div>
+      {/if}
 
     </div>
   </div>

@@ -13,6 +13,9 @@
   import { push } from "svelte-spa-router";
   import { fade } from "svelte/transition";
   import HistoryCard from "../components/HistoryCard.svelte";
+  import ContentWrapper from "../components/ContentWrapper.svelte";
+  import AppHeaderLocalScore from "../components/AppHeaderLocalScore.svelte";
+  import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
 
   let isHistoryLoaded = false;
 
@@ -57,22 +60,27 @@
   }
 </script>
 
-<div
-  in:fade
-  class="pb-2 px-5 space-y-3 sm:w-full sm:max-w-md mt-8 mb-2 sm:mx-auto">
-
-  {#each $userHabitsActive as habit}
-    {#if habit && !$isObjectEmpty(habit)}
-      <HistoryCard {habit} />
-    {/if}
-  {/each}
-  {#await $isDataOutdatedHistory}
-    Loading...
-  {:then}
-    {#each $userHabitsHistory as habit}
-      {#if habit && !$isObjectEmpty(habit)}
-        <HistoryCard {habit} />
-      {/if}
-    {/each}
-  {/await}
-</div>
+<ContentWrapper>
+  <div>
+    <AppHeaderLocalScore />
+    <AppHeaderLocalTitle
+      title={'Habit History'}
+      subtitle={'Track your progress and share'} />
+    <div class="mt-6 space-y-8">
+      {#each $userHabitsActive as habit}
+        {#if habit && !$isObjectEmpty(habit)}
+          <HistoryCard {habit} />
+        {/if}
+      {/each}
+      {#await $isDataOutdatedHistory}
+        Loading...
+      {:then}
+        {#each $userHabitsHistory as habit}
+          {#if habit && !$isObjectEmpty(habit)}
+            <HistoryCard {habit} />
+          {/if}
+        {/each}
+      {/await}
+    </div>
+  </div>
+</ContentWrapper>

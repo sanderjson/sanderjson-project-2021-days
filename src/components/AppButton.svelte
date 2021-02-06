@@ -1,0 +1,28 @@
+<script>
+  export let handleFun;
+  export let text;
+  export let success = false;
+  export let danger = false;
+</script>
+
+<style>
+  .success {
+    @apply bg-green-100 text-green-500 focus:ring-green-500 bg-opacity-50 hover:bg-green-500 hover:text-white;
+  }
+
+  .danger {
+    @apply bg-red-100 text-red-500 focus:ring-red-500 bg-opacity-50 hover:bg-red-500 hover:text-white;
+  }
+</style>
+
+<button
+  on:click={handleFun}
+  type="button"
+  class="inline-flex justify-center w-full rounded-md border border-transparent
+  shadow-sm px-4 py-2 bg-blue-900 text-base font-bold text-white
+  hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2
+  focus:ring-blue-700 sm:text-sm transition-colors duration-75"
+  class:success
+  class:danger>
+  <span>{text}</span>
+</button>

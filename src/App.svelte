@@ -21,6 +21,8 @@
     LSuserHabitsActive,
     LSuserHabitsHistory
   } from "./localStorage.js";
+  import Twitter from "./svg/social-twitter.svelte";
+  import LinkedIn from "./svg/social-linkedin.svelte";
 
   // loads user profile from local storage
   isLocalStorage.set($getIsLocalStorage());
@@ -72,5 +74,34 @@
 <div
   class="bg-repeat h-screen w-screen overflow-x-hidden relative"
   style="background-image: url(/static/subtle-bg/greek-vase.png)">
-  <Router {routes} />
+  <div class="fixed inset-0 sm:inset-2 lg:inset-8 bg-white opacity-40" />
+
+  <main>
+    <Router {routes} />
+  </main>
+
+  <footer class="mt-12 bottom-0 w-full sm:relative z-100">
+    <div
+      class="container mx-auto sm:max-w-xl py-1 sm:py-5 px-5 relative z-100
+      bg-gray-800 text-sm text-gray-400 font-bold sm:rounded-t ">
+      <div class="flex justify-between items-center ">
+        <p>Built by Jonathan Sanderson</p>
+        <div class="align-middle h-full">
+          <a
+            class="inline-flex justify-center align-middle fill-current w-4 h-4"
+            target="_blank"
+            href="https://twitter.com/sanderjson">
+            <Twitter />
+          </a>
+          <a
+            class="inline-flex justify-center align-middle fill-current w-4 h-4"
+            target="_blank"
+            href="https://linkedin.com/in/sandersonjma">
+            <LinkedIn />
+          </a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
 </div>

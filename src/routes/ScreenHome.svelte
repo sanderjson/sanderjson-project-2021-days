@@ -1,12 +1,15 @@
 <script>
   import {
+    errMessage,
+    API_ENDPOINT,
     indexActiveHabit,
     isNewSocialModal,
+    isNewHabitCheckModal,
     userProfile,
     userHabitsActive,
     userHabitsHistory,
-    API_ENDPOINT,
-    isObjectEmpty
+    isObjectEmpty,
+    isLSDataOutdated
   } from "../stores.js";
   import { fade } from "svelte/transition";
   import { push } from "svelte-spa-router";
@@ -14,6 +17,9 @@
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import HomeHabitButton from "../components/HomeHabitButton.svelte";
   import HomeHabitButtonNull from "../components/HomeHabitButtonNull.svelte";
+  import AppHeaderLocalScore from "../components/AppHeaderLocalScore.svelte";
+  import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
+  import AppButton from "../components/AppButton.svelte";
 
   import Modal from "../components/Modal.svelte";
 
@@ -27,29 +33,83 @@
   const contentModalSocial = {
     title: "Social Share Unavailable",
     details: "This feature will be enabled shortly, check back again.",
-    button: "Go back to App"
+    button: "Go back to App",
+    button2: "Back"
+  };
+
+  const contentModalHabitCheck = {
+    title: "Check in!",
+    details: "How are you feeling today?",
+    button: "Complete Check",
+    button2: "Back"
   };
 
   const contentModalHabitIsComplete = {
     title: "Congratulations!",
     details: "Complete this reflection to track your progress",
-    button: "Complete Habit"
+    button: "Complete Habit",
+    button2: "Back"
   };
 
-  const handleButtonHistory = () => {
+  const handleTriggerHistory = () => {
     push("/history");
   };
 
-  const handleHabitEdit = () => {
+  const handleTriggerHabitEdit = () => {
     push("/edit");
+  };
+  const handleTriggerSocial = () => {
+    isNewSocialModal.set(true);
   };
 
   const handleModalSocialAction = () => {
     isNewSocialModal.set(false);
   };
 
-  const handleButtonSocial = () => {
-    isNewSocialModal.set(true);
+  const handleModalHabitCheck = async val => {
+    let tempLocalUserHabit = $userHabitsActive[$indexActiveHabit];
+    console.log("tempLocalUserHabit", tempLocalUserHabit);
+    tempLocalUserHabit.checks.push({
+      date: new Date(),
+      isOk: val
+    });
+    const fetchURL =
+      $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
+    const fetchOptions = {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json"
+      },
+
+      body: JSON.stringify({
+        ...tempLocalUserHabit
+      })
+    };
+
+    const handleErrors = res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          throw text;
+        });
+      }
+      return res.json();
+    };
+
+    const postData = await fetch(fetchURL, fetchOptions)
+      .then(handleErrors)
+      .then(res => {
+        // console.log("res", res);
+        let tempHabitsActive = $userHabitsActive;
+        tempHabitsActive[$indexActiveHabit] = res.updatedHabit;
+        userHabitsActive.set(tempHabitsActive);
+        isNewHabitCheckModal.set(false);
+        isLSDataOutdated.set(true);
+      })
+      .catch(err => {
+        // console.clear();
+        errMessage.set(err);
+        push(`/error`);
+      });
   };
 
   $: $userHabitsActive;
@@ -57,175 +117,153 @@
 </script>
 
 <style>
-  /* section > div {
-    border: 1px solid black;
-  } */
-
-  .home-grid {
-    display: flex;
-    height: calc(100vh - 3rem);
-    flex-direction: column;
-  }
-
   .home-user {
     display: grid;
     place-items: center;
     grid-template-columns: 1fr 144px 1fr;
-    grid-template-rows: repeat(4, 1fr);
+    grid-template-rows: repeat(3, 1fr);
   }
 
-  .home-user .user-title {
-    grid-area: title;
-    grid-column: 1/4;
-    grid-row: 1/2;
-  }
   .home-user .user-img {
     grid-area: img;
     grid-column: 1/4;
-    grid-row: 2/5;
+    grid-row: 1/4;
   }
   .home-user .user-stat1 {
     grid-area: stat1;
     grid-column: 1/2;
-    grid-row: 2/3;
+    grid-row: 1/2;
   }
   .home-user .user-stat2 {
     grid-area: stat2;
     grid-column: 3/4;
-    grid-row: 2/3;
+    grid-row: 1/2;
   }
   .home-user .user-icon1 {
     grid-area: icon1;
     grid-column: 1/2;
-    grid-row: 4/5;
+    grid-row: 3/4;
   }
   .home-user .user-icon2 {
     grid-area: icon2;
     grid-column: 3/4;
-    grid-row: 4/5;
-  }
-
-  .home-habit-info {
-    flex-grow: 1;
+    grid-row: 3/4;
   }
 </style>
 
-<div in:fade class="home-grid pb-2 overflow-y-scroll px-5">
-
-  <section class="home-score pt-3">
-    <div class="opacity-0 px-4 flex items-center justify-between">
-      <div class="w-1/2 uppercase text-gray-500 font-bold text-xs">Info</div>
-      <div
-        class="flex justify-between uppercase text-gray-500 font-bold text-xs">
-        <span>info</span>
-        <span class="ml-2">info</span>
-      </div>
-    </div>
-  </section>
-
-  <section class="home-user home-user2 pt-6">
-    <h1 class="user-title text-center ">
-      <div class="text-lg font-bold leading-tight">
-        {$userProfile.detailName}
-      </div>
-      <div class="text-sm font-extrabold leading-tight text-blue-900">
-        {$userProfile.detailTitle}
-      </div>
-    </h1>
-    <div class="user-img relative">
-      <div class="absolute inset-0 bg-blue-100 rounded-full" />
-      <!-- <img
+<ContentWrapper>
+  <div>
+    <AppHeaderLocalScore />
+    <AppHeaderLocalTitle
+      title={$userProfile.detailName}
+      subtitle={$userProfile.detailTitle} />
+    <div class="mt-6">
+      <section class="home-user">
+        <div class="user-img relative">
+          <div
+            class="absolute inset-0 bg-blue-100 bg-opacity-50 rounded-full" />
+          <!-- <img
         class="relative rounded-full m-1 z-0"
         src="https://via.placeholder.com/168"
         alt="" /> -->
-      <div
-        style="font-family: 'Bungee', cursive; width: 168px; height 168px;"
-        class="relative rounded-full m-1 z-0 text-9xl flex justify-center
-        items-center h-full">
-        <span>{$userProfile.detailInitials}</span>
-      </div>
-    </div>
-    <div
-      class="user-stat1 bg-white text-lg border-1 h-10 w-10 flex justify-center
-      items-center rounded-full border-blue-100 font-extrabold shadow ml-5">
-      <span>{userHabitsActiveClean.length}</span>
-    </div>
-    <div
-      class="user-stat2 bg-white text-lg border-1 h-10 w-10 flex justify-center
-      items-center rounded-full border-blue-100 font-extrabold shadow mr-5">
-      <span>{$userHabitsHistory.length}</span>
-    </div>
-    <button
-      on:click={handleButtonHistory}
-      class="user-icon1 bg-white h-14 w-14 flex justify-center items-center
-      rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
-      focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none
-      transition-colors duration-75">
-      <i class=" fas fa-1x fa-history text-blue-900" />
-      <!-- <i class=" fas fa-1x fa-envelope text-blue-900" /> -->
-    </button>
-    <button
-      on:click={handleButtonSocial}
-      class="user-icon2 bg-white h-14 w-14 flex justify-center items-center
-      rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
-      focus:ring-2 focus:ring-offset-2 focus:ring-blue-700 focus:outline-none
-      transition-colors duration-75">
-      <i class=" fas fa-1x fa-share-alt text-blue-900" />
-    </button>
-  </section>
-
-  <section class="home-habit-info pt-6 sm:mx-auto sm:w-full sm:max-w-md">
-    <div
-      class="relative bg-white h-full py-2 px-2 shadow rounded sm:rounded-lg
-      sm:px-10 text-left">
-      {#if $userHabitsActive[$indexActiveHabit] && !$isObjectEmpty($userHabitsActive[$indexActiveHabit])}
-        <h1 class="text-xl font-bold">
-          {$userHabitsActive[$indexActiveHabit].detailTitle}
-        </h1>
-        <p class="text-base mt-1 text-gray-700">
-          {$userHabitsActive[$indexActiveHabit].detailDescription}
-        </p>
+          <div
+            style="font-family: 'Alt-Smaq', cursive; width: 168px; height 168px;"
+            class="relative rounded-full m-1 z-0 text-9xl sm:text-10xl flex
+            justify-center items-center h-full leading-none">
+            <span>{$userProfile.detailInitials}</span>
+          </div>
+        </div>
+        <div
+          class="user-stat1 bg-white text-lg border-1 h-10 w-10 flex
+          justify-center items-center rounded-full border-blue-100
+          font-extrabold shadow ml-5">
+          <span>{userHabitsActiveClean.length}</span>
+        </div>
+        <div
+          class="user-stat2 bg-white text-lg border-1 h-10 w-10 flex
+          justify-center items-center rounded-full border-blue-100
+          font-extrabold shadow mr-5">
+          <span>{$userHabitsHistory.length}</span>
+        </div>
         <button
-          on:click={handleHabitEdit}
-          class="user-icon1 absolute right-0 bottom-0 inline-flex ml-2 bg-white
-          h-6 w-6 justify-center items-center focus:outline-none
-          focus:border-blue-400 focus:border-2 mr-2 mb-2">
-          <i class="fas fa-1x fa-pencil-alt text-blue-900" />
-          <!-- <span class="font-bold text-blue-100">[edit]</span> -->
+          on:click={handleTriggerHistory}
+          class="user-icon1 bg-white h-14 w-14 flex justify-center items-center
+          rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
+          focus:ring-2 focus:ring-offset-2 focus:ring-blue-700
+          focus:outline-none transition-colors duration-75">
+          <i class=" fas fa-1x fa-history text-blue-900" />
+          <!-- <i class=" fas fa-1x fa-envelope text-blue-900" /> -->
         </button>
-      {:else}
-        <h1 class="text-xl font-bold text-gray-500">Your New Habit</h1>
-        <p class="text-base mt-1 text-gray-500">
-          What will you do? Who will you become? Tap the [Add] button below to
-          create a new habit.
-        </p>
-      {/if}
+        <button
+          on:click={handleTriggerSocial}
+          class="user-icon2 bg-white h-14 w-14 flex justify-center items-center
+          rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
+          focus:ring-2 focus:ring-offset-2 focus:ring-blue-700
+          focus:outline-none transition-colors duration-75">
+          <i class=" fas fa-1x fa-share-alt text-blue-900" />
+        </button>
+      </section>
+      <section class="pt-12 ">
+        <div
+          style="min-height: 160px"
+          class="relative bg-white h-full py-2 px-2 shadow rounded sm:rounded-lg
+          sm:px-10 text-left">
+          {#if $userHabitsActive[$indexActiveHabit] && !$isObjectEmpty($userHabitsActive[$indexActiveHabit])}
+            <h1 class="text-xl font-bold">
+              {$userHabitsActive[$indexActiveHabit].detailTitle}
+            </h1>
+            <p class="text-base mt-1 text-gray-700">
+              {$userHabitsActive[$indexActiveHabit].detailDescription}
+            </p>
+            <button
+              on:click={handleTriggerHabitEdit}
+              class="user-icon1 absolute right-0 bottom-0 inline-flex ml-2
+              bg-white h-6 w-6 justify-center items-center focus:outline-none
+              focus:border-blue-400 focus:border-2 mr-2 mb-2">
+              <i class="fas fa-1x fa-pencil-alt text-blue-900" />
+              <!-- <span class="font-bold text-blue-100">[edit]</span> -->
+            </button>
+          {:else}
+            <h1 class="text-xl font-bold text-gray-500">Your New Habit</h1>
+            <p class="text-base mt-1 text-gray-500">
+              What will you do? Who will you become? Tap the [Add] button below
+              to create a new habit.
+            </p>
+          {/if}
+        </div>
+      </section>
+      <section class="pt-3">
+        <div class="grid grid-cols-3 grid-rows-1 gap-3">
+          {#each $userHabitsActive as habit, i}
+            {#if habit && !$isObjectEmpty(habit)}
+              <HomeHabitButton {habit} {i} />
+            {:else}
+              <HomeHabitButtonNull {i} />
+            {/if}
+          {/each}
+        </div>
+      </section>
     </div>
-  </section>
-
-  <section
-    class="home-habit-select pt-3 grid grid-cols-3 grid-rows-1 gap-3 sm:mx-auto
-    sm:w-full sm:max-w-md">
-    {#each $userHabitsActive as habit, i}
-      {#if habit && !$isObjectEmpty(habit)}
-        <HomeHabitButton {habit} {i} />
-      {:else}
-        <HomeHabitButtonNull {i} />
-      {/if}
-    {/each}
-  </section>
-</div>
+  </div>
+</ContentWrapper>
 
 {#if $isNewSocialModal}
-  <Modal contentModal={contentModalSocial}>
-    <button
-      on:click={handleModalSocialAction}
-      type="button"
-      class="inline-flex justify-center w-full rounded-md border
-      border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-medium
-      text-white hover:bg-blue-500 focus:outline-none focus:ring-2
-      focus:ring-offset-2 focus:ring-blue-700 sm:text-sm">
-      {contentModalSocial.button}
-    </button>
+  <Modal contentModal={contentModalSocial} modalDualButton={false}>
+    <AppButton
+      handleFun={handleModalSocialAction}
+      text={contentModalSocial.button} />
+  </Modal>
+{/if}
+
+{#if $isNewHabitCheckModal}
+  <Modal contentModal={contentModalHabitCheck} modalDualButton={true}>
+    <AppButton
+      handleFun={() => handleModalHabitCheck(true)}
+      text="On Track"
+      success={true} />
+    <AppButton
+      handleFun={() => handleModalHabitCheck(false)}
+      text="Having Trouble"
+      danger={true} />
   </Modal>
 {/if}
