@@ -1,6 +1,8 @@
 <script>
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeader from "../components/AppHeader.svelte";
+  import AppButton from "../components/AppButton.svelte";
+
   import TwentyTwentyOne from "../svg/2021.svelte";
 
   import { push } from "svelte-spa-router";
@@ -9,7 +11,6 @@
     errMessage,
     API_ENDPOINT,
     isLocalStorage,
-    getUserHabitBlank,
     userAuth,
     userId,
     userProfile,
@@ -135,10 +136,10 @@
         <button
           type="submit"
           class="w-full flex justify-center py-2 px-4 border border-transparent
-          rounded-md shadow-sm text-sm font-medium text-white bg-blue-600
+          rounded-md shadow-sm text-sm font-bold text-white bg-blue-900
           hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2
           focus:ring-blue-500">
-          Sign in
+          Sign In
         </button>
       </div>
     </form>
@@ -170,7 +171,7 @@
             class="w-full inline-flex justify-center py-2 px-4 border
             border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium
             text-gray-500 hover:bg-gray-50">
-            <span class="">Learn More</span>
+            <span class="">About</span>
           </a>
         </div>
 

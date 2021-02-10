@@ -3,7 +3,6 @@
     errMessage,
     API_ENDPOINT,
     indexActiveHabit,
-    isNewSocialModal,
     isNewHabitCheckModal,
     userProfile,
     userHabitsActive,
@@ -13,15 +12,13 @@
   } from "../stores.js";
   import { fade } from "svelte/transition";
   import { push } from "svelte-spa-router";
-  import AppHeader from "../components/AppHeader.svelte";
   import ContentWrapper from "../components/ContentWrapper.svelte";
-  import HomeHabitButton from "../components/HomeHabitButton.svelte";
-  import HomeHabitButtonNull from "../components/HomeHabitButtonNull.svelte";
+  import HabitButtonHome from "../components/HabitButtonHome.svelte";
+  import HabitButtonNullHome from "../components/HabitButtonNullHome.svelte";
   import AppHeaderLocalScore from "../components/AppHeaderLocalScore.svelte";
   import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
   import AppButton from "../components/AppButton.svelte";
-
-  import Modal from "../components/Modal.svelte";
+  import AppModal from "../components/AppModal.svelte";
 
   let selected;
   let userHabitsActiveClean = $userHabitsActive.filter(habit => {
@@ -29,13 +26,6 @@
       return habit;
     }
   });
-
-  const contentModalSocial = {
-    title: "Social Share Unavailable",
-    details: "This feature will be enabled shortly, check back again.",
-    button: "Go back to App",
-    button2: "Back"
-  };
 
   const contentModalHabitCheck = {
     title: "Check in!",
@@ -55,20 +45,17 @@
     push("/history");
   };
 
-  const handleTriggerHabitEdit = () => {
-    push("/edit");
-  };
-  const handleTriggerSocial = () => {
-    isNewSocialModal.set(true);
+  const handleTriggerUserEdit = () => {
+    push("/settings");
   };
 
-  const handleModalSocialAction = () => {
-    isNewSocialModal.set(false);
+  const handleTriggerHabitEdit = () => {
+    push("/edit");
   };
 
   const handleModalHabitCheck = async val => {
     let tempLocalUserHabit = $userHabitsActive[$indexActiveHabit];
-    console.log("tempLocalUserHabit", tempLocalUserHabit);
+    // console.log("tempLocalUserHabit", tempLocalUserHabit);
     tempLocalUserHabit.checks.push({
       date: new Date(),
       isOk: val
@@ -168,9 +155,9 @@
         alt="" /> -->
           <div
             style="font-family: 'Alt-Smaq', cursive; width: 168px; height 168px;"
-            class="relative rounded-full m-1 z-0 text-9xl sm:text-10xl flex
-            justify-center items-center h-full leading-none">
-            <span>{$userProfile.detailInitials}</span>
+            class="relative rounded-full m-1 z-0 text-9xl sm:text-10xl
+            leading-none">
+            <div>{$userProfile.detailInitials}</div>
           </div>
         </div>
         <div
@@ -195,19 +182,19 @@
           <!-- <i class=" fas fa-1x fa-envelope text-blue-900" /> -->
         </button>
         <button
-          on:click={handleTriggerSocial}
+          on:click={handleTriggerUserEdit}
           class="user-icon2 bg-white h-14 w-14 flex justify-center items-center
           rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
           focus:ring-2 focus:ring-offset-2 focus:ring-blue-700
           focus:outline-none transition-colors duration-75">
-          <i class=" fas fa-1x fa-share-alt text-blue-900" />
+          <i class=" fas fa-1x fa-pencil-alt text-blue-900" />
         </button>
       </section>
       <section class="pt-12 ">
         <div
           style="min-height: 160px"
           class="relative bg-white h-full py-2 px-2 shadow rounded sm:rounded-lg
-          sm:px-10 text-left">
+          sm:px-5 text-left">
           {#if $userHabitsActive[$indexActiveHabit] && !$isObjectEmpty($userHabitsActive[$indexActiveHabit])}
             <h1 class="text-xl font-bold">
               {$userHabitsActive[$indexActiveHabit].detailTitle}
@@ -220,7 +207,7 @@
               class="user-icon1 absolute right-0 bottom-0 inline-flex ml-2
               bg-white h-6 w-6 justify-center items-center focus:outline-none
               focus:border-blue-400 focus:border-2 mr-2 mb-2">
-              <i class="fas fa-1x fa-pencil-alt text-blue-900" />
+              <i class="fas fa-1x fa-pencil-alt text-blue-100" />
               <!-- <span class="font-bold text-blue-100">[edit]</span> -->
             </button>
           {:else}
@@ -236,9 +223,9 @@
         <div class="grid grid-cols-3 grid-rows-1 gap-3">
           {#each $userHabitsActive as habit, i}
             {#if habit && !$isObjectEmpty(habit)}
-              <HomeHabitButton {habit} {i} />
+              <HabitButtonHome {habit} {i} />
             {:else}
-              <HomeHabitButtonNull {i} />
+              <HabitButtonNullHome {i} />
             {/if}
           {/each}
         </div>
@@ -247,16 +234,8 @@
   </div>
 </ContentWrapper>
 
-{#if $isNewSocialModal}
-  <Modal contentModal={contentModalSocial} modalDualButton={false}>
-    <AppButton
-      handleFun={handleModalSocialAction}
-      text={contentModalSocial.button} />
-  </Modal>
-{/if}
-
 {#if $isNewHabitCheckModal}
-  <Modal contentModal={contentModalHabitCheck} modalDualButton={true}>
+  <AppModal contentModal={contentModalHabitCheck} modalDualButton={true}>
     <AppButton
       handleFun={() => handleModalHabitCheck(true)}
       text="On Track"
@@ -265,5 +244,5 @@
       handleFun={() => handleModalHabitCheck(false)}
       text="Having Trouble"
       danger={true} />
-  </Modal>
+  </AppModal>
 {/if}

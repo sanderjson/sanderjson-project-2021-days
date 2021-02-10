@@ -13,7 +13,7 @@
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
   import TwentyTwentyOne from "../svg/2021.svelte";
-  import HabitFormAddEditDelete from "../components/HabitFormAddEditDelete.svelte";
+  import FormHabitAddEditDelete from "../components/FormHabitAddEditDelete.svelte";
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeaderLocalScore from "../components/AppHeaderLocalScore.svelte";
   import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
@@ -81,7 +81,7 @@
       title={'Add Habit'}
       subtitle={'Fill out this form to add'} />
     <div class="mt-6">
-      <HabitFormAddEditDelete
+      <FormHabitAddEditDelete
         {tempLocalUserHabit}
         actionTitle="Create Habit"
         handleSubmit={handleSubmitCreateNewHabit}

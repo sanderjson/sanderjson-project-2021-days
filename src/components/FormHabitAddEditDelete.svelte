@@ -8,7 +8,7 @@
   import ContentWrapper from "./ContentWrapper.svelte";
   import AppHeader from "./AppHeader.svelte";
   import TwentyTwentyOne from "../svg/2021.svelte";
-  import Modal from "./Modal.svelte";
+  import AppModal from "./AppModal.svelte";
   import HabitCardInfoLeader from "./HabitCardInfoLeader.svelte";
   import HabitCard from "./HabitCard.svelte";
 

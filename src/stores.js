@@ -138,6 +138,8 @@ export const isNewHabitCheckModal = writable(false);
 
 export const isLSDataOutdated = writable(false);
 export const isDataOutdatedHistory = writable(false);
+export const isDataOutdatedUserDelete = writable(false);
+
 export const isLocalStorage = writable(null);
 export const isObjectEmpty = readable(isObjectEmptyFun);
 

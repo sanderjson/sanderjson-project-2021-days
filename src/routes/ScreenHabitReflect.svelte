@@ -13,10 +13,11 @@
   import { push } from "svelte-spa-router";
   import AppHeader from "../components/AppHeader.svelte";
   import TwentyTwentyOne from "../svg/2021.svelte";
-  import Modal from "../components/Modal.svelte";
+  import AppModal from "../components/AppModal.svelte";
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeaderLocalScore from "../components/AppHeaderLocalScore.svelte";
   import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
+  import HabitCard from "../components/HabitCard.svelte";
 
   let contentModalDelete = {
     title: "Are You Sure You Want to Delete?",
@@ -230,76 +231,23 @@
         <div
           class="w-1/3 bg-white py-1 px-2 border-2 border-blue-100 shadow
           rounded-sm focus:outline-none">
-          <div class="flex flex-col mx-auto">
-            <div
-              class="relative uppercase font-extrabold text-gray-900 text-xs
-              text-left">
-              {#if tempLocalUserHabit.detailDuration > 86400}
-                {tempLocalUserHabit.detailDuration / 86400} days
-              {:else if tempLocalUserHabit.detailDuration == 86400}
-                24 hours
-              {:else}1 hour{/if}
-              <span
-                style="height: 50%; top: 50%; width: 28vw; left: calc(100% +
-                .5rem)"
-                class="absolute text-blue-900 border-t-2 green-500" />
-              <span
-                style="left: calc(100% + 28vw)"
-                class="ml-2 p-2 rounded flex justify-center items-center
-                absolute top-0 bottom-0 leading-none text-xs font-extrabold
-                text-gray-900 uppercase text-left">
-                Habit Duration
+          <HabitCard
+            duration={tempLocalUserHabit.detailDuration}
+            code={tempLocalUserHabit.detailCode}
+            leaders={['Habit Duration', 'Habit Code', 'Elapsed Time']}>
+            {#if tempLocalUserHabit.reflectIsSuccessful}
+              <span class="bg-green-100 text-green-700 py-1 px-2 rounded-sm">
+                success
               </span>
-            </div>
-            <div
-              class="relative mt-1 text-6xl font-extrabold text-center
-              text-blue-900">
-              {#if tempLocalUserHabit.detailCode}
-                {tempLocalUserHabit.detailCode}
-              {:else}+{/if}
-              <span
-                style="height: 50%; top: 50%; width: 23vw; left: calc(100% +
-                .5rem)"
-                class="absolute text-blue-900 border-t-2 green-500" />
-              <span
-                style="left: calc(100% + 23vw);"
-                class="ml-2 p-2 rounded flex justify-center items-center
-                absolute top-0 bottom-0 leading-none text-xs font-extrabold
-                text-gray-900 uppercase text-left">
-                Habit Code
+            {:else if tempLocalUserHabit.reflectIsSuccessful == null}
+              <span class="bg-blue-100 text-blue-700 px-2 rounded-sm">
+                active
               </span>
-            </div>
+            {:else}
+              <span class="bg-red-100 text-red-700 px-2 rounded-sm">fail</span>
+            {/if}
+          </HabitCard>
 
-            <div
-              class="relative mt-2 text-sm font-bold text-center text-gray-900
-              uppercase">
-              {#if tempLocalUserHabit.reflectIsSuccessful}
-                <span class="bg-green-100 text-green-700 py-1 px-2 rounded-sm">
-                  success
-                </span>
-              {:else if tempLocalUserHabit.reflectIsSuccessful == null}
-                <span class="bg-blue-100 text-blue-700 px-2 rounded-sm">
-                  active
-                </span>
-              {:else}
-                <span class="bg-red-100 text-red-700 px-2 rounded-sm">
-                  fail
-                </span>
-              {/if}
-              <span
-                style="height: 50%; top: 50%; width: 28vw; left: calc(100% +
-                .5rem)"
-                class="absolute text-blue-900 border-t-2 green-500" />
-              <span
-                style="left: calc(100% + 28vw);"
-                class="ml-2 p-2 rounded flex justify-center items-center
-                absolute top-0 bottom-0 leading-none text-xs font-extrabold
-                text-gray-900 uppercase text-left">
-                Habit Status
-              </span>
-            </div>
-
-          </div>
         </div>
 
         <div>
@@ -464,7 +412,7 @@
 </ContentWrapper>
 
 {#if habitDeleteWarning}
-  <Modal contentModal={contentModalDelete}>
+  <AppModal contentModal={contentModalDelete}>
     <button
       on:click={handleModalDeleteAction}
       type="button"
@@ -497,5 +445,5 @@
       </div>
 
     </div>
-  </Modal>
+  </AppModal>
 {/if}

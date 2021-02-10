@@ -11,6 +11,7 @@
     userHabitsHistory,
     isLSDataOutdated,
     isDataOutdatedHistory,
+    isDataOutdatedUserDelete,
     isLocalStorage,
     getIsLocalStorage
   } from "./stores.js";
@@ -50,6 +51,7 @@
     }
     $isLSDataOutdated ? isLSDataOutdated.set(false) : "";
     $isDataOutdatedHistory ? isDataOutdatedHistory.set(false) : "";
+    $isDataOutdatedUserDelete ? isDataOutdatedUserDelete.set(false) : "";
   };
 
   const updateLSAndRouteHome = () => {
@@ -57,14 +59,21 @@
     replace("/");
   };
 
+  const updateLSAndRouteStart = () => {
+    updateLocalStorage();
+    replace("/start");
+  };
+
   $: $isLSDataOutdated == true ? updateLSAndRouteHome() : "";
   $: $isDataOutdatedHistory == true ? updateLocalStorage() : "";
+  $: $isDataOutdatedHistory == true ? updateLocalStorage() : "";
+  $: $isDataOutdatedUserDelete == true ? updateLSAndRouteStart() : "";
 
-  // $: console.log("$userId", $userId);
-  // $: console.log("$userProfile", $userProfile);
-  // $: console.log("$userHabitsActive", $userHabitsActive);
-  // $: console.log("$userHabitsHistory", $userHabitsHistory);
-  // $: console.log("$isLSDataOutdated", $isLSDataOutdated);
+  $: console.log("$userId", $userId);
+  $: console.log("$userProfile", $userProfile);
+  $: console.log("$userHabitsActive", $userHabitsActive);
+  $: console.log("$userHabitsHistory", $userHabitsHistory);
+  $: console.log("$isLSDataOutdated", $isLSDataOutdated);
 
   onDestroy(() => {
     isLSDataOutdated.set(false);
@@ -80,10 +89,10 @@
     <Router {routes} />
   </main>
 
-  <footer class="mt-12 bottom-0 w-full sm:relative z-100">
+  <footer class="fixed mt-12 sm:mb-4 bottom-0 w-full sm:relative z-0">
     <div
       class="container mx-auto sm:max-w-xl py-1 sm:py-5 px-5 relative z-100
-      bg-gray-800 text-sm text-gray-400 font-bold sm:rounded-t ">
+      bg-gray-800 text-sm text-gray-400 font-bold sm:rounded ">
       <div class="flex justify-between items-center ">
         <p>Built by Jonathan Sanderson</p>
         <div class="align-middle h-full">

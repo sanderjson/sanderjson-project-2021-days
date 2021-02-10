@@ -8,7 +8,8 @@
     errMessage,
     userId,
     isLSDataOutdated,
-    isDataOutdatedHistory
+    isDataOutdatedHistory,
+    isNewSocialModal
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import { fade } from "svelte/transition";
@@ -16,8 +17,25 @@
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeaderLocalScore from "../components/AppHeaderLocalScore.svelte";
   import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
+  import AppButton from "../components/AppButton.svelte";
+  import AppModal from "../components/AppModal.svelte";
 
   let isHistoryLoaded = false;
+
+  const contentModalSocial = {
+    title: "Social Share Unavailable",
+    details: "This feature will be enabled shortly, check back again.",
+    button: "Go back to App",
+    button2: "Back"
+  };
+
+  const handleModalSocialAction = () => {
+    isNewSocialModal.set(false);
+  };
+
+  const handleTriggerSocial = () => {
+    isNewSocialModal.set(true);
+  };
 
   const getHabitHistory = async () => {
     const fetchURL = $API_ENDPOINT + `/habits/${$userId}/history`;
@@ -66,7 +84,7 @@
     <AppHeaderLocalTitle
       title={'Habit History'}
       subtitle={'Track your progress and share'} />
-    <div class="mt-6 space-y-8">
+    <div class="my-6 space-y-6">
       {#each $userHabitsActive as habit}
         {#if habit && !$isObjectEmpty(habit)}
           <HistoryCard {habit} />
@@ -82,5 +100,14 @@
         {/each}
       {/await}
     </div>
+    <AppButton handleFun={handleTriggerSocial} text="Share Habit History" />
   </div>
 </ContentWrapper>
+
+{#if $isNewSocialModal}
+  <AppModal contentModal={contentModalSocial} modalDualButton={false}>
+    <AppButton
+      handleFun={handleModalSocialAction}
+      text={contentModalSocial.button} />
+  </AppModal>
+{/if}

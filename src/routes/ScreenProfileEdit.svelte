@@ -1,33 +1,35 @@
 <script>
+  import { push } from "svelte-spa-router";
   import { onMount } from "svelte";
   import {
     errMessage,
     API_ENDPOINT,
-    indexActiveHabit,
-    userHabitsActive,
+    userAuth,
+    userId,
     userProfile,
-    isLSDataOutdated
+    userHabitsActive,
+    userHabitsHistory,
+    getUserHabitBlank,
+    isDataOutdatedUserDelete
   } from "../stores.js";
-  import { push } from "svelte-spa-router";
-  import AppHeader from "../components/AppHeader.svelte";
-  import TwentyTwentyOne from "../svg/2021.svelte";
-  import AppModal from "../components/AppModal.svelte";
-  import FormHabitAddEditDelete from "../components/FormHabitAddEditDelete.svelte";
   import ContentWrapper from "../components/ContentWrapper.svelte";
   import AppHeaderLocalScore from "../components/AppHeaderLocalScore.svelte";
   import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
+  import FormUserEditDelete from "../components/FormUserEditDelete.svelte";
+  import AppModal from "../components/AppModal.svelte";
 
-  let tempLocalUserHabit = $userHabitsActive[$indexActiveHabit];
+  let tempLocalUserProfile = $userProfile;
 
   let contentModalDelete = {
     title: "Are You Sure You Want to Delete?",
-    details: "You will lose all data associated with this habit.",
-    button: "Delete Habit Data"
+    details:
+      "You will lose all data associated with this profile. There is no way to recover the data after this point.",
+    button: "Delete User Profile"
   };
 
   const handleModalDeleteAction = async () => {
     const fetchURL =
-      $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
+      $API_ENDPOINT + `/users/${tempLocalUserProfile.adminIdUser}`;
     const fetchOptions = {
       method: "DELETE",
       headers: {
@@ -35,54 +37,7 @@
       },
 
       body: JSON.stringify({
-        ...tempLocalUserHabit
-      })
-    };
-
-    const handleErrors = res => {
-      if (!res.ok) {
-        return res.text().then(text => {
-          throw text;
-        });
-      }
-      return res.json();
-    };
-
-    const postData = await fetch(fetchURL, fetchOptions)
-      .then(handleErrors)
-      .then(res => {
-        console.log("res", res);
-        let newHabitData = $userHabitsActive;
-        newHabitData[$indexActiveHabit] = {};
-        userHabitsActive.set(newHabitData);
-        userProfile.set(res.userProfile);
-        isLSDataOutdated.set(true);
-      })
-      .catch(err => {
-        // console.clear();
-        errMessage.set(err);
-        push(`/error`);
-      });
-
-    habitDeleteWarning = false;
-  };
-
-  let habitDeleteWarning = false;
-  const handleDelete = () => {
-    habitDeleteWarning = true;
-  };
-
-  const handleSubmitEditExistingHabit = async () => {
-    const fetchURL =
-      $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
-    const fetchOptions = {
-      method: "PATCH",
-      headers: {
-        "content-type": "application/json"
-      },
-
-      body: JSON.stringify({
-        ...tempLocalUserHabit
+        ...tempLocalUserProfile
       })
     };
 
@@ -99,41 +54,87 @@
       .then(handleErrors)
       .then(res => {
         // console.log("res", res);
-        let newHabitData = $userHabitsActive;
-        newHabitData[$indexActiveHabit] = res.updatedHabit;
-        userHabitsActive.set(newHabitData);
-        isLSDataOutdated.set(true);
+        userAuth.set({
+          prop1: null,
+          prop2: null,
+          prop3: null
+        });
+        userProfile.set($getUserHabitBlank());
+        userId.set(null);
+        userHabitsActive.set([null, null, null]);
+        userHabitsHistory.set([]);
+        isDataOutdatedUserDelete.set(true);
       })
       .catch(err => {
         // console.clear();
         errMessage.set(err);
         push(`/error`);
       });
+
+    profileDeleteWarning = false;
+  };
+
+  let profileDeleteWarning = false;
+  const handleDelete = () => {
+    profileDeleteWarning = true;
+  };
+
+  const handleSubmitEditExistingProfile = async () => {
+    const fetchURL =
+      $API_ENDPOINT + `/users/${tempLocalUserProfile.adminIdUser}`;
+    const fetchOptions = {
+      method: "PATCH",
+      headers: {
+        "content-type": "application/json"
+      },
+
+      body: JSON.stringify({
+        ...tempLocalUserProfile
+      })
+    };
+
+    const handleErrors = res => {
+      if (!res.ok) {
+        return res.text().then(text => {
+          throw text;
+        });
+      }
+      return res.json();
+    };
+
+    const postData = await fetch(fetchURL, fetchOptions)
+      .then(handleErrors)
+      .then(res => {
+        // console.log("res", res);
+        userProfile.set(res.userProfile);
+        isDataOutdatedUserDelete.set(true);
+      })
+      .catch(err => {
+        console.clear();
+        errMessage.set(err);
+        push(`/error`);
+      });
   };
 </script>
-
-<!-- <AppHeader>
-  <TwentyTwentyOne />
-</AppHeader> -->
 
 <ContentWrapper>
   <div>
     <AppHeaderLocalScore />
     <AppHeaderLocalTitle
-      title={'Edit Habit'}
+      title={'Edit Account'}
       subtitle={'Fill out this form to edit'} />
     <div class="mt-6">
-      <FormHabitAddEditDelete
-        {tempLocalUserHabit}
-        actionTitle="Update Habit"
-        handleSubmit={handleSubmitEditExistingHabit}
+      <FormUserEditDelete
+        {tempLocalUserProfile}
+        actionTitle="Update Profile"
+        handleSubmit={handleSubmitEditExistingProfile}
         altActionTitle="Delete"
         handleAltAction={handleDelete} />
     </div>
   </div>
 </ContentWrapper>
 
-{#if habitDeleteWarning}
+{#if profileDeleteWarning}
   <AppModal contentModal={contentModalDelete}>
     <button
       on:click={handleModalDeleteAction}

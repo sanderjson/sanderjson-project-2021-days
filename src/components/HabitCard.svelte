@@ -6,10 +6,12 @@
   import HabitCardInfoLeader from "./HabitCardInfoLeader.svelte";
 </script>
 
-<div class="flex flex-col mx-auto">
+<div class="flex flex-col mx-auto sm:py-2">
   <div
     class="relative uppercase font-extrabold text-gray-900 text-xs text-left">
-    {#if duration > 86400}
+    {#if duration === 'Time'}
+      {duration}
+    {:else if duration > 86400}
       {duration / 86400} days
     {:else if duration == 86400}
       24 hours

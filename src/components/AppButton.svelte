@@ -15,14 +15,26 @@
   }
 </style>
 
-<button
-  on:click={handleFun}
-  type="button"
-  class="inline-flex justify-center w-full rounded-md border border-transparent
-  shadow-sm px-4 py-2 bg-blue-900 text-base font-bold text-white
-  hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-offset-2
-  focus:ring-blue-700 sm:text-sm transition-colors duration-75"
-  class:success
-  class:danger>
-  <span>{text}</span>
-</button>
+{#if handleFun}
+  <button
+    on:click={handleFun}
+    type="button"
+    class="inline-flex justify-center w-full rounded-md border
+    border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-bold
+    text-white hover:bg-blue-500 focus:outline-none focus:ring-2
+    focus:ring-offset-2 focus:ring-blue-700 sm:text-sm transition-colors
+    duration-75"
+    class:success
+    class:danger>
+    <span>{text}</span>
+  </button>
+{:else}
+  <button
+    disabled
+    class="inline-flex justify-center w-full rounded-md border
+    border-transparent shadow-sm px-4 py-2 bg-blue-100 text-base font-bold
+    text-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2
+    focus:ring-blue-700 sm:text-sm transition-colors duration-75">
+    <span>{text}</span>
+  </button>
+{/if}

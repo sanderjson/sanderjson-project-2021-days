@@ -8,7 +8,6 @@
   import {
     errMessage,
     API_ENDPOINT,
-    contentHabitDetailCategory,
     userId,
     userAuth,
     userProfile,

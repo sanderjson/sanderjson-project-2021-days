@@ -14,6 +14,8 @@
   export let habit;
   export let i;
 
+  let isReadyToHabitCheck = false;
+
   const handleTriggerHabitCheck = () => {
     isNewHabitCheckModal.set(true);
   };
@@ -109,11 +111,28 @@
     return `${val.toFixed(0)} ${unit}`;
   };
 
-  const updateTimeInterval = setInterval(() => {
+  const intervalUpdateTime = setInterval(() => {
     if (isTimeUpdating) {
       timeRemaining--;
     }
   }, 1000);
+
+  const checkIfIsReadyForHabitCheck = () => {
+    console.log("habit", habit);
+    if (dateCurrent && habit.adminIsActive && habit.checks.length > 0) {
+      let lastCheck = new Date(habit.checks[habit.checks.length - 1].date);
+      let timeHoursSinceLastCheck = (new Date() - lastCheck) / 3600 / 1000;
+      if (
+        (timeHoursSinceLastCheck > 1 && habit.detailDuration <= 86400) ||
+        timeHoursSinceLastCheck > 8
+      )
+        isReadyToHabitCheck = true;
+    }
+  };
+
+  const intervalCheckIsReady = setInterval(() => {
+    checkIfIsReadyForHabitCheck();
+  }, 10 * 1000);
 
   let timeUpdateFormat = formatTimeRemaining(timeRemaining);
 
@@ -122,13 +141,17 @@
       timeUpdateFormat = formatTimeRemaining(timeRemaining);
     } else {
       dateCurrent = false;
+      isReadyToHabitCheck = false;
       timeUpdateFormat = 0;
-      clearInterval(updateTimeInterval);
+      clearInterval(intervalUpdateTime);
       handleHabitIsComplete();
     }
   };
 
+  checkIfIsReadyForHabitCheck();
+
   $: timeRemaining && isTimeUpdating ? updateTime() : "";
+  $: isReadyToHabitCheck;
 </script>
 
 <style>
@@ -157,8 +180,10 @@
       <div class="sm:bg-white mt-2 sm:shadow sm:rounded-lg sm:px-6 sm:py-2">
         {#if !habit.adminIsActive}
           <AppButton handleFun={handleHabitReflect} text="Reflect" />
-        {:else}
+        {:else if isReadyToHabitCheck}
           <AppButton handleFun={handleTriggerHabitCheck} text="Check In" />
+        {:else}
+          <AppButton handleFun={null} text="On Track" />
         {/if}
       </div>
     {/if}

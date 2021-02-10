@@ -6,7 +6,7 @@
 <div
   class="mx-auto flex py-1 border-2 border-blue-100 shadow rounded-sm bg-white
   hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-900
-  focus:outline-none transition-colors duration-75">
+  focus:outline-none transition-colors duration-75 cursor-pointer">
   <div
     on:click={() => console.log('Habit button clicked')}
     class="w-1/3 py-1 px-2 ">
