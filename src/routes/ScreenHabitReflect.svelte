@@ -42,7 +42,13 @@
     habitDeleteWarning = !habitDeleteWarning;
   };
 
+  const calculateHabitScore = () => {
+
+  };
+
   const handleModalDeleteAction = async () => {
+
+    
     const fetchURL =
       $API_ENDPOINT + `/habits/${tempLocalUserHabit.adminIdHabit}`;
     const fetchOptions = {

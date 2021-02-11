@@ -24,7 +24,7 @@
     title: "Are You Sure You Want to Delete?",
     details:
       "You will lose all data associated with this profile. There is no way to recover the data after this point.",
-    button: "Delete User Profile"
+    button: "Delete My Entire Account"
   };
 
   const handleModalDeleteAction = async () => {
@@ -76,7 +76,7 @@
 
   let profileDeleteWarning = false;
   const handleDelete = () => {
-    profileDeleteWarning = true;
+    profileDeleteWarning = !profileDeleteWarning;
   };
 
   const handleSubmitEditExistingProfile = async () => {
@@ -145,5 +145,28 @@
       focus:ring-offset-2 focus:ring-blue-700 sm:text-sm">
       {contentModalDelete.button}
     </button>
+    <div class="mt-6">
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-gray-300" />
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="px-2 bg-white text-gray-900">Or</span>
+        </div>
+      </div>
+
+      <div class="mt-6">
+
+        <button
+          on:click={handleDelete}
+          class="w-full inline-flex justify-center py-2 px-4 border
+          border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium
+          text-gray-900 hover:bg-gray-50">
+          <span class="">Back</span>
+        </button>
+
+      </div>
+
+    </div>
   </AppModal>
 {/if}

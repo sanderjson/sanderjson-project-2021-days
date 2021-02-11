@@ -164,7 +164,6 @@
             <span class="">Sign Up</span>
           </a>
         </div>
-
         <div>
           <a
             href="#/about"
@@ -174,8 +173,9 @@
             <span class="">About</span>
           </a>
         </div>
-
       </div>
+
     </div>
+    
   </div>
 </ContentWrapper>

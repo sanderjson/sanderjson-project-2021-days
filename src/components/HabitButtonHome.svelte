@@ -5,7 +5,8 @@
     indexActiveHabit,
     userHabitsActive,
     isLSDataOutdated,
-    isNewHabitCheckModal
+    isNewHabitCheckModal,
+    isReadyToHabitCheck
   } from "../stores.js";
   import { push } from "svelte-spa-router";
   import HabitCard from "./HabitCard.svelte";
@@ -13,8 +14,6 @@
 
   export let habit;
   export let i;
-
-  let isReadyToHabitCheck = false;
 
   const handleTriggerHabitCheck = () => {
     isNewHabitCheckModal.set(true);
@@ -40,7 +39,7 @@
   };
 
   const handleComplete = () => {
-    console.log("COMPLETE ", i);
+    console.log("habit complete", habit);
     isTimeUpdating = false;
   };
   const handleHabitCheck = async val => {
@@ -118,7 +117,7 @@
   }, 1000);
 
   const checkIfIsReadyForHabitCheck = () => {
-    console.log("habit", habit);
+    // console.log("habit", habit);
     if (dateCurrent && habit.adminIsActive && habit.checks.length > 0) {
       let lastCheck = new Date(habit.checks[habit.checks.length - 1].date);
       let timeHoursSinceLastCheck = (new Date() - lastCheck) / 3600 / 1000;
@@ -126,7 +125,7 @@
         (timeHoursSinceLastCheck > 1 && habit.detailDuration <= 86400) ||
         timeHoursSinceLastCheck > 8
       )
-        isReadyToHabitCheck = true;
+        isReadyToHabitCheck.set(true);
     }
   };
 
@@ -141,7 +140,7 @@
       timeUpdateFormat = formatTimeRemaining(timeRemaining);
     } else {
       dateCurrent = false;
-      isReadyToHabitCheck = false;
+      isReadyToHabitCheck.set(false);
       timeUpdateFormat = 0;
       clearInterval(intervalUpdateTime);
       handleHabitIsComplete();
@@ -151,7 +150,8 @@
   checkIfIsReadyForHabitCheck();
 
   $: timeRemaining && isTimeUpdating ? updateTime() : "";
-  $: isReadyToHabitCheck;
+  $: $isReadyToHabitCheck;
+  $: habit;
 </script>
 
 <style>
@@ -180,7 +180,7 @@
       <div class="sm:bg-white mt-2 sm:shadow sm:rounded-lg sm:px-6 sm:py-2">
         {#if !habit.adminIsActive}
           <AppButton handleFun={handleHabitReflect} text="Reflect" />
-        {:else if isReadyToHabitCheck}
+        {:else if $isReadyToHabitCheck || habit.checks.length == 0}
           <AppButton handleFun={handleTriggerHabitCheck} text="Check In" />
         {:else}
           <AppButton handleFun={null} text="On Track" />

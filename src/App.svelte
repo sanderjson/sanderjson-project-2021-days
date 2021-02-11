@@ -69,11 +69,11 @@
   $: $isDataOutdatedHistory == true ? updateLocalStorage() : "";
   $: $isDataOutdatedUserDelete == true ? updateLSAndRouteStart() : "";
 
-  $: console.log("$userId", $userId);
-  $: console.log("$userProfile", $userProfile);
-  $: console.log("$userHabitsActive", $userHabitsActive);
-  $: console.log("$userHabitsHistory", $userHabitsHistory);
-  $: console.log("$isLSDataOutdated", $isLSDataOutdated);
+  // $: console.log("$userId", $userId);
+  // $: console.log("$userProfile", $userProfile);
+  // $: console.log("$userHabitsActive", $userHabitsActive);
+  // $: console.log("$userHabitsHistory", $userHabitsHistory);
+  // $: console.log("$isLSDataOutdated", $isLSDataOutdated);
 
   onDestroy(() => {
     isLSDataOutdated.set(false);
@@ -92,18 +92,25 @@
   <footer class="fixed mt-12 sm:mb-4 bottom-0 w-full sm:relative z-0">
     <div
       class="container mx-auto sm:max-w-xl py-1 sm:py-5 px-5 relative z-100
-      bg-gray-800 text-sm text-gray-400 font-bold sm:rounded ">
+      bg-gray-300 text-sm text-gray-500 font-medium sm:rounded ">
       <div class="flex justify-between items-center ">
-        <p>Built by Jonathan Sanderson</p>
+        <p
+          class="hover:text-blue-900 transition-colors duration-150
+          cursor-pointer">
+          Built by
+          <span class="font-bold">Jonathan Sanderson</span>
+        </p>
         <div class="align-middle h-full">
           <a
-            class="inline-flex justify-center align-middle fill-current w-4 h-4"
+            class="inline-flex justify-center align-middle fill-current w-4 h-4
+            hover:text-blue-900 transition-colors duration-150"
             target="_blank"
             href="https://twitter.com/sanderjson">
             <Twitter />
           </a>
           <a
-            class="inline-flex justify-center align-middle fill-current w-4 h-4"
+            class="inline-flex justify-center align-middle fill-current w-4 h-4
+            hover:text-blue-900 transition-colors duration-150"
             target="_blank"
             href="https://linkedin.com/in/sandersonjma">
             <LinkedIn />

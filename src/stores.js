@@ -25,6 +25,7 @@ const contentHabitDurationData = [
 	// { disabled: false, value: 60, text: `1 min` },
 	// { disabled: false, value: 300, text: `5 min` },
 	// { disabled: false, value: 3600, text: `1 hour` },
+	{ disabled: false, value: 3600 * 8, text: `8 hours` },
 	{ disabled: false, value: 3600 * 24, text: `24 hours` },
 	{ disabled: false, value: 3600 * 24 * 3, text: `3 days` },
 	{ disabled: true, value: 3600 * 24 * 7, text: `7 days` },
@@ -135,6 +136,7 @@ export const indexActiveHabit = writable(0);
 
 export const isNewSocialModal = writable(false);
 export const isNewHabitCheckModal = writable(false);
+export const isReadyToHabitCheck = writable(false);
 
 export const isLSDataOutdated = writable(false);
 export const isDataOutdatedHistory = writable(false);

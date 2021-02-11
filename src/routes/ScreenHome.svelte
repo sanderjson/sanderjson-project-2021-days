@@ -4,6 +4,7 @@
     API_ENDPOINT,
     indexActiveHabit,
     isNewHabitCheckModal,
+    isReadyToHabitCheck,
     userProfile,
     userHabitsActive,
     userHabitsHistory,
@@ -19,6 +20,8 @@
   import AppHeaderLocalTitle from "../components/AppHeaderLocalTitle.svelte";
   import AppButton from "../components/AppButton.svelte";
   import AppModal from "../components/AppModal.svelte";
+  import FaHistory from "../svg/fa-history.svelte";
+  import FaPencilAlt from "../svg/fa-pencil-alt.svelte";
 
   let selected;
   let userHabitsActiveClean = $userHabitsActive.filter(habit => {
@@ -29,7 +32,7 @@
 
   const contentModalHabitCheck = {
     title: "Check in!",
-    details: "How are you feeling today?",
+    details: "How is this habit going right now?",
     button: "Complete Check",
     button2: "Back"
   };
@@ -90,6 +93,7 @@
         tempHabitsActive[$indexActiveHabit] = res.updatedHabit;
         userHabitsActive.set(tempHabitsActive);
         isNewHabitCheckModal.set(false);
+        isReadyToHabitCheck.set(false);
         isLSDataOutdated.set(true);
       })
       .catch(err => {
@@ -178,8 +182,9 @@
           rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
           focus:ring-2 focus:ring-offset-2 focus:ring-blue-700
           focus:outline-none transition-colors duration-75">
-          <i class=" fas fa-1x fa-history text-blue-900" />
-          <!-- <i class=" fas fa-1x fa-envelope text-blue-900" /> -->
+          <span class="text-blue-900 w-6 h-6 fill-current">
+            <FaHistory />
+          </span>
         </button>
         <button
           on:click={handleTriggerUserEdit}
@@ -187,7 +192,9 @@
           rounded-full border-2 border-blue-100 shadow hover:bg-blue-200
           focus:ring-2 focus:ring-offset-2 focus:ring-blue-700
           focus:outline-none transition-colors duration-75">
-          <i class=" fas fa-1x fa-pencil-alt text-blue-900" />
+          <span class="text-blue-900 w-5 h-5 fill-current">
+            <FaPencilAlt />
+          </span>
         </button>
       </section>
       <section class="pt-12 ">
@@ -207,8 +214,9 @@
               class="user-icon1 absolute right-0 bottom-0 inline-flex ml-2
               bg-white h-6 w-6 justify-center items-center focus:outline-none
               focus:border-blue-400 focus:border-2 mr-2 mb-2">
-              <i class="fas fa-1x fa-pencil-alt text-blue-100" />
-              <!-- <span class="font-bold text-blue-100">[edit]</span> -->
+              <span class="text-blue-900 w-3 h-3 fill-current">
+                <FaPencilAlt />
+              </span>
             </button>
           {:else}
             <h1 class="text-xl font-bold text-gray-500">Your New Habit</h1>

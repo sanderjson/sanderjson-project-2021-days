@@ -10,14 +10,14 @@
 
 <ContentWrapper>
   <div>
-    <h1 class="text-xl text-gray-700 leading-8">
-      It has been suggested that it takes twenty-one days to make or break a
-      habit.
+    <h1 class="text-xl text-gray-700 leading-tight">
+      Creating a series of habits is often cited as a sure recipe for success
     </h1>
     <div
-      class=" space-y-6 mt-6 prose prose-indigo prose-lg text-gray-500 mx-auto">
+      class=" space-y-6 my-6 prose prose-blue prose-lg text-gray-500 mx-auto">
       <p>
-        This simple app can help you track progress.
+        This simple app can help you track the progress, and history of your
+        habits.
         <a class="underline" href="#/signup">Click here</a>
         to visit the signup page, and create an account with your details.
       </p>
@@ -37,9 +37,9 @@
         <li>"I will practice gratitude everyday for the next 21 days</li>
       </ul>
       <p class="mt-2">
-        We don't need anymore empty New Year's resolutions. People who want real
-        change don't wait for a special day. Help yourself by making a real
-        commitment of twenty-one days.
+        We don't need anymore empty New Year's resolutions. Someone who wants
+        real change won't wait for a 'special day' to start. Help your future
+        self by making a real commitment now.
       </p>
     </div>
 

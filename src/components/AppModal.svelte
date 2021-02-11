@@ -1,8 +1,7 @@
 <script>
   import { fade, fly } from "svelte/transition";
-
   export let contentModal;
-  export let modalDualButton;
+  export let modalDualButton = false;
 </script>
 
 <div in:fade class="fixed z-10 inset-0 overflow-y-auto">
@@ -29,12 +28,13 @@
       aria-modal="true"
       aria-labelledby="modal-headline">
       <div>
+
         <div
           class="mx-auto flex items-center justify-center h-12 w-12 rounded-full
-          bg-green-100">
+          bg-blue-100">
           <!-- Heroicon name: check -->
           <svg
-            class="h-6 w-6 text-green-600"
+            class="h-6 w-6 text-blue-600"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"

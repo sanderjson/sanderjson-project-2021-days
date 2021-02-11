@@ -1,5 +1,8 @@
 <script>
   import HabitCard from "./HabitCard.svelte";
+  import FaSquareCheck from "../svg/fa-square-check.svelte";
+  import FaSquareClose from "../svg/fa-square-close.svelte";
+
   export let habit;
 </script>
 
@@ -42,15 +45,18 @@
       End: {habit.adminDateStartUTCString.slice(0, 16)}
     </div>
     <ul
-      class="ml-2 pt-1 place-items-center grid grid-cols-8 grid-cols-2 w-4/5
-      leading-tight">
+      class="ml-2 pt-1 place-items-center grid grid-cols-8 w-4/5 leading-tight">
       {#each habit.checks as check, i}
         {#if i < 15}
-          <li>
+          <li title={check.date.slice(0, 16)}>
             {#if check.isOk}
-              <i class="bg-green-100 far fa-1x fa-check-square" />
+              <span class="inline-block text-green-500 w-5 h-5 fill-current">
+                <FaSquareCheck />
+              </span>
             {:else}
-              <i class="bg-red-100 far fa-1x fa-window-close" />
+              <span class="inline-block text-red-500 w-6 h-6 fill-current">
+                <FaSquareClose />
+              </span>
             {/if}
           </li>
         {/if}

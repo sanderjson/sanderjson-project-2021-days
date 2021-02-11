@@ -7,11 +7,11 @@
 
 <style>
   .success {
-    @apply bg-green-100 text-green-500 focus:ring-green-500 bg-opacity-50 hover:bg-green-500 hover:text-white;
+    @apply bg-green-100 text-green-700 focus:ring-green-500 bg-opacity-50 hover:bg-green-500 hover:text-white;
   }
 
   .danger {
-    @apply bg-red-100 text-red-500 focus:ring-red-500 bg-opacity-50 hover:bg-red-500 hover:text-white;
+    @apply bg-red-100 text-red-700 focus:ring-red-500 bg-opacity-50 hover:bg-red-500 hover:text-white;
   }
 </style>
 
