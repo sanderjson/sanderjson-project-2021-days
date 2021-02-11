@@ -18,6 +18,13 @@
   export let handleAltAction;
   export let handleSubmit;
 
+  // tempLocalUserHabit.duration = 3600;
+  // {
+  //       disabled: false,
+  //       value: 3600 * 8,
+  //       text: "8 hours"
+  //     }
+
   const handleLocalSubmit = () => {
     handleSubmit();
   };
@@ -40,11 +47,7 @@
     tempLocalUserHabit.detailIsNewHabit = !tempLocalUserHabit.detailIsNewHabit;
   };
 
-  onMount(() => {
-    tempLocalUserHabit.adminIsActive
-      ? ""
-      : handleSelectDuration($contentHabitDuration[0]);
-  });
+  // console.log("tempLocalUserHabit", tempLocalUserHabit);
 </script>
 
 <form class="space-y-6" on:submit|preventDefault={handleLocalSubmit}>
@@ -90,7 +93,15 @@
       focus:outline-none focus:ring-blue-900 focus:border-blue-900 sm:text-sm
       rounded-md">
       {#each $contentHabitDuration as option}
-        <option disabled={option.disabled} value={option}>{option.text}</option>
+        {#if (option.value == 3600 && !tempLocalUserHabit.adminIsActive) || (tempLocalUserHabit.adminIsActive && option.value == tempLocalUserHabit.detailDuration)}
+          <option selected disabled={option.disabled} value={option}>
+            {option.text}
+          </option>
+        {:else}
+          <option disabled={option.disabled} value={option}>
+            {option.text}
+          </option>
+        {/if}
       {/each}
     </select>
   </div>

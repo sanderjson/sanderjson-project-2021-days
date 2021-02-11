@@ -159,8 +159,8 @@
         alt="" /> -->
           <div
             style="font-family: 'Alt-Smaq', cursive; width: 168px; height 168px;"
-            class="relative rounded-full m-1 z-0 text-9xl sm:text-10xl
-            leading-none">
+            class="relative text-center rounded-full m-1 z-0 text-9xl
+            sm:text-10xl leading-none">
             <div>{$userProfile.detailInitials}</div>
           </div>
         </div>
