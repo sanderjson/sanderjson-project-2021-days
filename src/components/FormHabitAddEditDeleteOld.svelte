@@ -3,7 +3,6 @@
 	import {
 		contentHabitDetailCategory,
 		contentHabitDuration,
-		contentHabitCheckinFrequency,
 	} from "../stores.js";
 	import { push } from "svelte-spa-router";
 	import ContentWrapper from "./ContentWrapper.svelte";
@@ -34,42 +33,21 @@
 		return new Date();
 	};
 
-	// let selected;
-	// const handleSelectDuration = option => {
-	//   let dateStart = getNewDate();
-	//   let dateEnd = getNewDate();
-	//   dateEnd.setSeconds(dateEnd.getSeconds() + option.value);
-	//   tempLocalUserHabit.adminDateStartUTCString = dateStart.toUTCString();
-	//   tempLocalUserHabit.adminDateEndUTCString = dateEnd.toUTCString();
-	//   tempLocalUserHabit.detailDuration = option.value;
-	// };
-
-	let selectedHabitDuration;
-	const handleSelectHabitDuration = (option) => {
+	let selected;
+	const handleSelectDuration = (option) => {
 		let dateStart = getNewDate();
 		let dateEnd = getNewDate();
 		dateEnd.setSeconds(dateEnd.getSeconds() + option.value);
 		tempLocalUserHabit.adminDateStartUTCString = dateStart.toUTCString();
 		tempLocalUserHabit.adminDateEndUTCString = dateEnd.toUTCString();
 		tempLocalUserHabit.detailDuration = option.value;
-		// console.log("changeDuration", { tempLocalUserHabit });
-	};
-
-	let selectedCheckinFrequency;
-	const handleSelectHabitCheckinFrequency = (option) => {
-		tempLocalUserHabit.detailCheckinFrequency = option.value;
-		// console.log("changeFreq", { tempLocalUserHabit });
 	};
 
 	const handleToggleHabit = () => {
 		tempLocalUserHabit.detailIsNewHabit = !tempLocalUserHabit.detailIsNewHabit;
 	};
 
-	// console.log("init tempLocalUserHabit", tempLocalUserHabit);
-	onMount(() => {
-		handleSelectHabitDuration(selectedHabitDuration);
-		handleSelectHabitCheckinFrequency(selectedCheckinFrequency);
-	});
+	// console.log("tempLocalUserHabit", tempLocalUserHabit);
 </script>
 
 <form class="space-y-6" on:submit|preventDefault={handleLocalSubmit}>
@@ -103,7 +81,7 @@
 		</div>
 	</div>
 
-	<!-- <div>
+	<div>
 		<label for="location" class="block text-sm font-medium text-gray-900">
 			Duration
 		</label>
@@ -118,65 +96,6 @@
 		>
 			{#each $contentHabitDuration as option}
 				{#if (option.value == 3600 && !tempLocalUserHabit.adminIsActive) || (tempLocalUserHabit.adminIsActive && option.value == tempLocalUserHabit.detailDuration)}
-					<option selected disabled={option.disabled} value={option}>
-						{option.text}
-					</option>
-				{:else}
-					<option disabled={option.disabled} value={option}>
-						{option.text}
-					</option>
-				{/if}
-			{/each}
-		</select>
-	</div> -->
-
-	<div>
-		<label for="habit-duration" class="block text-sm font-medium text-gray-900">
-			Duration
-		</label>
-		<select
-			bind:value={selectedHabitDuration}
-			on:change={() => handleSelectHabitDuration(selectedHabitDuration)}
-			id="habit-duration"
-			name="habit-duration"
-			class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300
-      focus:outline-none focus:ring-blue-900 focus:border-blue-900 sm:text-sm
-      rounded-md"
-		>
-			{#each $contentHabitDuration as option}
-				{#if (option.value == 3600 * 8 && !tempLocalUserHabit.adminIsActive) || (tempLocalUserHabit.adminIsActive && option.value == tempLocalUserHabit.detailDuration)}
-					<!-- {console.log("Duration", option)} -->
-					<option selected disabled={option.disabled} value={option}>
-						{option.text}
-					</option>
-				{:else}
-					<option disabled={option.disabled} value={option}>
-						{option.text}
-					</option>{/if}
-			{/each}
-		</select>
-	</div>
-
-	<div>
-		<label
-			for="habit-checkin-frequency"
-			class="block text-sm font-medium text-gray-900"
-		>
-			Checkin Frequency
-		</label>
-		<select
-			bind:value={selectedCheckinFrequency}
-			on:change={() =>
-				handleSelectHabitCheckinFrequency(selectedCheckinFrequency)}
-			id="habit-checkin-frequency"
-			name="habit-checkin-frequency"
-			class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300
-      focus:outline-none focus:ring-blue-900 focus:border-blue-900 sm:text-sm
-      rounded-md"
-		>
-			{#each $contentHabitCheckinFrequency as option}
-				{#if (option.value == 3600 && !tempLocalUserHabit.adminIsActive) || (tempLocalUserHabit.adminIsActive && option.value == tempLocalUserHabit.detailCheckinFrequency)}
-					<!-- {console.log("Frequency", option)} -->
 					<option selected disabled={option.disabled} value={option}>
 						{option.text}
 					</option>
@@ -338,5 +257,3 @@
 		</div>
 	</div>
 </div>
-
-<!--  -->
