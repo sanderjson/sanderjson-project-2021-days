@@ -11758,13 +11758,20 @@ var app = (function () {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[2] = list[i];
-    	child_ctx[4] = i;
+    	child_ctx[3] = list[i];
+    	child_ctx[5] = i;
     	return child_ctx;
     }
 
-    // (26:6) {:else}
-    function create_else_block_1$5(ctx) {
+    function get_each_context_1$1(ctx, list, i) {
+    	const child_ctx = ctx.slice();
+    	child_ctx[3] = list[i];
+    	child_ctx[5] = i;
+    	return child_ctx;
+    }
+
+    // (31:4) {:else}
+    function create_else_block_2$2(ctx) {
     	let span;
 
     	const block = {
@@ -11772,7 +11779,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "fail";
     			attr_dev(span, "class", "bg-red-100 text-red-700 px-2 rounded-sm");
-    			add_location(span, file$p, 26, 8, 929);
+    			add_location(span, file$p, 31, 5, 950);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11784,17 +11791,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block_1$5.name,
+    		id: create_else_block_2$2.name,
     		type: "else",
-    		source: "(26:6) {:else}",
+    		source: "(31:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (24:50) 
-    function create_if_block_4$2(ctx) {
+    // (29:48) 
+    function create_if_block_6$1(ctx) {
     	let span;
 
     	const block = {
@@ -11802,7 +11809,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "active";
     			attr_dev(span, "class", "bg-blue-100 text-blue-700 px-2 rounded-sm");
-    			add_location(span, file$p, 24, 8, 837);
+    			add_location(span, file$p, 29, 5, 863);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11814,17 +11821,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_4$2.name,
+    		id: create_if_block_6$1.name,
     		type: "if",
-    		source: "(24:50) ",
+    		source: "(29:48) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (20:6) {#if habit.reflectIsSuccessful}
-    function create_if_block_3$3(ctx) {
+    // (25:4) {#if habit.reflectIsSuccessful}
+    function create_if_block_5$2(ctx) {
     	let span;
 
     	const block = {
@@ -11832,7 +11839,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "success";
     			attr_dev(span, "class", "bg-green-100 text-green-700 py-1 px-2 rounded-sm");
-    			add_location(span, file$p, 20, 8, 680);
+    			add_location(span, file$p, 25, 5, 718);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11844,23 +11851,23 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_3$3.name,
+    		id: create_if_block_5$2.name,
     		type: "if",
-    		source: "(20:6) {#if habit.reflectIsSuccessful}",
+    		source: "(25:4) {#if habit.reflectIsSuccessful}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (16:4) <HabitCard       duration={habit.detailDuration}       code={habit.detailCode}       leaders={false}>
+    // (20:3) <HabitCard     duration={habit.detailDuration}     code={habit.detailCode}     leaders={false}    >
     function create_default_slot$b(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
-    		if (/*habit*/ ctx[0].reflectIsSuccessful) return create_if_block_3$3;
-    		if (/*habit*/ ctx[0].reflectIsSuccessful == null) return create_if_block_4$2;
-    		return create_else_block_1$5;
+    		if (/*habit*/ ctx[0].reflectIsSuccessful) return create_if_block_5$2;
+    		if (/*habit*/ ctx[0].reflectIsSuccessful == null) return create_if_block_6$1;
+    		return create_else_block_2$2;
     	}
 
     	let current_block_type = select_block_type(ctx);
@@ -11896,25 +11903,25 @@ var app = (function () {
     		block,
     		id: create_default_slot$b.name,
     		type: "slot",
-    		source: "(16:4) <HabitCard       duration={habit.detailDuration}       code={habit.detailCode}       leaders={false}>",
+    		source: "(20:3) <HabitCard     duration={habit.detailDuration}     code={habit.detailCode}     leaders={false}    >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (50:8) {#if i < 15}
-    function create_if_block_1$5(ctx) {
+    // (58:5) {#if i < 15}
+    function create_if_block_3$3(ctx) {
     	let li;
     	let current_block_type_index;
     	let if_block;
     	let li_title_value;
     	let current;
-    	const if_block_creators = [create_if_block_2$5, create_else_block$8];
+    	const if_block_creators = [create_if_block_4$2, create_else_block_1$5];
     	const if_blocks = [];
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*check*/ ctx[2].isOk) return 0;
+    		if (/*check*/ ctx[3].isOk) return 0;
     		return 1;
     	}
 
@@ -11925,8 +11932,8 @@ var app = (function () {
     		c: function create() {
     			li = element("li");
     			if_block.c();
-    			attr_dev(li, "title", li_title_value = /*check*/ ctx[2].date.slice(0, 16));
-    			add_location(li, file$p, 50, 10, 1683);
+    			attr_dev(li, "title", li_title_value = /*check*/ ctx[3].date.slice(0, 16));
+    			add_location(li, file$p, 58, 6, 1685);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -11956,7 +11963,7 @@ var app = (function () {
     				if_block.m(li, null);
     			}
 
-    			if (!current || dirty & /*habit*/ 1 && li_title_value !== (li_title_value = /*check*/ ctx[2].date.slice(0, 16))) {
+    			if (!current || dirty & /*habit*/ 1 && li_title_value !== (li_title_value = /*check*/ ctx[3].date.slice(0, 16))) {
     				attr_dev(li, "title", li_title_value);
     			}
     		},
@@ -11977,17 +11984,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_1$5.name,
+    		id: create_if_block_3$3.name,
     		type: "if",
-    		source: "(50:8) {#if i < 15}",
+    		source: "(58:5) {#if i < 15}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (56:12) {:else}
-    function create_else_block$8(ctx) {
+    // (64:7) {:else}
+    function create_else_block_1$5(ctx) {
     	let span;
     	let fasquareclose;
     	let current;
@@ -11998,7 +12005,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquareclose.$$.fragment);
     			attr_dev(span, "class", "inline-block text-red-500 w-6 h-6 fill-current");
-    			add_location(span, file$p, 56, 14, 1917);
+    			add_location(span, file$p, 64, 8, 1884);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12022,17 +12029,17 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_else_block$8.name,
+    		id: create_else_block_1$5.name,
     		type: "else",
-    		source: "(56:12) {:else}",
+    		source: "(64:7) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (52:12) {#if check.isOk}
-    function create_if_block_2$5(ctx) {
+    // (60:7) {#if check.isOk}
+    function create_if_block_4$2(ctx) {
     	let span;
     	let fasquarecheck;
     	let current;
@@ -12043,7 +12050,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquarecheck.$$.fragment);
     			attr_dev(span, "class", "inline-block text-green-500 w-5 h-5 fill-current");
-    			add_location(span, file$p, 52, 14, 1763);
+    			add_location(span, file$p, 60, 8, 1754);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12067,25 +12074,25 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block_2$5.name,
+    		id: create_if_block_4$2.name,
     		type: "if",
-    		source: "(52:12) {#if check.isOk}",
+    		source: "(60:7) {#if check.isOk}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (63:8) {#if i === 15}
-    function create_if_block$a(ctx) {
+    // (71:5) {#if i === 15}
+    function create_if_block_2$5(ctx) {
     	let div;
 
     	const block = {
     		c: function create() {
     			div = element("div");
-    			div.textContent = "...\n          ";
+    			div.textContent = "...\n\t\t\t\t\t\t";
     			attr_dev(div, "class", "w-full text-xs font-extrabold text-gray-900 uppercase\n            text-center");
-    			add_location(div, file$p, 63, 10, 2116);
+    			add_location(div, file$p, 71, 6, 2051);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12097,22 +12104,22 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_if_block$a.name,
+    		id: create_if_block_2$5.name,
     		type: "if",
-    		source: "(63:8) {#if i === 15}",
+    		source: "(71:5) {#if i === 15}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (49:6) {#each habit.checks as check, i}
-    function create_each_block$2(ctx) {
+    // (57:4) {#each habit.checks as check, i}
+    function create_each_block_1$1(ctx) {
     	let t;
     	let if_block1_anchor;
     	let current;
-    	let if_block0 = /*i*/ ctx[4] < 15 && create_if_block_1$5(ctx);
-    	let if_block1 = /*i*/ ctx[4] === 15 && create_if_block$a(ctx);
+    	let if_block0 = /*i*/ ctx[5] < 15 && create_if_block_3$3(ctx);
+    	let if_block1 = /*i*/ ctx[5] === 15 && create_if_block_2$5(ctx);
 
     	const block = {
     		c: function create() {
@@ -12129,7 +12136,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (/*i*/ ctx[4] < 15) if_block0.p(ctx, dirty);
+    			if (/*i*/ ctx[5] < 15) if_block0.p(ctx, dirty);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -12150,51 +12157,20 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block$2.name,
+    		id: create_each_block_1$1.name,
     		type: "each",
-    		source: "(49:6) {#each habit.checks as check, i}",
+    		source: "(57:4) {#each habit.checks as check, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    function create_fragment$q(ctx) {
-    	let div5;
-    	let div0;
-    	let habitcard;
-    	let t0;
-    	let div4;
-    	let div1;
-    	let t1_value = /*habit*/ ctx[0].detailTitle + "";
-    	let t1;
-    	let t2;
-    	let div2;
-    	let t3;
-    	let t4_value = /*habit*/ ctx[0].adminDateEndUTCString.slice(0, 16) + "";
-    	let t4;
-    	let t5;
-    	let div3;
-    	let t6;
-    	let t7_value = /*habit*/ ctx[0].adminDateStartUTCString.slice(0, 16) + "";
-    	let t7;
-    	let t8;
+    // (83:1) {#if showDetails}
+    function create_if_block$a(ctx) {
+    	let div;
     	let ul;
     	let current;
-    	let mounted;
-    	let dispose;
-
-    	habitcard = new HabitCard({
-    			props: {
-    				duration: /*habit*/ ctx[0].detailDuration,
-    				code: /*habit*/ ctx[0].detailCode,
-    				leaders: false,
-    				$$slots: { default: [create_default_slot$b] },
-    				$$scope: { ctx }
-    			},
-    			$$inline: true
-    		});
-
     	let each_value = /*habit*/ ctx[0].checks;
     	validate_each_argument(each_value);
     	let each_blocks = [];
@@ -12209,90 +12185,28 @@ var app = (function () {
 
     	const block = {
     		c: function create() {
-    			div5 = element("div");
-    			div0 = element("div");
-    			create_component(habitcard.$$.fragment);
-    			t0 = space();
-    			div4 = element("div");
-    			div1 = element("div");
-    			t1 = text(t1_value);
-    			t2 = space();
-    			div2 = element("div");
-    			t3 = text("Start: ");
-    			t4 = text(t4_value);
-    			t5 = space();
-    			div3 = element("div");
-    			t6 = text("End: ");
-    			t7 = text(t7_value);
-    			t8 = space();
+    			div = element("div");
     			ul = element("ul");
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].c();
     			}
 
-    			attr_dev(div0, "class", "w-1/3 py-1 px-2 ");
-    			add_location(div0, file$p, 12, 2, 436);
-    			attr_dev(div1, "class", "ml-2 pl-2 pt-3 ltext-xs font-extrabold text-gray-900 uppercase\n      text-left");
-    			add_location(div1, file$p, 32, 4, 1061);
-    			attr_dev(div2, "class", "ml-2 pl-2 pt-0 text-xs font-extrabold text-gray-500 uppercase\n      text-left");
-    			add_location(div2, file$p, 37, 4, 1201);
-    			attr_dev(div3, "class", "ml-2 pl-2 text-xs font-extrabold text-gray-500 uppercase text-left");
-    			add_location(div3, file$p, 42, 4, 1370);
-    			attr_dev(ul, "class", "ml-2 pt-1 place-items-center grid grid-cols-8 w-4/5 leading-tight");
-    			add_location(ul, file$p, 46, 4, 1528);
-    			attr_dev(div4, "class", "w-full");
-    			add_location(div4, file$p, 31, 2, 1036);
-    			attr_dev(div5, "class", "mx-auto flex py-1 border-2 border-blue-100 shadow rounded-sm bg-white\n  hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-900\n  focus:outline-none transition-colors duration-75 cursor-pointer");
-    			add_location(div5, file$p, 8, 0, 209);
-    		},
-    		l: function claim(nodes) {
-    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    			attr_dev(ul, "class", "pl-8 grid grid-cols-2");
+    			add_location(ul, file$p, 84, 3, 2260);
+    			add_location(div, file$p, 83, 2, 2251);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div5, anchor);
-    			append_dev(div5, div0);
-    			mount_component(habitcard, div0, null);
-    			append_dev(div5, t0);
-    			append_dev(div5, div4);
-    			append_dev(div4, div1);
-    			append_dev(div1, t1);
-    			append_dev(div4, t2);
-    			append_dev(div4, div2);
-    			append_dev(div2, t3);
-    			append_dev(div2, t4);
-    			append_dev(div4, t5);
-    			append_dev(div4, div3);
-    			append_dev(div3, t6);
-    			append_dev(div3, t7);
-    			append_dev(div4, t8);
-    			append_dev(div4, ul);
+    			insert_dev(target, div, anchor);
+    			append_dev(div, ul);
 
     			for (let i = 0; i < each_blocks.length; i += 1) {
     				each_blocks[i].m(ul, null);
     			}
 
     			current = true;
-
-    			if (!mounted) {
-    				dispose = listen_dev(div0, "click", /*click_handler*/ ctx[1], false, false, false);
-    				mounted = true;
-    			}
     		},
-    		p: function update(ctx, [dirty]) {
-    			const habitcard_changes = {};
-    			if (dirty & /*habit*/ 1) habitcard_changes.duration = /*habit*/ ctx[0].detailDuration;
-    			if (dirty & /*habit*/ 1) habitcard_changes.code = /*habit*/ ctx[0].detailCode;
-
-    			if (dirty & /*$$scope, habit*/ 33) {
-    				habitcard_changes.$$scope = { dirty, ctx };
-    			}
-
-    			habitcard.$set(habitcard_changes);
-    			if ((!current || dirty & /*habit*/ 1) && t1_value !== (t1_value = /*habit*/ ctx[0].detailTitle + "")) set_data_dev(t1, t1_value);
-    			if ((!current || dirty & /*habit*/ 1) && t4_value !== (t4_value = /*habit*/ ctx[0].adminDateEndUTCString.slice(0, 16) + "")) set_data_dev(t4, t4_value);
-    			if ((!current || dirty & /*habit*/ 1) && t7_value !== (t7_value = /*habit*/ ctx[0].adminDateStartUTCString.slice(0, 16) + "")) set_data_dev(t7, t7_value);
-
+    		p: function update(ctx, dirty) {
     			if (dirty & /*habit*/ 1) {
     				each_value = /*habit*/ ctx[0].checks;
     				validate_each_argument(each_value);
@@ -12323,12 +12237,430 @@ var app = (function () {
     		},
     		i: function intro(local) {
     			if (current) return;
-    			transition_in(habitcard.$$.fragment, local);
 
     			for (let i = 0; i < each_value.length; i += 1) {
     				transition_in(each_blocks[i]);
     			}
 
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			each_blocks = each_blocks.filter(Boolean);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				transition_out(each_blocks[i]);
+    			}
+
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(div);
+    			destroy_each(each_blocks, detaching);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block$a.name,
+    		type: "if",
+    		source: "(83:1) {#if showDetails}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (92:6) {:else}
+    function create_else_block$8(ctx) {
+    	let span;
+    	let fasquareclose;
+    	let current;
+    	fasquareclose = new Fa_square_close({ $$inline: true });
+
+    	const block = {
+    		c: function create() {
+    			span = element("span");
+    			create_component(fasquareclose.$$.fragment);
+    			attr_dev(span, "class", "inline-block text-red-500 w-6 h-6 fill-current");
+    			add_location(span, file$p, 92, 7, 2526);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, span, anchor);
+    			mount_component(fasquareclose, span, null);
+    			current = true;
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(fasquareclose.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(fasquareclose.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(span);
+    			destroy_component(fasquareclose);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_else_block$8.name,
+    		type: "else",
+    		source: "(92:6) {:else}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (88:6) {#if check.isOk}
+    function create_if_block_1$5(ctx) {
+    	let span;
+    	let fasquarecheck;
+    	let current;
+    	fasquarecheck = new Fa_square_check({ $$inline: true });
+
+    	const block = {
+    		c: function create() {
+    			span = element("span");
+    			create_component(fasquarecheck.$$.fragment);
+    			attr_dev(span, "class", "inline-block text-green-500 w-5 h-5 fill-current");
+    			add_location(span, file$p, 88, 7, 2400);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, span, anchor);
+    			mount_component(fasquarecheck, span, null);
+    			current = true;
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(fasquarecheck.$$.fragment, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(fasquarecheck.$$.fragment, local);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(span);
+    			destroy_component(fasquarecheck);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_if_block_1$5.name,
+    		type: "if",
+    		source: "(88:6) {#if check.isOk}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (86:4) {#each habit.checks as check, i}
+    function create_each_block$2(ctx) {
+    	let li;
+    	let current_block_type_index;
+    	let if_block;
+    	let t0;
+    	let span;
+    	let t1_value = /*check*/ ctx[3].date.slice(0, 16) + "";
+    	let t1;
+    	let t2;
+    	let current;
+    	const if_block_creators = [create_if_block_1$5, create_else_block$8];
+    	const if_blocks = [];
+
+    	function select_block_type_2(ctx, dirty) {
+    		if (/*check*/ ctx[3].isOk) return 0;
+    		return 1;
+    	}
+
+    	current_block_type_index = select_block_type_2(ctx);
+    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+
+    	const block = {
+    		c: function create() {
+    			li = element("li");
+    			if_block.c();
+    			t0 = space();
+    			span = element("span");
+    			t1 = text(t1_value);
+    			t2 = space();
+    			attr_dev(span, "class", "inline-block text-base font-bold text-gray-700 uppercase");
+    			add_location(span, file$p, 96, 6, 2647);
+    			attr_dev(li, "class", "mt-1 flex space-x-4");
+    			add_location(li, file$p, 86, 5, 2337);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, li, anchor);
+    			if_blocks[current_block_type_index].m(li, null);
+    			append_dev(li, t0);
+    			append_dev(li, span);
+    			append_dev(span, t1);
+    			append_dev(li, t2);
+    			current = true;
+    		},
+    		p: function update(ctx, dirty) {
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type_2(ctx);
+
+    			if (current_block_type_index !== previous_block_index) {
+    				group_outros();
+
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
+
+    				check_outros();
+    				if_block = if_blocks[current_block_type_index];
+
+    				if (!if_block) {
+    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block.c();
+    				}
+
+    				transition_in(if_block, 1);
+    				if_block.m(li, t0);
+    			}
+
+    			if ((!current || dirty & /*habit*/ 1) && t1_value !== (t1_value = /*check*/ ctx[3].date.slice(0, 16) + "")) set_data_dev(t1, t1_value);
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			current = false;
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(li);
+    			if_blocks[current_block_type_index].d();
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_each_block$2.name,
+    		type: "each",
+    		source: "(86:4) {#each habit.checks as check, i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    function create_fragment$q(ctx) {
+    	let div6;
+    	let div5;
+    	let div0;
+    	let habitcard;
+    	let t0;
+    	let div4;
+    	let div1;
+    	let t1_value = /*habit*/ ctx[0].detailTitle + "";
+    	let t1;
+    	let t2;
+    	let div2;
+    	let t3;
+    	let t4_value = /*habit*/ ctx[0].adminDateEndUTCString.slice(0, 16) + "";
+    	let t4;
+    	let t5;
+    	let div3;
+    	let t6;
+    	let t7_value = /*habit*/ ctx[0].adminDateStartUTCString.slice(0, 16) + "";
+    	let t7;
+    	let t8;
+    	let ul;
+    	let t9;
+    	let current;
+    	let mounted;
+    	let dispose;
+
+    	habitcard = new HabitCard({
+    			props: {
+    				duration: /*habit*/ ctx[0].detailDuration,
+    				code: /*habit*/ ctx[0].detailCode,
+    				leaders: false,
+    				$$slots: { default: [create_default_slot$b] },
+    				$$scope: { ctx }
+    			},
+    			$$inline: true
+    		});
+
+    	let each_value_1 = /*habit*/ ctx[0].checks;
+    	validate_each_argument(each_value_1);
+    	let each_blocks = [];
+
+    	for (let i = 0; i < each_value_1.length; i += 1) {
+    		each_blocks[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
+    	}
+
+    	const out = i => transition_out(each_blocks[i], 1, 1, () => {
+    		each_blocks[i] = null;
+    	});
+
+    	let if_block = /*showDetails*/ ctx[1] && create_if_block$a(ctx);
+
+    	const block = {
+    		c: function create() {
+    			div6 = element("div");
+    			div5 = element("div");
+    			div0 = element("div");
+    			create_component(habitcard.$$.fragment);
+    			t0 = space();
+    			div4 = element("div");
+    			div1 = element("div");
+    			t1 = text(t1_value);
+    			t2 = space();
+    			div2 = element("div");
+    			t3 = text("Start: ");
+    			t4 = text(t4_value);
+    			t5 = space();
+    			div3 = element("div");
+    			t6 = text("End: ");
+    			t7 = text(t7_value);
+    			t8 = space();
+    			ul = element("ul");
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].c();
+    			}
+
+    			t9 = space();
+    			if (if_block) if_block.c();
+    			attr_dev(div0, "class", "w-1/3 py-1 px-2 ");
+    			add_location(div0, file$p, 18, 2, 543);
+    			attr_dev(div1, "class", "ml-2 pl-2 pt-3 text-xs font-extrabold text-gray-900 uppercase\n      text-left");
+    			add_location(div1, file$p, 36, 3, 1077);
+    			attr_dev(div2, "class", "ml-2 pl-2 pt-0 text-xs font-extrabold text-gray-500 uppercase\n      text-left");
+    			add_location(div2, file$p, 42, 3, 1214);
+    			attr_dev(div3, "class", "ml-2 pl-2 text-xs font-extrabold text-gray-500 uppercase text-left");
+    			add_location(div3, file$p, 48, 3, 1381);
+    			attr_dev(ul, "class", "ml-2 pt-1 place-items-center grid grid-cols-8 w-4/5 leading-tight");
+    			add_location(ul, file$p, 53, 3, 1537);
+    			attr_dev(div4, "class", "w-full");
+    			add_location(div4, file$p, 35, 2, 1053);
+    			attr_dev(div5, "class", "flex");
+    			add_location(div5, file$p, 17, 1, 522);
+    			attr_dev(div6, "class", "mx-auto  py-1 border-2 border-blue-100 shadow rounded-sm bg-white\n  hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-900\n  focus:outline-none transition-colors duration-75 cursor-pointer");
+    			add_location(div6, file$p, 11, 0, 253);
+    		},
+    		l: function claim(nodes) {
+    			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, div6, anchor);
+    			append_dev(div6, div5);
+    			append_dev(div5, div0);
+    			mount_component(habitcard, div0, null);
+    			append_dev(div5, t0);
+    			append_dev(div5, div4);
+    			append_dev(div4, div1);
+    			append_dev(div1, t1);
+    			append_dev(div4, t2);
+    			append_dev(div4, div2);
+    			append_dev(div2, t3);
+    			append_dev(div2, t4);
+    			append_dev(div4, t5);
+    			append_dev(div4, div3);
+    			append_dev(div3, t6);
+    			append_dev(div3, t7);
+    			append_dev(div4, t8);
+    			append_dev(div4, ul);
+
+    			for (let i = 0; i < each_blocks.length; i += 1) {
+    				each_blocks[i].m(ul, null);
+    			}
+
+    			append_dev(div6, t9);
+    			if (if_block) if_block.m(div6, null);
+    			current = true;
+
+    			if (!mounted) {
+    				dispose = listen_dev(div6, "click", /*click_handler*/ ctx[2], false, false, false);
+    				mounted = true;
+    			}
+    		},
+    		p: function update(ctx, [dirty]) {
+    			const habitcard_changes = {};
+    			if (dirty & /*habit*/ 1) habitcard_changes.duration = /*habit*/ ctx[0].detailDuration;
+    			if (dirty & /*habit*/ 1) habitcard_changes.code = /*habit*/ ctx[0].detailCode;
+
+    			if (dirty & /*$$scope, habit*/ 129) {
+    				habitcard_changes.$$scope = { dirty, ctx };
+    			}
+
+    			habitcard.$set(habitcard_changes);
+    			if ((!current || dirty & /*habit*/ 1) && t1_value !== (t1_value = /*habit*/ ctx[0].detailTitle + "")) set_data_dev(t1, t1_value);
+    			if ((!current || dirty & /*habit*/ 1) && t4_value !== (t4_value = /*habit*/ ctx[0].adminDateEndUTCString.slice(0, 16) + "")) set_data_dev(t4, t4_value);
+    			if ((!current || dirty & /*habit*/ 1) && t7_value !== (t7_value = /*habit*/ ctx[0].adminDateStartUTCString.slice(0, 16) + "")) set_data_dev(t7, t7_value);
+
+    			if (dirty & /*habit*/ 1) {
+    				each_value_1 = /*habit*/ ctx[0].checks;
+    				validate_each_argument(each_value_1);
+    				let i;
+
+    				for (i = 0; i < each_value_1.length; i += 1) {
+    					const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
+
+    					if (each_blocks[i]) {
+    						each_blocks[i].p(child_ctx, dirty);
+    						transition_in(each_blocks[i], 1);
+    					} else {
+    						each_blocks[i] = create_each_block_1$1(child_ctx);
+    						each_blocks[i].c();
+    						transition_in(each_blocks[i], 1);
+    						each_blocks[i].m(ul, null);
+    					}
+    				}
+
+    				group_outros();
+
+    				for (i = each_value_1.length; i < each_blocks.length; i += 1) {
+    					out(i);
+    				}
+
+    				check_outros();
+    			}
+
+    			if (/*showDetails*/ ctx[1]) {
+    				if (if_block) {
+    					if_block.p(ctx, dirty);
+
+    					if (dirty & /*showDetails*/ 2) {
+    						transition_in(if_block, 1);
+    					}
+    				} else {
+    					if_block = create_if_block$a(ctx);
+    					if_block.c();
+    					transition_in(if_block, 1);
+    					if_block.m(div6, null);
+    				}
+    			} else if (if_block) {
+    				group_outros();
+
+    				transition_out(if_block, 1, 1, () => {
+    					if_block = null;
+    				});
+
+    				check_outros();
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(habitcard.$$.fragment, local);
+
+    			for (let i = 0; i < each_value_1.length; i += 1) {
+    				transition_in(each_blocks[i]);
+    			}
+
+    			transition_in(if_block);
     			current = true;
     		},
     		o: function outro(local) {
@@ -12339,12 +12671,14 @@ var app = (function () {
     				transition_out(each_blocks[i]);
     			}
 
+    			transition_out(if_block);
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div5);
+    			if (detaching) detach_dev(div6);
     			destroy_component(habitcard);
     			destroy_each(each_blocks, detaching);
+    			if (if_block) if_block.d();
     			mounted = false;
     			dispose();
     		}
@@ -12365,13 +12699,15 @@ var app = (function () {
     	let { $$slots: slots = {}, $$scope } = $$props;
     	validate_slots("HistoryCard", slots, []);
     	let { habit } = $$props;
+    	let showDetails = false;
+    	console.log(habit);
     	const writable_props = ["habit"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$5.warn(`<HistoryCard> was created with unknown prop '${key}'`);
     	});
 
-    	const click_handler = () => console.log("Habit button clicked");
+    	const click_handler = () => $$invalidate(1, showDetails = !showDetails);
 
     	$$self.$$set = $$props => {
     		if ("habit" in $$props) $$invalidate(0, habit = $$props.habit);
@@ -12381,18 +12717,20 @@ var app = (function () {
     		HabitCard,
     		FaSquareCheck: Fa_square_check,
     		FaSquareClose: Fa_square_close,
-    		habit
+    		habit,
+    		showDetails
     	});
 
     	$$self.$inject_state = $$props => {
     		if ("habit" in $$props) $$invalidate(0, habit = $$props.habit);
+    		if ("showDetails" in $$props) $$invalidate(1, showDetails = $$props.showDetails);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [habit, click_handler];
+    	return [habit, showDetails, click_handler];
     }
 
     class HistoryCard extends SvelteComponentDev {
@@ -12435,7 +12773,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    function get_each_context_1$1(ctx, list, i) {
+    function get_each_context_1$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
     	child_ctx[18] = list[i];
     	return child_ctx;
@@ -12490,7 +12828,7 @@ var app = (function () {
     }
 
     // (142:6) {#each $userHabitsActive as habit}
-    function create_each_block_1$1(ctx) {
+    function create_each_block_1$2(ctx) {
     	let show_if = /*habit*/ ctx[18] && !/*$isObjectEmpty*/ ctx[3](/*habit*/ ctx[18]);
     	let if_block_anchor;
     	let current;
@@ -12549,7 +12887,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_each_block_1$1.name,
+    		id: create_each_block_1$2.name,
     		type: "each",
     		source: "(142:6) {#each $userHabitsActive as habit}",
     		ctx
@@ -12870,7 +13208,7 @@ var app = (function () {
     	let each_blocks = [];
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
-    		each_blocks[i] = create_each_block_1$1(get_each_context_1$1(ctx, each_value_1, i));
+    		each_blocks[i] = create_each_block_1$2(get_each_context_1$2(ctx, each_value_1, i));
     	}
 
     	const out = i => transition_out(each_blocks[i], 1, 1, () => {
@@ -13018,13 +13356,13 @@ var app = (function () {
     				let i;
 
     				for (i = 0; i < each_value_1.length; i += 1) {
-    					const child_ctx = get_each_context_1$1(ctx, each_value_1, i);
+    					const child_ctx = get_each_context_1$2(ctx, each_value_1, i);
 
     					if (each_blocks[i]) {
     						each_blocks[i].p(child_ctx, dirty);
     						transition_in(each_blocks[i], 1);
     					} else {
-    						each_blocks[i] = create_each_block_1$1(child_ctx);
+    						each_blocks[i] = create_each_block_1$2(child_ctx);
     						each_blocks[i].c();
     						transition_in(each_blocks[i], 1);
     						each_blocks[i].m(div0, t2);
