@@ -11779,7 +11779,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "fail";
     			attr_dev(span, "class", "bg-red-100 text-red-700 px-2 rounded-sm");
-    			add_location(span, file$p, 31, 5, 950);
+    			add_location(span, file$p, 31, 5, 997);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11809,7 +11809,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "active";
     			attr_dev(span, "class", "bg-blue-100 text-blue-700 px-2 rounded-sm");
-    			add_location(span, file$p, 29, 5, 863);
+    			add_location(span, file$p, 29, 5, 910);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11839,7 +11839,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "success";
     			attr_dev(span, "class", "bg-green-100 text-green-700 py-1 px-2 rounded-sm");
-    			add_location(span, file$p, 25, 5, 718);
+    			add_location(span, file$p, 25, 5, 765);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11933,7 +11933,7 @@ var app = (function () {
     			li = element("li");
     			if_block.c();
     			attr_dev(li, "title", li_title_value = /*check*/ ctx[3].date.slice(0, 16));
-    			add_location(li, file$p, 58, 6, 1685);
+    			add_location(li, file$p, 58, 6, 1732);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -12005,7 +12005,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquareclose.$$.fragment);
     			attr_dev(span, "class", "inline-block text-red-500 w-6 h-6 fill-current");
-    			add_location(span, file$p, 64, 8, 1884);
+    			add_location(span, file$p, 64, 8, 1931);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12050,7 +12050,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquarecheck.$$.fragment);
     			attr_dev(span, "class", "inline-block text-green-500 w-5 h-5 fill-current");
-    			add_location(span, file$p, 60, 8, 1754);
+    			add_location(span, file$p, 60, 8, 1801);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12092,7 +12092,7 @@ var app = (function () {
     			div = element("div");
     			div.textContent = "...\n\t\t\t\t\t\t";
     			attr_dev(div, "class", "w-full text-xs font-extrabold text-gray-900 uppercase\n            text-center");
-    			add_location(div, file$p, 71, 6, 2051);
+    			add_location(div, file$p, 71, 6, 2098);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12193,8 +12193,8 @@ var app = (function () {
     			}
 
     			attr_dev(ul, "class", "pl-8 grid grid-cols-2");
-    			add_location(ul, file$p, 84, 3, 2260);
-    			add_location(div, file$p, 83, 2, 2251);
+    			add_location(ul, file$p, 84, 3, 2307);
+    			add_location(div, file$p, 83, 2, 2298);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12282,7 +12282,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquareclose.$$.fragment);
     			attr_dev(span, "class", "inline-block text-red-500 w-6 h-6 fill-current");
-    			add_location(span, file$p, 92, 7, 2526);
+    			add_location(span, file$p, 92, 7, 2602);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12327,7 +12327,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquarecheck.$$.fragment);
     			attr_dev(span, "class", "inline-block text-green-500 w-5 h-5 fill-current");
-    			add_location(span, file$p, 88, 7, 2400);
+    			add_location(span, file$p, 88, 7, 2476);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12370,6 +12370,7 @@ var app = (function () {
     	let t1_value = /*check*/ ctx[3].date.slice(0, 16) + "";
     	let t1;
     	let t2;
+    	let li_intro;
     	let current;
     	const if_block_creators = [create_if_block_1$5, create_else_block$8];
     	const if_blocks = [];
@@ -12391,9 +12392,9 @@ var app = (function () {
     			t1 = text(t1_value);
     			t2 = space();
     			attr_dev(span, "class", "inline-block text-base font-bold text-gray-700 uppercase");
-    			add_location(span, file$p, 96, 6, 2647);
+    			add_location(span, file$p, 96, 6, 2723);
     			attr_dev(li, "class", "mt-1 flex space-x-4");
-    			add_location(li, file$p, 86, 5, 2337);
+    			add_location(li, file$p, 86, 5, 2384);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -12432,6 +12433,14 @@ var app = (function () {
     		i: function intro(local) {
     			if (current) return;
     			transition_in(if_block);
+
+    			if (!li_intro) {
+    				add_render_callback(() => {
+    					li_intro = create_in_transition(li, fade, { delay: 100 * /*i*/ ctx[5] });
+    					li_intro.start();
+    				});
+    			}
+
     			current = true;
     		},
     		o: function outro(local) {
@@ -12535,21 +12544,21 @@ var app = (function () {
     			t9 = space();
     			if (if_block) if_block.c();
     			attr_dev(div0, "class", "w-1/3 py-1 px-2 ");
-    			add_location(div0, file$p, 18, 2, 543);
+    			add_location(div0, file$p, 18, 2, 590);
     			attr_dev(div1, "class", "ml-2 pl-2 pt-3 text-xs font-extrabold text-gray-900 uppercase\n      text-left");
-    			add_location(div1, file$p, 36, 3, 1077);
+    			add_location(div1, file$p, 36, 3, 1124);
     			attr_dev(div2, "class", "ml-2 pl-2 pt-0 text-xs font-extrabold text-gray-500 uppercase\n      text-left");
-    			add_location(div2, file$p, 42, 3, 1214);
+    			add_location(div2, file$p, 42, 3, 1261);
     			attr_dev(div3, "class", "ml-2 pl-2 text-xs font-extrabold text-gray-500 uppercase text-left");
-    			add_location(div3, file$p, 48, 3, 1381);
+    			add_location(div3, file$p, 48, 3, 1428);
     			attr_dev(ul, "class", "ml-2 pt-1 place-items-center grid grid-cols-8 w-4/5 leading-tight");
-    			add_location(ul, file$p, 53, 3, 1537);
+    			add_location(ul, file$p, 53, 3, 1584);
     			attr_dev(div4, "class", "w-full");
-    			add_location(div4, file$p, 35, 2, 1053);
+    			add_location(div4, file$p, 35, 2, 1100);
     			attr_dev(div5, "class", "flex");
-    			add_location(div5, file$p, 17, 1, 522);
+    			add_location(div5, file$p, 17, 1, 569);
     			attr_dev(div6, "class", "mx-auto  py-1 border-2 border-blue-100 shadow rounded-sm bg-white\n  hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-900\n  focus:outline-none transition-colors duration-75 cursor-pointer");
-    			add_location(div6, file$p, 11, 0, 253);
+    			add_location(div6, file$p, 11, 0, 300);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -12717,6 +12726,8 @@ var app = (function () {
     		HabitCard,
     		FaSquareCheck: Fa_square_check,
     		FaSquareClose: Fa_square_close,
+    		fade,
+    		fly,
     		habit,
     		showDetails
     	});

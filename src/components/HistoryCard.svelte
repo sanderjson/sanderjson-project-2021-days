@@ -2,7 +2,7 @@
 	import HabitCard from "./HabitCard.svelte";
 	import FaSquareCheck from "../svg/fa-square-check.svelte";
 	import FaSquareClose from "../svg/fa-square-close.svelte";
-
+	import { fade, fly } from "svelte/transition";
 	export let habit;
 	let showDetails = false;
 
@@ -84,7 +84,7 @@
 		<div>
 			<ul class="pl-8 grid grid-cols-2">
 				{#each habit.checks as check, i}
-					<li class="mt-1 flex space-x-4">
+					<li in:fade={{ delay: 100 * i }} class="mt-1 flex space-x-4">
 						{#if check.isOk}
 							<span class="inline-block text-green-500 w-5 h-5 fill-current">
 								<FaSquareCheck />
