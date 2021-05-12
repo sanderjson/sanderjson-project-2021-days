@@ -104,7 +104,7 @@
 							</span>
 						{/if}
 						<span
-							class="inline-block text-base font-bold text-gray-700 uppercase"
+							class="inline-block text-sm font-bold text-gray-700 uppercase"
 						>
 							{presentCheckinDate(check.date)}
 						</span>

@@ -5790,24 +5790,20 @@ var app = (function () {
 
     // (156:5) <AppButton handleFun={null}>
     function create_default_slot_2$1(ctx) {
-    	let t0;
-    	let t1;
+    	let t;
 
     	const block = {
     		c: function create() {
-    			t0 = text("Check in: ");
-    			t1 = text(/*timeUpdateFormatCheckin*/ ctx[3]);
+    			t = text(/*timeUpdateFormatCheckin*/ ctx[3]);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, t0, anchor);
-    			insert_dev(target, t1, anchor);
+    			insert_dev(target, t, anchor);
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*timeUpdateFormatCheckin*/ 8) set_data_dev(t1, /*timeUpdateFormatCheckin*/ ctx[3]);
+    			if (dirty & /*timeUpdateFormatCheckin*/ 8) set_data_dev(t, /*timeUpdateFormatCheckin*/ ctx[3]);
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(t0);
-    			if (detaching) detach_dev(t1);
+    			if (detaching) detach_dev(t);
     		}
     	};
 
@@ -12678,7 +12674,7 @@ var app = (function () {
     			span = element("span");
     			t1 = text(t1_value);
     			t2 = space();
-    			attr_dev(span, "class", "inline-block text-base font-bold text-gray-700 uppercase");
+    			attr_dev(span, "class", "inline-block text-sm font-bold text-gray-700 uppercase");
     			add_location(span, file$p, 105, 6, 2969);
     			attr_dev(li, "class", "mt-1 flex space-x-2");
     			add_location(li, file$p, 95, 5, 2631);

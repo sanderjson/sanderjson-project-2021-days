@@ -154,7 +154,7 @@
 					
 					</div> -->
 					<AppButton handleFun={null}>
-						Check in: {timeUpdateFormatCheckin}</AppButton
+						{timeUpdateFormatCheckin}</AppButton
 					>
 				{/if}
 			</div>
