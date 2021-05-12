@@ -6,7 +6,16 @@
 	export let habit;
 	let showDetails = false;
 
-	console.log(habit);
+	const presentCheckinDate = (data) => {
+		const date = new Date(data);
+		const time = date.toLocaleString("en-US", {
+			hour: "numeric",
+			minute: "numeric",
+			hour12: true,
+		});
+		const dateString = `${date}`;
+		return `${dateString.slice(0, 11)} at ${time}`;
+	};
 </script>
 
 <div
@@ -82,9 +91,9 @@
 	</div>
 	{#if showDetails}
 		<div>
-			<ul class="pl-8 grid grid-cols-2">
+			<ul class="pl-4 grid grid-cols-2">
 				{#each habit.checks as check, i}
-					<li in:fade={{ delay: 100 * i }} class="mt-1 flex space-x-4">
+					<li in:fade={{ delay: 50 * i }} class="mt-1 flex space-x-2">
 						{#if check.isOk}
 							<span class="inline-block text-green-500 w-5 h-5 fill-current">
 								<FaSquareCheck />
@@ -97,7 +106,7 @@
 						<span
 							class="inline-block text-base font-bold text-gray-700 uppercase"
 						>
-							{check.date.slice(0, 16)}
+							{presentCheckinDate(check.date)}
 						</span>
 					</li>
 				{/each}

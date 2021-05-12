@@ -2182,32 +2182,53 @@ var app = (function () {
 
     const file$2 = "src/components/AppButton.svelte";
 
-    // (80:0) {:else}
+    // (21:0) {:else}
     function create_else_block$1(ctx) {
     	let button;
     	let span;
-    	let t;
+    	let current;
+    	const default_slot_template = /*#slots*/ ctx[4].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[3], null);
 
     	const block = {
     		c: function create() {
     			button = element("button");
     			span = element("span");
-    			t = text(/*text*/ ctx[1]);
-    			add_location(span, file$2, 86, 4, 1945);
+    			if (default_slot) default_slot.c();
+    			add_location(span, file$2, 28, 2, 829);
     			button.disabled = true;
     			attr_dev(button, "class", "inline-flex justify-center w-full rounded-md border\n    border-transparent shadow-sm px-4 py-2 bg-blue-100 text-base font-bold\n    text-blue-900 focus:outline-none focus:ring-2 focus:ring-offset-2\n    focus:ring-blue-700 sm:text-sm transition-colors duration-75");
-    			add_location(button, file$2, 80, 2, 1645);
+    			add_location(button, file$2, 21, 1, 533);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
     			append_dev(button, span);
-    			append_dev(span, t);
+
+    			if (default_slot) {
+    				default_slot.m(span, null);
+    			}
+
+    			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*text*/ 2) set_data_dev(t, /*text*/ ctx[1]);
+    			if (default_slot) {
+    				if (default_slot.p && dirty & /*$$scope*/ 8) {
+    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[3], dirty, null, null);
+    				}
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(default_slot, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(default_slot, local);
+    			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(button);
+    			if (default_slot) default_slot.d(detaching);
     		}
     	};
 
@@ -2215,37 +2236,44 @@ var app = (function () {
     		block,
     		id: create_else_block$1.name,
     		type: "else",
-    		source: "(80:0) {:else}",
+    		source: "(21:0) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (67:0) {#if handleFun}
+    // (7:0) {#if handleFun}
     function create_if_block$1(ctx) {
     	let button;
     	let span;
-    	let t;
+    	let current;
     	let mounted;
     	let dispose;
+    	const default_slot_template = /*#slots*/ ctx[4].default;
+    	const default_slot = create_slot(default_slot_template, ctx, /*$$scope*/ ctx[3], null);
 
     	const block = {
     		c: function create() {
     			button = element("button");
     			span = element("span");
-    			t = text(/*text*/ ctx[1]);
-    			add_location(span, file$2, 77, 4, 1603);
+    			if (default_slot) default_slot.c();
+    			add_location(span, file$2, 18, 2, 491);
     			attr_dev(button, "type", "button");
     			attr_dev(button, "class", "inline-flex justify-center w-full rounded-md border\n    border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-bold\n    text-white hover:bg-blue-500 focus:outline-none focus:ring-2\n    focus:ring-offset-2 focus:ring-blue-700 sm:text-sm transition-colors\n    duration-75 svelte-18uimld");
-    			toggle_class(button, "success", /*success*/ ctx[2]);
-    			toggle_class(button, "danger", /*danger*/ ctx[3]);
-    			add_location(button, file$2, 67, 2, 1219);
+    			toggle_class(button, "success", /*success*/ ctx[1]);
+    			toggle_class(button, "danger", /*danger*/ ctx[2]);
+    			add_location(button, file$2, 7, 1, 117);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button, anchor);
     			append_dev(button, span);
-    			append_dev(span, t);
+
+    			if (default_slot) {
+    				default_slot.m(span, null);
+    			}
+
+    			current = true;
 
     			if (!mounted) {
     				dispose = listen_dev(
@@ -2264,18 +2292,33 @@ var app = (function () {
     		},
     		p: function update(new_ctx, dirty) {
     			ctx = new_ctx;
-    			if (dirty & /*text*/ 2) set_data_dev(t, /*text*/ ctx[1]);
 
-    			if (dirty & /*success*/ 4) {
-    				toggle_class(button, "success", /*success*/ ctx[2]);
+    			if (default_slot) {
+    				if (default_slot.p && dirty & /*$$scope*/ 8) {
+    					update_slot(default_slot, default_slot_template, ctx, /*$$scope*/ ctx[3], dirty, null, null);
+    				}
     			}
 
-    			if (dirty & /*danger*/ 8) {
-    				toggle_class(button, "danger", /*danger*/ ctx[3]);
+    			if (dirty & /*success*/ 2) {
+    				toggle_class(button, "success", /*success*/ ctx[1]);
     			}
+
+    			if (dirty & /*danger*/ 4) {
+    				toggle_class(button, "danger", /*danger*/ ctx[2]);
+    			}
+    		},
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(default_slot, local);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(default_slot, local);
+    			current = false;
     		},
     		d: function destroy(detaching) {
     			if (detaching) detach_dev(button);
+    			if (default_slot) default_slot.d(detaching);
     			mounted = false;
     			dispose();
     		}
@@ -2285,7 +2328,7 @@ var app = (function () {
     		block,
     		id: create_if_block$1.name,
     		type: "if",
-    		source: "(67:0) {#if handleFun}",
+    		source: "(7:0) {#if handleFun}",
     		ctx
     	});
 
@@ -2293,15 +2336,20 @@ var app = (function () {
     }
 
     function create_fragment$3(ctx) {
+    	let current_block_type_index;
+    	let if_block;
     	let if_block_anchor;
+    	let current;
+    	const if_block_creators = [create_if_block$1, create_else_block$1];
+    	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
-    		if (/*handleFun*/ ctx[0]) return create_if_block$1;
-    		return create_else_block$1;
+    		if (/*handleFun*/ ctx[0]) return 0;
+    		return 1;
     	}
 
-    	let current_block_type = select_block_type(ctx);
-    	let if_block = current_block_type(ctx);
+    	current_block_type_index = select_block_type(ctx);
+    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
     	const block = {
     		c: function create() {
@@ -2312,26 +2360,48 @@ var app = (function () {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
     		},
     		m: function mount(target, anchor) {
-    			if_block.m(target, anchor);
+    			if_blocks[current_block_type_index].m(target, anchor);
     			insert_dev(target, if_block_anchor, anchor);
+    			current = true;
     		},
     		p: function update(ctx, [dirty]) {
-    			if (current_block_type === (current_block_type = select_block_type(ctx)) && if_block) {
-    				if_block.p(ctx, dirty);
-    			} else {
-    				if_block.d(1);
-    				if_block = current_block_type(ctx);
+    			let previous_block_index = current_block_type_index;
+    			current_block_type_index = select_block_type(ctx);
 
-    				if (if_block) {
+    			if (current_block_type_index === previous_block_index) {
+    				if_blocks[current_block_type_index].p(ctx, dirty);
+    			} else {
+    				group_outros();
+
+    				transition_out(if_blocks[previous_block_index], 1, 1, () => {
+    					if_blocks[previous_block_index] = null;
+    				});
+
+    				check_outros();
+    				if_block = if_blocks[current_block_type_index];
+
+    				if (!if_block) {
+    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
     					if_block.c();
-    					if_block.m(if_block_anchor.parentNode, if_block_anchor);
+    				} else {
+    					if_block.p(ctx, dirty);
     				}
+
+    				transition_in(if_block, 1);
+    				if_block.m(if_block_anchor.parentNode, if_block_anchor);
     			}
     		},
-    		i: noop,
-    		o: noop,
+    		i: function intro(local) {
+    			if (current) return;
+    			transition_in(if_block);
+    			current = true;
+    		},
+    		o: function outro(local) {
+    			transition_out(if_block);
+    			current = false;
+    		},
     		d: function destroy(detaching) {
-    			if_block.d(detaching);
+    			if_blocks[current_block_type_index].d(detaching);
     			if (detaching) detach_dev(if_block_anchor);
     		}
     	};
@@ -2349,12 +2419,11 @@ var app = (function () {
 
     function instance$3($$self, $$props, $$invalidate) {
     	let { $$slots: slots = {}, $$scope } = $$props;
-    	validate_slots("AppButton", slots, []);
+    	validate_slots("AppButton", slots, ['default']);
     	let { handleFun } = $$props;
-    	let { text } = $$props;
     	let { success = false } = $$props;
     	let { danger = false } = $$props;
-    	const writable_props = ["handleFun", "text", "success", "danger"];
+    	const writable_props = ["handleFun", "success", "danger"];
 
     	Object.keys($$props).forEach(key => {
     		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<AppButton> was created with unknown prop '${key}'`);
@@ -2362,37 +2431,30 @@ var app = (function () {
 
     	$$self.$$set = $$props => {
     		if ("handleFun" in $$props) $$invalidate(0, handleFun = $$props.handleFun);
-    		if ("text" in $$props) $$invalidate(1, text = $$props.text);
-    		if ("success" in $$props) $$invalidate(2, success = $$props.success);
-    		if ("danger" in $$props) $$invalidate(3, danger = $$props.danger);
+    		if ("success" in $$props) $$invalidate(1, success = $$props.success);
+    		if ("danger" in $$props) $$invalidate(2, danger = $$props.danger);
+    		if ("$$scope" in $$props) $$invalidate(3, $$scope = $$props.$$scope);
     	};
 
-    	$$self.$capture_state = () => ({ handleFun, text, success, danger });
+    	$$self.$capture_state = () => ({ handleFun, success, danger });
 
     	$$self.$inject_state = $$props => {
     		if ("handleFun" in $$props) $$invalidate(0, handleFun = $$props.handleFun);
-    		if ("text" in $$props) $$invalidate(1, text = $$props.text);
-    		if ("success" in $$props) $$invalidate(2, success = $$props.success);
-    		if ("danger" in $$props) $$invalidate(3, danger = $$props.danger);
+    		if ("success" in $$props) $$invalidate(1, success = $$props.success);
+    		if ("danger" in $$props) $$invalidate(2, danger = $$props.danger);
     	};
 
     	if ($$props && "$$inject" in $$props) {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [handleFun, text, success, danger];
+    	return [handleFun, success, danger, $$scope, slots];
     }
 
     class AppButton extends SvelteComponentDev {
     	constructor(options) {
     		super(options);
-
-    		init(this, options, instance$3, create_fragment$3, safe_not_equal, {
-    			handleFun: 0,
-    			text: 1,
-    			success: 2,
-    			danger: 3
-    		});
+    		init(this, options, instance$3, create_fragment$3, safe_not_equal, { handleFun: 0, success: 1, danger: 2 });
 
     		dispatch_dev("SvelteRegisterComponent", {
     			component: this,
@@ -2407,10 +2469,6 @@ var app = (function () {
     		if (/*handleFun*/ ctx[0] === undefined && !("handleFun" in props)) {
     			console.warn("<AppButton> was created without expected prop 'handleFun'");
     		}
-
-    		if (/*text*/ ctx[1] === undefined && !("text" in props)) {
-    			console.warn("<AppButton> was created without expected prop 'text'");
-    		}
     	}
 
     	get handleFun() {
@@ -2418,14 +2476,6 @@ var app = (function () {
     	}
 
     	set handleFun(value) {
-    		throw new Error("<AppButton>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	get text() {
-    		throw new Error("<AppButton>: Props cannot be read directly from the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
-    	}
-
-    	set text(value) {
     		throw new Error("<AppButton>: Props cannot be set directly on the component instance unless compiling with 'accessors: true' or '<svelte:options accessors/>'");
     	}
 
@@ -2730,7 +2780,7 @@ var app = (function () {
     const file$4 = "src/routes/ScreenError.svelte";
 
     // (10:0) <AppHeader>
-    function create_default_slot_1(ctx) {
+    function create_default_slot_2(ctx) {
     	let error;
     	let current;
     	error = new Error$1({ $$inline: true });
@@ -2759,9 +2809,36 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1.name,
+    		id: create_default_slot_2.name,
     		type: "slot",
     		source: "(10:0) <AppHeader>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (17:2) <AppButton handleFun={() => push("/start")}>
+    function create_default_slot_1(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Click here");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_1.name,
+    		type: "slot",
+    		source: "(17:2) <AppButton handleFun={() => push(\\\"/start\\\")}>",
     		ctx
     	});
 
@@ -2781,7 +2858,8 @@ var app = (function () {
     	appbutton = new AppButton({
     			props: {
     				handleFun: /*func*/ ctx[1],
-    				text: "Click here"
+    				$$slots: { default: [create_default_slot_1] },
+    				$$scope: { ctx }
     			},
     			$$inline: true
     		});
@@ -2795,8 +2873,8 @@ var app = (function () {
     			t2 = space();
     			create_component(appbutton.$$.fragment);
     			attr_dev(div0, "class", "my-6");
-    			add_location(div0, file$4, 15, 4, 403);
-    			add_location(div1, file$4, 14, 2, 393);
+    			add_location(div0, file$4, 15, 2, 393);
+    			add_location(div1, file$4, 14, 1, 385);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div1, anchor);
@@ -2809,6 +2887,13 @@ var app = (function () {
     		},
     		p: function update(ctx, dirty) {
     			if (!current || dirty & /*$errMessage*/ 1) set_data_dev(t1, /*$errMessage*/ ctx[0]);
+    			const appbutton_changes = {};
+
+    			if (dirty & /*$$scope*/ 4) {
+    				appbutton_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton.$set(appbutton_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -2844,7 +2929,7 @@ var app = (function () {
 
     	appheader = new AppHeader({
     			props: {
-    				$$slots: { default: [create_default_slot_1] },
+    				$$slots: { default: [create_default_slot_2] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -3989,7 +4074,7 @@ var app = (function () {
 
     const file$8 = "src/routes/ScreenStart.svelte";
 
-    // (92:0) <AppHeader>
+    // (91:0) <AppHeader>
     function create_default_slot_1$3(ctx) {
     	let twentytwentyone;
     	let current;
@@ -4021,14 +4106,14 @@ var app = (function () {
     		block,
     		id: create_default_slot_1$3.name,
     		type: "slot",
-    		source: "(92:0) <AppHeader>",
+    		source: "(91:0) <AppHeader>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (96:0) <ContentWrapper>
+    // (95:0) <ContentWrapper>
     function create_default_slot$3(ctx) {
     	let div13;
     	let form;
@@ -4109,63 +4194,63 @@ var app = (function () {
     			span2.textContent = "About";
     			attr_dev(label0, "for", "email");
     			attr_dev(label0, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label0, file$8, 99, 8, 2460);
+    			add_location(label0, file$8, 98, 8, 2402);
     			attr_dev(input0, "id", "email");
     			attr_dev(input0, "name", "email");
     			attr_dev(input0, "type", "email");
     			attr_dev(input0, "autocomplete", "email");
     			input0.required = true;
     			attr_dev(input0, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n            rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n            focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input0, file$8, 103, 10, 2606);
+    			add_location(input0, file$8, 102, 10, 2548);
     			attr_dev(div0, "class", "mt-1");
-    			add_location(div0, file$8, 102, 8, 2577);
-    			add_location(div1, file$8, 98, 6, 2446);
+    			add_location(div0, file$8, 101, 8, 2519);
+    			add_location(div1, file$8, 97, 6, 2388);
     			attr_dev(label1, "for", "password");
     			attr_dev(label1, "class", "block text-sm font-medium text-gray-700");
-    			add_location(label1, file$8, 117, 8, 3052);
+    			add_location(label1, file$8, 116, 8, 2994);
     			attr_dev(input1, "id", "password");
     			attr_dev(input1, "name", "password");
     			attr_dev(input1, "type", "password");
     			attr_dev(input1, "autocomplete", "password");
     			input1.required = true;
     			attr_dev(input1, "class", "appearance-none block w-full px-3 py-2 border border-gray-300\n            rounded-md shadow-sm placeholder-gray-400 focus:outline-none\n            focus:ring-blue-500 focus:border-blue-500 sm:text-sm");
-    			add_location(input1, file$8, 121, 10, 3196);
+    			add_location(input1, file$8, 120, 10, 3138);
     			attr_dev(div2, "class", "mt-1");
-    			add_location(div2, file$8, 120, 8, 3167);
-    			add_location(div3, file$8, 116, 6, 3038);
+    			add_location(div2, file$8, 119, 8, 3109);
+    			add_location(div3, file$8, 115, 6, 2980);
     			attr_dev(button, "type", "submit");
     			attr_dev(button, "class", "w-full flex justify-center py-2 px-4 border border-transparent\n          rounded-md shadow-sm text-sm font-bold text-white bg-blue-900\n          hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2\n          focus:ring-blue-500");
-    			add_location(button, file$8, 135, 8, 3657);
-    			add_location(div4, file$8, 134, 6, 3643);
+    			add_location(button, file$8, 134, 8, 3599);
+    			add_location(div4, file$8, 133, 6, 3585);
     			attr_dev(form, "class", "space-y-6");
-    			add_location(form, file$8, 97, 4, 2375);
+    			add_location(form, file$8, 96, 4, 2317);
     			attr_dev(div5, "class", "w-full border-t border-gray-300");
-    			add_location(div5, file$8, 149, 10, 4134);
+    			add_location(div5, file$8, 148, 10, 4076);
     			attr_dev(div6, "class", "absolute inset-0 flex items-center");
-    			add_location(div6, file$8, 148, 8, 4075);
+    			add_location(div6, file$8, 147, 8, 4017);
     			attr_dev(span0, "class", "px-2 bg-white text-gray-500");
-    			add_location(span0, file$8, 152, 10, 4266);
+    			add_location(span0, file$8, 151, 10, 4208);
     			attr_dev(div7, "class", "relative flex justify-center text-sm");
-    			add_location(div7, file$8, 151, 8, 4205);
+    			add_location(div7, file$8, 150, 8, 4147);
     			attr_dev(div8, "class", "relative");
-    			add_location(div8, file$8, 147, 6, 4044);
+    			add_location(div8, file$8, 146, 6, 3986);
     			attr_dev(span1, "class", "");
-    			add_location(span1, file$8, 163, 12, 4655);
+    			add_location(span1, file$8, 162, 12, 4597);
     			attr_dev(a0, "href", "#/signup");
     			attr_dev(a0, "class", "w-full inline-flex justify-center py-2 px-4 border\n            border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n            text-gray-500 hover:bg-gray-50");
-    			add_location(a0, file$8, 158, 10, 4419);
-    			add_location(div9, file$8, 157, 8, 4403);
+    			add_location(a0, file$8, 157, 10, 4361);
+    			add_location(div9, file$8, 156, 8, 4345);
     			attr_dev(span2, "class", "");
-    			add_location(span2, file$8, 172, 12, 4974);
+    			add_location(span2, file$8, 171, 12, 4916);
     			attr_dev(a1, "href", "#/about");
     			attr_dev(a1, "class", "w-full inline-flex justify-center py-2 px-4 border\n            border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n            text-gray-500 hover:bg-gray-50");
-    			add_location(a1, file$8, 167, 10, 4739);
-    			add_location(div10, file$8, 166, 8, 4723);
+    			add_location(a1, file$8, 166, 10, 4681);
+    			add_location(div10, file$8, 165, 8, 4665);
     			attr_dev(div11, "class", "mt-6 grid grid-cols-2 gap-3");
-    			add_location(div11, file$8, 156, 6, 4353);
+    			add_location(div11, file$8, 155, 6, 4295);
     			attr_dev(div12, "class", "mt-6");
-    			add_location(div12, file$8, 146, 4, 4019);
-    			add_location(div13, file$8, 96, 2, 2365);
+    			add_location(div12, file$8, 145, 4, 3961);
+    			add_location(div13, file$8, 95, 2, 2307);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div13, anchor);
@@ -4234,7 +4319,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$3.name,
     		type: "slot",
-    		source: "(96:0) <ContentWrapper>",
+    		source: "(95:0) <ContentWrapper>",
     		ctx
     	});
 
@@ -4410,7 +4495,6 @@ var app = (function () {
     	$$self.$capture_state = () => ({
     		ContentWrapper,
     		AppHeader,
-    		AppButton,
     		TwentyTwentyOne: _2021,
     		push,
     		onMount,
@@ -5342,8 +5426,6 @@ var app = (function () {
     }
 
     /* src/components/HabitButtonHome.svelte generated by Svelte v3.32.3 */
-
-    const { console: console_1$1 } = globals;
     const file$b = "src/components/HabitButtonHome.svelte";
 
     // (141:46) {:else}
@@ -5405,7 +5487,7 @@ var app = (function () {
     }
 
     // (136:2) <HabitCard    duration={habit.detailDuration}    code={habit.detailCode}    leaders={false}   >
-    function create_default_slot$4(ctx) {
+    function create_default_slot_3(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
@@ -5446,7 +5528,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot$4.name,
+    		id: create_default_slot_3.name,
     		type: "slot",
     		source: "(136:2) <HabitCard    duration={habit.detailDuration}    code={habit.detailCode}    leaders={false}   >",
     		ctx
@@ -5478,7 +5560,7 @@ var app = (function () {
     			div = element("div");
     			if_block.c();
     			attr_dev(div, "class", "sm:bg-white mt-2 sm:shadow sm:rounded-lg sm:px-6 sm:py-2");
-    			add_location(div, file$b, 146, 3, 3816);
+    			add_location(div, file$b, 146, 3, 3822);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -5540,38 +5622,34 @@ var app = (function () {
 
     // (152:4) {:else}
     function create_else_block$3(ctx) {
-    	let div;
-    	let t0;
-    	let t1;
-    	let t2;
     	let appbutton;
     	let current;
 
     	appbutton = new AppButton({
-    			props: { handleFun: null, text: "On Track" },
+    			props: {
+    				handleFun: null,
+    				$$slots: { default: [create_default_slot_2$1] },
+    				$$scope: { ctx }
+    			},
     			$$inline: true
     		});
 
     	const block = {
     		c: function create() {
-    			div = element("div");
-    			t0 = text("Check: ");
-    			t1 = text(/*timeUpdateFormatCheckin*/ ctx[3]);
-    			t2 = space();
     			create_component(appbutton.$$.fragment);
-    			attr_dev(div, "class", "text-xs text-center w-full font-bold");
-    			add_location(div, file$b, 152, 5, 4135);
     		},
     		m: function mount(target, anchor) {
-    			insert_dev(target, div, anchor);
-    			append_dev(div, t0);
-    			append_dev(div, t1);
-    			insert_dev(target, t2, anchor);
     			mount_component(appbutton, target, anchor);
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (!current || dirty & /*timeUpdateFormatCheckin*/ 8) set_data_dev(t1, /*timeUpdateFormatCheckin*/ ctx[3]);
+    			const appbutton_changes = {};
+
+    			if (dirty & /*$$scope, timeUpdateFormatCheckin*/ 268435464) {
+    				appbutton_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton.$set(appbutton_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -5583,8 +5661,6 @@ var app = (function () {
     			current = false;
     		},
     		d: function destroy(detaching) {
-    			if (detaching) detach_dev(div);
-    			if (detaching) detach_dev(t2);
     			destroy_component(appbutton, detaching);
     		}
     	};
@@ -5608,7 +5684,8 @@ var app = (function () {
     	appbutton = new AppButton({
     			props: {
     				handleFun: /*handleTriggerHabitCheck*/ ctx[6],
-    				text: "Check In"
+    				$$slots: { default: [create_default_slot_1$4] },
+    				$$scope: { ctx }
     			},
     			$$inline: true
     		});
@@ -5621,7 +5698,15 @@ var app = (function () {
     			mount_component(appbutton, target, anchor);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			const appbutton_changes = {};
+
+    			if (dirty & /*$$scope*/ 268435456) {
+    				appbutton_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton.$set(appbutton_changes);
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(appbutton.$$.fragment, local);
@@ -5655,7 +5740,8 @@ var app = (function () {
     	appbutton = new AppButton({
     			props: {
     				handleFun: /*handleHabitReflect*/ ctx[8],
-    				text: "Reflect"
+    				$$slots: { default: [create_default_slot$4] },
+    				$$scope: { ctx }
     			},
     			$$inline: true
     		});
@@ -5668,7 +5754,15 @@ var app = (function () {
     			mount_component(appbutton, target, anchor);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			const appbutton_changes = {};
+
+    			if (dirty & /*$$scope*/ 268435456) {
+    				appbutton_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton.$set(appbutton_changes);
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(appbutton.$$.fragment, local);
@@ -5694,6 +5788,94 @@ var app = (function () {
     	return block;
     }
 
+    // (156:5) <AppButton handleFun={null}>
+    function create_default_slot_2$1(ctx) {
+    	let t0;
+    	let t1;
+
+    	const block = {
+    		c: function create() {
+    			t0 = text("Check in: ");
+    			t1 = text(/*timeUpdateFormatCheckin*/ ctx[3]);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t0, anchor);
+    			insert_dev(target, t1, anchor);
+    		},
+    		p: function update(ctx, dirty) {
+    			if (dirty & /*timeUpdateFormatCheckin*/ 8) set_data_dev(t1, /*timeUpdateFormatCheckin*/ ctx[3]);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t0);
+    			if (detaching) detach_dev(t1);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_2$1.name,
+    		type: "slot",
+    		source: "(156:5) <AppButton handleFun={null}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (151:5) <AppButton handleFun={handleTriggerHabitCheck}>
+    function create_default_slot_1$4(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Check In");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_1$4.name,
+    		type: "slot",
+    		source: "(151:5) <AppButton handleFun={handleTriggerHabitCheck}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (149:5) <AppButton handleFun={handleHabitReflect}>
+    function create_default_slot$4(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Reflect");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$4.name,
+    		type: "slot",
+    		source: "(149:5) <AppButton handleFun={handleHabitReflect}>",
+    		ctx
+    	});
+
+    	return block;
+    }
+
     function create_fragment$c(ctx) {
     	let div1;
     	let button;
@@ -5709,7 +5891,7 @@ var app = (function () {
     				duration: /*habit*/ ctx[0].detailDuration,
     				code: /*habit*/ ctx[0].detailCode,
     				leaders: false,
-    				$$slots: { default: [create_default_slot$4] },
+    				$$slots: { default: [create_default_slot_3] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -5727,10 +5909,10 @@ var app = (function () {
     			if (if_block) if_block.c();
     			attr_dev(button, "class", "bg-white py-1 px-2 border-2 border-blue-100 shadow rounded-sm\n    hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700\n    focus:outline-none transition-colors duration-75 svelte-lvw779");
     			toggle_class(button, "selected", /*$indexActiveHabit*/ ctx[5] === /*i*/ ctx[1] || /*$indexActiveHabit*/ ctx[5] === null && !/*habit*/ ctx[0].adminIsActive);
-    			add_location(button, file$b, 127, 1, 3244);
-    			add_location(div0, file$b, 144, 1, 3775);
+    			add_location(button, file$b, 127, 1, 3250);
+    			add_location(div0, file$b, 144, 1, 3781);
     			attr_dev(div1, "class", "flex flex-col");
-    			add_location(div1, file$b, 126, 0, 3215);
+    			add_location(div1, file$b, 126, 0, 3221);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -5867,7 +6049,7 @@ var app = (function () {
     	};
 
     	const handleComplete = () => {
-    		console.log("habit complete", habit);
+    		// console.log("habit complete", habit);
     		$$invalidate(10, isTimeUpdating = false);
     	};
 
@@ -5920,8 +6102,8 @@ var app = (function () {
     		if (timeRemaining > 0) {
     			$$invalidate(2, timeUpdateFormat = formatTimeRemaining(timeRemaining));
     			$$invalidate(3, timeUpdateFormatCheckin = formatTimeRemaining(timeRemainingUntilNewCheckin));
-    			console.log("timeRemainingUntilNewCheckin", timeRemainingUntilNewCheckin);
 
+    			// console.log("timeRemainingUntilNewCheckin", timeRemainingUntilNewCheckin);
     			if (timeSinceLastCheckin > habit.detailCheckinFrequency && !$isReadyToHabitCheck) {
     				// timeRemainingUntilNewCheckin = habit.detailCheckinFrequency;
     				isReadyToHabitCheck.set(true);
@@ -5939,7 +6121,7 @@ var app = (function () {
     	const writable_props = ["habit", "i"];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$1.warn(`<HabitButtonHome> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<HabitButtonHome> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$$set = $$props => {
@@ -6051,11 +6233,11 @@ var app = (function () {
     		const props = options.props || {};
 
     		if (/*habit*/ ctx[0] === undefined && !("habit" in props)) {
-    			console_1$1.warn("<HabitButtonHome> was created without expected prop 'habit'");
+    			console.warn("<HabitButtonHome> was created without expected prop 'habit'");
     		}
 
     		if (/*i*/ ctx[1] === undefined && !("i" in props)) {
-    			console_1$1.warn("<HabitButtonHome> was created without expected prop 'i'");
+    			console.warn("<HabitButtonHome> was created without expected prop 'i'");
     		}
     	}
 
@@ -6079,8 +6261,8 @@ var app = (function () {
     /* src/components/HabitButtonNullHome.svelte generated by Svelte v3.32.3 */
     const file$c = "src/components/HabitButtonNullHome.svelte";
 
-    // (31:4) <HabitCard duration={'Time'} code={'+'} leaders={false}>
-    function create_default_slot$5(ctx) {
+    // (26:2) <HabitCard duration={"Time"} code={"+"} leaders={false}>
+    function create_default_slot_1$5(ctx) {
     	let t;
 
     	const block = {
@@ -6097,16 +6279,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot$5.name,
+    		id: create_default_slot_1$5.name,
     		type: "slot",
-    		source: "(31:4) <HabitCard duration={'Time'} code={'+'} leaders={false}>",
+    		source: "(26:2) <HabitCard duration={\\\"Time\\\"} code={\\\"+\\\"} leaders={false}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (35:4) {#if $indexActiveHabit === i}
+    // (30:2) {#if $indexActiveHabit === i}
     function create_if_block$4(ctx) {
     	let div;
     	let appbutton;
@@ -6115,7 +6297,8 @@ var app = (function () {
     	appbutton = new AppButton({
     			props: {
     				handleFun: /*handleNullHabitAdd*/ ctx[3],
-    				text: "Add"
+    				$$slots: { default: [create_default_slot$5] },
+    				$$scope: { ctx }
     			},
     			$$inline: true
     		});
@@ -6125,14 +6308,22 @@ var app = (function () {
     			div = element("div");
     			create_component(appbutton.$$.fragment);
     			attr_dev(div, "class", "sm:bg-white mt-2 sm:shadow sm:rounded-lg sm:px-6 sm:py-2");
-    			add_location(div, file$c, 35, 6, 1008);
+    			add_location(div, file$c, 30, 3, 844);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
     			mount_component(appbutton, div, null);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			const appbutton_changes = {};
+
+    			if (dirty & /*$$scope*/ 16) {
+    				appbutton_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton.$set(appbutton_changes);
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(appbutton.$$.fragment, local);
@@ -6152,7 +6343,34 @@ var app = (function () {
     		block,
     		id: create_if_block$4.name,
     		type: "if",
-    		source: "(35:4) {#if $indexActiveHabit === i}",
+    		source: "(30:2) {#if $indexActiveHabit === i}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (32:4) <AppButton handleFun={handleNullHabitAdd}>
+    function create_default_slot$5(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Add");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot$5.name,
+    		type: "slot",
+    		source: "(32:4) <AppButton handleFun={handleNullHabitAdd}>",
     		ctx
     	});
 
@@ -6174,7 +6392,7 @@ var app = (function () {
     				duration: "Time",
     				code: "+",
     				leaders: false,
-    				$$slots: { default: [create_default_slot$5] },
+    				$$slots: { default: [create_default_slot_1$5] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -6192,10 +6410,10 @@ var app = (function () {
     			if (if_block) if_block.c();
     			attr_dev(button, "class", "bg-white py-1 px-2 border-2 border-blue-100 shadow rounded-sm\n    hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-700\n    focus:outline-none transition-colors duration-75 svelte-1fef9j5");
     			toggle_class(button, "selected", /*$indexActiveHabit*/ ctx[1] === /*i*/ ctx[0] || /*$indexActiveHabit*/ ctx[1] === null && !habit.adminIsActive);
-    			add_location(button, file$c, 24, 2, 525);
-    			add_location(div0, file$c, 33, 2, 962);
+    			add_location(button, file$c, 17, 1, 371);
+    			add_location(div0, file$c, 28, 1, 803);
     			attr_dev(div1, "class", "flex flex-col");
-    			add_location(div1, file$c, 23, 0, 495);
+    			add_location(div1, file$c, 16, 0, 342);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -7442,7 +7660,7 @@ var app = (function () {
     }
 
     // (110:0) <ContentWrapper>
-    function create_default_slot_1$4(ctx) {
+    function create_default_slot_3$1(ctx) {
     	let div9;
     	let appheaderlocalscore;
     	let t0;
@@ -7756,7 +7974,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1$4.name,
+    		id: create_default_slot_3$1.name,
     		type: "slot",
     		source: "(110:0) <ContentWrapper>",
     		ctx
@@ -7822,6 +8040,60 @@ var app = (function () {
     	return block;
     }
 
+    // (221:2) <AppButton handleFun={() => handleModalHabitCheck(true)} success={true}    >
+    function create_default_slot_2$2(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("On Track");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_2$2.name,
+    		type: "slot",
+    		source: "(221:2) <AppButton handleFun={() => handleModalHabitCheck(true)} success={true}    >",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (224:2) <AppButton handleFun={() => handleModalHabitCheck(false)} danger={true}    >
+    function create_default_slot_1$6(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Having Trouble");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_1$6.name,
+    		type: "slot",
+    		source: "(224:2) <AppButton handleFun={() => handleModalHabitCheck(false)} danger={true}    >",
+    		ctx
+    	});
+
+    	return block;
+    }
+
     // (220:1) <AppModal contentModal={contentModalHabitCheck} modalDualButton={true}>
     function create_default_slot$6(ctx) {
     	let appbutton0;
@@ -7832,8 +8104,9 @@ var app = (function () {
     	appbutton0 = new AppButton({
     			props: {
     				handleFun: /*func*/ ctx[12],
-    				text: "On Track",
-    				success: true
+    				success: true,
+    				$$slots: { default: [create_default_slot_2$2] },
+    				$$scope: { ctx }
     			},
     			$$inline: true
     		});
@@ -7841,8 +8114,9 @@ var app = (function () {
     	appbutton1 = new AppButton({
     			props: {
     				handleFun: /*func_1*/ ctx[13],
-    				text: "Having Trouble",
-    				danger: true
+    				danger: true,
+    				$$slots: { default: [create_default_slot_1$6] },
+    				$$scope: { ctx }
     			},
     			$$inline: true
     		});
@@ -7859,7 +8133,22 @@ var app = (function () {
     			mount_component(appbutton1, target, anchor);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			const appbutton0_changes = {};
+
+    			if (dirty & /*$$scope*/ 1048576) {
+    				appbutton0_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton0.$set(appbutton0_changes);
+    			const appbutton1_changes = {};
+
+    			if (dirty & /*$$scope*/ 1048576) {
+    				appbutton1_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton1.$set(appbutton1_changes);
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(appbutton0.$$.fragment, local);
@@ -7897,7 +8186,7 @@ var app = (function () {
 
     	contentwrapper = new ContentWrapper({
     			props: {
-    				$$slots: { default: [create_default_slot_1$4] },
+    				$$slots: { default: [create_default_slot_3$1] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -9606,7 +9895,7 @@ var app = (function () {
 
     /* src/routes/ScreenHabitAdd.svelte generated by Svelte v3.32.3 */
 
-    const { Object: Object_1$2, console: console_1$2 } = globals;
+    const { Object: Object_1$2, console: console_1$1 } = globals;
     const file$k = "src/routes/ScreenHabitAdd.svelte";
 
     // (78:0) <ContentWrapper>
@@ -9827,7 +10116,7 @@ var app = (function () {
     	const writable_props = [];
 
     	Object_1$2.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$2.warn(`<ScreenHabitAdd> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$1.warn(`<ScreenHabitAdd> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$capture_state = () => ({
@@ -9884,11 +10173,11 @@ var app = (function () {
 
     /* src/routes/ScreenHabitEdit.svelte generated by Svelte v3.32.3 */
 
-    const { console: console_1$3 } = globals;
+    const { console: console_1$2 } = globals;
     const file$l = "src/routes/ScreenHabitEdit.svelte";
 
     // (119:0) <ContentWrapper>
-    function create_default_slot_1$5(ctx) {
+    function create_default_slot_1$7(ctx) {
     	let div1;
     	let appheaderlocalscore;
     	let t0;
@@ -9965,7 +10254,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1$5.name,
+    		id: create_default_slot_1$7.name,
     		type: "slot",
     		source: "(119:0) <ContentWrapper>",
     		ctx
@@ -10079,7 +10368,7 @@ var app = (function () {
 
     	contentwrapper = new ContentWrapper({
     			props: {
-    				$$slots: { default: [create_default_slot_1$5] },
+    				$$slots: { default: [create_default_slot_1$7] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -10265,7 +10554,7 @@ var app = (function () {
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$3.warn(`<ScreenHabitEdit> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$2.warn(`<ScreenHabitEdit> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$capture_state = () => ({
@@ -10331,7 +10620,7 @@ var app = (function () {
 
     /* src/routes/ScreenHabitReflect.svelte generated by Svelte v3.32.3 */
 
-    const { Object: Object_1$3, console: console_1$4 } = globals;
+    const { Object: Object_1$3, console: console_1$3 } = globals;
     const file$m = "src/routes/ScreenHabitReflect.svelte";
 
     // (267:12) {:else}
@@ -10425,7 +10714,7 @@ var app = (function () {
     }
 
     // (255:10) <HabitCard             duration={tempLocalUserHabit.detailDuration}             code={tempLocalUserHabit.detailCode}             leaders={['Habit Duration', 'Habit Code', 'Elapsed Time']}>
-    function create_default_slot_2(ctx) {
+    function create_default_slot_2$3(ctx) {
     	let if_block_anchor;
 
     	function select_block_type(ctx, dirty) {
@@ -10465,7 +10754,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_2.name,
+    		id: create_default_slot_2$3.name,
     		type: "slot",
     		source: "(255:10) <HabitCard             duration={tempLocalUserHabit.detailDuration}             code={tempLocalUserHabit.detailCode}             leaders={['Habit Duration', 'Habit Code', 'Elapsed Time']}>",
     		ctx
@@ -10642,7 +10931,7 @@ var app = (function () {
     }
 
     // (242:0) <ContentWrapper>
-    function create_default_slot_1$6(ctx) {
+    function create_default_slot_1$8(ctx) {
     	let div18;
     	let appheaderlocalscore;
     	let t0;
@@ -10730,7 +11019,7 @@ var app = (function () {
     				duration: /*tempLocalUserHabit*/ ctx[0].detailDuration,
     				code: /*tempLocalUserHabit*/ ctx[0].detailCode,
     				leaders: ["Habit Duration", "Habit Code", "Elapsed Time"],
-    				$$slots: { default: [create_default_slot_2] },
+    				$$slots: { default: [create_default_slot_2$3] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -11134,7 +11423,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1$6.name,
+    		id: create_default_slot_1$8.name,
     		type: "slot",
     		source: "(242:0) <ContentWrapper>",
     		ctx
@@ -11310,7 +11599,7 @@ var app = (function () {
 
     	contentwrapper = new ContentWrapper({
     			props: {
-    				$$slots: { default: [create_default_slot_1$6] },
+    				$$slots: { default: [create_default_slot_1$8] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -11524,7 +11813,7 @@ var app = (function () {
     	const writable_props = [];
 
     	Object_1$3.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$4.warn(`<ScreenHabitReflect> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$3.warn(`<ScreenHabitReflect> was created with unknown prop '${key}'`);
     	});
 
     	function textarea_input_handler() {
@@ -11752,25 +12041,23 @@ var app = (function () {
     }
 
     /* src/components/HistoryCard.svelte generated by Svelte v3.32.3 */
-
-    const { console: console_1$5 } = globals;
     const file$p = "src/components/HistoryCard.svelte";
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[3] = list[i];
-    	child_ctx[5] = i;
+    	child_ctx[4] = list[i];
+    	child_ctx[6] = i;
     	return child_ctx;
     }
 
     function get_each_context_1$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[3] = list[i];
-    	child_ctx[5] = i;
+    	child_ctx[4] = list[i];
+    	child_ctx[6] = i;
     	return child_ctx;
     }
 
-    // (31:4) {:else}
+    // (40:4) {:else}
     function create_else_block_2$2(ctx) {
     	let span;
 
@@ -11779,7 +12066,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "fail";
     			attr_dev(span, "class", "bg-red-100 text-red-700 px-2 rounded-sm");
-    			add_location(span, file$p, 31, 5, 997);
+    			add_location(span, file$p, 40, 5, 1244);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11793,14 +12080,14 @@ var app = (function () {
     		block,
     		id: create_else_block_2$2.name,
     		type: "else",
-    		source: "(31:4) {:else}",
+    		source: "(40:4) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (29:48) 
+    // (38:48) 
     function create_if_block_6$1(ctx) {
     	let span;
 
@@ -11809,7 +12096,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "active";
     			attr_dev(span, "class", "bg-blue-100 text-blue-700 px-2 rounded-sm");
-    			add_location(span, file$p, 29, 5, 910);
+    			add_location(span, file$p, 38, 5, 1157);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11823,14 +12110,14 @@ var app = (function () {
     		block,
     		id: create_if_block_6$1.name,
     		type: "if",
-    		source: "(29:48) ",
+    		source: "(38:48) ",
     		ctx
     	});
 
     	return block;
     }
 
-    // (25:4) {#if habit.reflectIsSuccessful}
+    // (34:4) {#if habit.reflectIsSuccessful}
     function create_if_block_5$2(ctx) {
     	let span;
 
@@ -11839,7 +12126,7 @@ var app = (function () {
     			span = element("span");
     			span.textContent = "success";
     			attr_dev(span, "class", "bg-green-100 text-green-700 py-1 px-2 rounded-sm");
-    			add_location(span, file$p, 25, 5, 765);
+    			add_location(span, file$p, 34, 5, 1012);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -11853,14 +12140,14 @@ var app = (function () {
     		block,
     		id: create_if_block_5$2.name,
     		type: "if",
-    		source: "(25:4) {#if habit.reflectIsSuccessful}",
+    		source: "(34:4) {#if habit.reflectIsSuccessful}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (20:3) <HabitCard     duration={habit.detailDuration}     code={habit.detailCode}     leaders={false}    >
+    // (29:3) <HabitCard     duration={habit.detailDuration}     code={habit.detailCode}     leaders={false}    >
     function create_default_slot$b(ctx) {
     	let if_block_anchor;
 
@@ -11903,14 +12190,14 @@ var app = (function () {
     		block,
     		id: create_default_slot$b.name,
     		type: "slot",
-    		source: "(20:3) <HabitCard     duration={habit.detailDuration}     code={habit.detailCode}     leaders={false}    >",
+    		source: "(29:3) <HabitCard     duration={habit.detailDuration}     code={habit.detailCode}     leaders={false}    >",
     		ctx
     	});
 
     	return block;
     }
 
-    // (58:5) {#if i < 15}
+    // (67:5) {#if i < 15}
     function create_if_block_3$3(ctx) {
     	let li;
     	let current_block_type_index;
@@ -11921,7 +12208,7 @@ var app = (function () {
     	const if_blocks = [];
 
     	function select_block_type_1(ctx, dirty) {
-    		if (/*check*/ ctx[3].isOk) return 0;
+    		if (/*check*/ ctx[4].isOk) return 0;
     		return 1;
     	}
 
@@ -11932,8 +12219,8 @@ var app = (function () {
     		c: function create() {
     			li = element("li");
     			if_block.c();
-    			attr_dev(li, "title", li_title_value = /*check*/ ctx[3].date.slice(0, 16));
-    			add_location(li, file$p, 58, 6, 1732);
+    			attr_dev(li, "title", li_title_value = /*check*/ ctx[4].date.slice(0, 16));
+    			add_location(li, file$p, 67, 6, 1979);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -11963,7 +12250,7 @@ var app = (function () {
     				if_block.m(li, null);
     			}
 
-    			if (!current || dirty & /*habit*/ 1 && li_title_value !== (li_title_value = /*check*/ ctx[3].date.slice(0, 16))) {
+    			if (!current || dirty & /*habit*/ 1 && li_title_value !== (li_title_value = /*check*/ ctx[4].date.slice(0, 16))) {
     				attr_dev(li, "title", li_title_value);
     			}
     		},
@@ -11986,14 +12273,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$3.name,
     		type: "if",
-    		source: "(58:5) {#if i < 15}",
+    		source: "(67:5) {#if i < 15}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (64:7) {:else}
+    // (73:7) {:else}
     function create_else_block_1$5(ctx) {
     	let span;
     	let fasquareclose;
@@ -12005,7 +12292,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquareclose.$$.fragment);
     			attr_dev(span, "class", "inline-block text-red-500 w-6 h-6 fill-current");
-    			add_location(span, file$p, 64, 8, 1931);
+    			add_location(span, file$p, 73, 8, 2178);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12031,14 +12318,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1$5.name,
     		type: "else",
-    		source: "(64:7) {:else}",
+    		source: "(73:7) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (60:7) {#if check.isOk}
+    // (69:7) {#if check.isOk}
     function create_if_block_4$2(ctx) {
     	let span;
     	let fasquarecheck;
@@ -12050,7 +12337,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquarecheck.$$.fragment);
     			attr_dev(span, "class", "inline-block text-green-500 w-5 h-5 fill-current");
-    			add_location(span, file$p, 60, 8, 1801);
+    			add_location(span, file$p, 69, 8, 2048);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12076,14 +12363,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4$2.name,
     		type: "if",
-    		source: "(60:7) {#if check.isOk}",
+    		source: "(69:7) {#if check.isOk}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (71:5) {#if i === 15}
+    // (80:5) {#if i === 15}
     function create_if_block_2$5(ctx) {
     	let div;
 
@@ -12092,7 +12379,7 @@ var app = (function () {
     			div = element("div");
     			div.textContent = "...\n\t\t\t\t\t\t";
     			attr_dev(div, "class", "w-full text-xs font-extrabold text-gray-900 uppercase\n            text-center");
-    			add_location(div, file$p, 71, 6, 2098);
+    			add_location(div, file$p, 80, 6, 2345);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12106,20 +12393,20 @@ var app = (function () {
     		block,
     		id: create_if_block_2$5.name,
     		type: "if",
-    		source: "(71:5) {#if i === 15}",
+    		source: "(80:5) {#if i === 15}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (57:4) {#each habit.checks as check, i}
+    // (66:4) {#each habit.checks as check, i}
     function create_each_block_1$1(ctx) {
     	let t;
     	let if_block1_anchor;
     	let current;
-    	let if_block0 = /*i*/ ctx[5] < 15 && create_if_block_3$3(ctx);
-    	let if_block1 = /*i*/ ctx[5] === 15 && create_if_block_2$5(ctx);
+    	let if_block0 = /*i*/ ctx[6] < 15 && create_if_block_3$3(ctx);
+    	let if_block1 = /*i*/ ctx[6] === 15 && create_if_block_2$5(ctx);
 
     	const block = {
     		c: function create() {
@@ -12136,7 +12423,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (/*i*/ ctx[5] < 15) if_block0.p(ctx, dirty);
+    			if (/*i*/ ctx[6] < 15) if_block0.p(ctx, dirty);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -12159,14 +12446,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1$1.name,
     		type: "each",
-    		source: "(57:4) {#each habit.checks as check, i}",
+    		source: "(66:4) {#each habit.checks as check, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (83:1) {#if showDetails}
+    // (92:1) {#if showDetails}
     function create_if_block$a(ctx) {
     	let div;
     	let ul;
@@ -12192,9 +12479,9 @@ var app = (function () {
     				each_blocks[i].c();
     			}
 
-    			attr_dev(ul, "class", "pl-8 grid grid-cols-2");
-    			add_location(ul, file$p, 84, 3, 2307);
-    			add_location(div, file$p, 83, 2, 2298);
+    			attr_dev(ul, "class", "pl-4 grid grid-cols-2");
+    			add_location(ul, file$p, 93, 3, 2554);
+    			add_location(div, file$p, 92, 2, 2545);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12207,7 +12494,7 @@ var app = (function () {
     			current = true;
     		},
     		p: function update(ctx, dirty) {
-    			if (dirty & /*habit*/ 1) {
+    			if (dirty & /*presentCheckinDate, habit*/ 5) {
     				each_value = /*habit*/ ctx[0].checks;
     				validate_each_argument(each_value);
     				let i;
@@ -12263,14 +12550,14 @@ var app = (function () {
     		block,
     		id: create_if_block$a.name,
     		type: "if",
-    		source: "(83:1) {#if showDetails}",
+    		source: "(92:1) {#if showDetails}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (92:6) {:else}
+    // (101:6) {:else}
     function create_else_block$8(ctx) {
     	let span;
     	let fasquareclose;
@@ -12282,7 +12569,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquareclose.$$.fragment);
     			attr_dev(span, "class", "inline-block text-red-500 w-6 h-6 fill-current");
-    			add_location(span, file$p, 92, 7, 2602);
+    			add_location(span, file$p, 101, 7, 2848);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12308,14 +12595,14 @@ var app = (function () {
     		block,
     		id: create_else_block$8.name,
     		type: "else",
-    		source: "(92:6) {:else}",
+    		source: "(101:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (88:6) {#if check.isOk}
+    // (97:6) {#if check.isOk}
     function create_if_block_1$5(ctx) {
     	let span;
     	let fasquarecheck;
@@ -12327,7 +12614,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquarecheck.$$.fragment);
     			attr_dev(span, "class", "inline-block text-green-500 w-5 h-5 fill-current");
-    			add_location(span, file$p, 88, 7, 2476);
+    			add_location(span, file$p, 97, 7, 2722);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12353,21 +12640,21 @@ var app = (function () {
     		block,
     		id: create_if_block_1$5.name,
     		type: "if",
-    		source: "(88:6) {#if check.isOk}",
+    		source: "(97:6) {#if check.isOk}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (86:4) {#each habit.checks as check, i}
+    // (95:4) {#each habit.checks as check, i}
     function create_each_block$2(ctx) {
     	let li;
     	let current_block_type_index;
     	let if_block;
     	let t0;
     	let span;
-    	let t1_value = /*check*/ ctx[3].date.slice(0, 16) + "";
+    	let t1_value = /*presentCheckinDate*/ ctx[2](/*check*/ ctx[4].date) + "";
     	let t1;
     	let t2;
     	let li_intro;
@@ -12376,7 +12663,7 @@ var app = (function () {
     	const if_blocks = [];
 
     	function select_block_type_2(ctx, dirty) {
-    		if (/*check*/ ctx[3].isOk) return 0;
+    		if (/*check*/ ctx[4].isOk) return 0;
     		return 1;
     	}
 
@@ -12392,9 +12679,9 @@ var app = (function () {
     			t1 = text(t1_value);
     			t2 = space();
     			attr_dev(span, "class", "inline-block text-base font-bold text-gray-700 uppercase");
-    			add_location(span, file$p, 96, 6, 2723);
-    			attr_dev(li, "class", "mt-1 flex space-x-4");
-    			add_location(li, file$p, 86, 5, 2384);
+    			add_location(span, file$p, 105, 6, 2969);
+    			attr_dev(li, "class", "mt-1 flex space-x-2");
+    			add_location(li, file$p, 95, 5, 2631);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -12428,7 +12715,7 @@ var app = (function () {
     				if_block.m(li, t0);
     			}
 
-    			if ((!current || dirty & /*habit*/ 1) && t1_value !== (t1_value = /*check*/ ctx[3].date.slice(0, 16) + "")) set_data_dev(t1, t1_value);
+    			if ((!current || dirty & /*habit*/ 1) && t1_value !== (t1_value = /*presentCheckinDate*/ ctx[2](/*check*/ ctx[4].date) + "")) set_data_dev(t1, t1_value);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -12436,7 +12723,7 @@ var app = (function () {
 
     			if (!li_intro) {
     				add_render_callback(() => {
-    					li_intro = create_in_transition(li, fade, { delay: 100 * /*i*/ ctx[5] });
+    					li_intro = create_in_transition(li, fade, { delay: 50 * /*i*/ ctx[6] });
     					li_intro.start();
     				});
     			}
@@ -12457,7 +12744,7 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(86:4) {#each habit.checks as check, i}",
+    		source: "(95:4) {#each habit.checks as check, i}",
     		ctx
     	});
 
@@ -12544,21 +12831,21 @@ var app = (function () {
     			t9 = space();
     			if (if_block) if_block.c();
     			attr_dev(div0, "class", "w-1/3 py-1 px-2 ");
-    			add_location(div0, file$p, 18, 2, 590);
+    			add_location(div0, file$p, 27, 2, 837);
     			attr_dev(div1, "class", "ml-2 pl-2 pt-3 text-xs font-extrabold text-gray-900 uppercase\n      text-left");
-    			add_location(div1, file$p, 36, 3, 1124);
+    			add_location(div1, file$p, 45, 3, 1371);
     			attr_dev(div2, "class", "ml-2 pl-2 pt-0 text-xs font-extrabold text-gray-500 uppercase\n      text-left");
-    			add_location(div2, file$p, 42, 3, 1261);
+    			add_location(div2, file$p, 51, 3, 1508);
     			attr_dev(div3, "class", "ml-2 pl-2 text-xs font-extrabold text-gray-500 uppercase text-left");
-    			add_location(div3, file$p, 48, 3, 1428);
+    			add_location(div3, file$p, 57, 3, 1675);
     			attr_dev(ul, "class", "ml-2 pt-1 place-items-center grid grid-cols-8 w-4/5 leading-tight");
-    			add_location(ul, file$p, 53, 3, 1584);
+    			add_location(ul, file$p, 62, 3, 1831);
     			attr_dev(div4, "class", "w-full");
-    			add_location(div4, file$p, 35, 2, 1100);
+    			add_location(div4, file$p, 44, 2, 1347);
     			attr_dev(div5, "class", "flex");
-    			add_location(div5, file$p, 17, 1, 569);
+    			add_location(div5, file$p, 26, 1, 816);
     			attr_dev(div6, "class", "mx-auto  py-1 border-2 border-blue-100 shadow rounded-sm bg-white\n  hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-900\n  focus:outline-none transition-colors duration-75 cursor-pointer");
-    			add_location(div6, file$p, 11, 0, 300);
+    			add_location(div6, file$p, 20, 0, 547);
     		},
     		l: function claim(nodes) {
     			throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -12592,7 +12879,7 @@ var app = (function () {
     			current = true;
 
     			if (!mounted) {
-    				dispose = listen_dev(div6, "click", /*click_handler*/ ctx[2], false, false, false);
+    				dispose = listen_dev(div6, "click", /*click_handler*/ ctx[3], false, false, false);
     				mounted = true;
     			}
     		},
@@ -12601,7 +12888,7 @@ var app = (function () {
     			if (dirty & /*habit*/ 1) habitcard_changes.duration = /*habit*/ ctx[0].detailDuration;
     			if (dirty & /*habit*/ 1) habitcard_changes.code = /*habit*/ ctx[0].detailCode;
 
-    			if (dirty & /*$$scope, habit*/ 129) {
+    			if (dirty & /*$$scope, habit*/ 257) {
     				habitcard_changes.$$scope = { dirty, ctx };
     			}
 
@@ -12709,11 +12996,24 @@ var app = (function () {
     	validate_slots("HistoryCard", slots, []);
     	let { habit } = $$props;
     	let showDetails = false;
-    	console.log(habit);
+
+    	const presentCheckinDate = data => {
+    		const date = new Date(data);
+
+    		const time = date.toLocaleString("en-US", {
+    			hour: "numeric",
+    			minute: "numeric",
+    			hour12: true
+    		});
+
+    		const dateString = `${date}`;
+    		return `${dateString.slice(0, 11)} at ${time}`;
+    	};
+
     	const writable_props = ["habit"];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$5.warn(`<HistoryCard> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console.warn(`<HistoryCard> was created with unknown prop '${key}'`);
     	});
 
     	const click_handler = () => $$invalidate(1, showDetails = !showDetails);
@@ -12729,7 +13029,8 @@ var app = (function () {
     		fade,
     		fly,
     		habit,
-    		showDetails
+    		showDetails,
+    		presentCheckinDate
     	});
 
     	$$self.$inject_state = $$props => {
@@ -12741,7 +13042,7 @@ var app = (function () {
     		$$self.$inject_state($$props.$$inject);
     	}
 
-    	return [habit, showDetails, click_handler];
+    	return [habit, showDetails, presentCheckinDate, click_handler];
     }
 
     class HistoryCard extends SvelteComponentDev {
@@ -12760,7 +13061,7 @@ var app = (function () {
     		const props = options.props || {};
 
     		if (/*habit*/ ctx[0] === undefined && !("habit" in props)) {
-    			console_1$5.warn("<HistoryCard> was created without expected prop 'habit'");
+    			console.warn("<HistoryCard> was created without expected prop 'habit'");
     		}
     	}
 
@@ -12775,7 +13076,7 @@ var app = (function () {
 
     /* src/routes/ScreenHabitHistory.svelte generated by Svelte v3.32.3 */
 
-    const { console: console_1$6 } = globals;
+    const { console: console_1$4 } = globals;
     const file$q = "src/routes/ScreenHabitHistory.svelte";
 
     function get_each_context$3(ctx, list, i) {
@@ -12790,7 +13091,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (143:8) {#if habit && !$isObjectEmpty(habit)}
+    // (144:4) {#if habit && !$isObjectEmpty(habit)}
     function create_if_block_3$4(ctx) {
     	let historycard;
     	let current;
@@ -12831,14 +13132,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$4.name,
     		type: "if",
-    		source: "(143:8) {#if habit && !$isObjectEmpty(habit)}",
+    		source: "(144:4) {#if habit && !$isObjectEmpty(habit)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (142:6) {#each $userHabitsActive as habit}
+    // (143:3) {#each $userHabitsActive as habit}
     function create_each_block_1$2(ctx) {
     	let show_if = /*habit*/ ctx[18] && !/*$isObjectEmpty*/ ctx[3](/*habit*/ ctx[18]);
     	let if_block_anchor;
@@ -12900,14 +13201,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1$2.name,
     		type: "each",
-    		source: "(142:6) {#each $userHabitsActive as habit}",
+    		source: "(143:3) {#each $userHabitsActive as habit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (1:0) <script>   import {     userProfile,     userHabitsActive,     userHabitsHistory,     isObjectEmpty,     API_ENDPOINT,     errMessage,     userId,     isLSDataOutdated,     isDataOutdatedHistory,     isNewSocialModal   }
+    // (1:0) <script>  import {   userProfile,   userHabitsActive,   userHabitsHistory,   isObjectEmpty,   API_ENDPOINT,   errMessage,   userId,   isLSDataOutdated,   isDataOutdatedHistory,   isNewSocialModal,  }
     function create_catch_block(ctx) {
     	const block = {
     		c: noop,
@@ -12922,14 +13223,14 @@ var app = (function () {
     		block,
     		id: create_catch_block.name,
     		type: "catch",
-    		source: "(1:0) <script>   import {     userProfile,     userHabitsActive,     userHabitsHistory,     isObjectEmpty,     API_ENDPOINT,     errMessage,     userId,     isLSDataOutdated,     isDataOutdatedHistory,     isNewSocialModal   }",
+    		source: "(1:0) <script>  import {   userProfile,   userHabitsActive,   userHabitsHistory,   isObjectEmpty,   API_ENDPOINT,   errMessage,   userId,   isLSDataOutdated,   isDataOutdatedHistory,   isNewSocialModal,  }",
     		ctx
     	});
 
     	return block;
     }
 
-    // (149:6) {:then}
+    // (150:3) {:then}
     function create_then_block(ctx) {
     	let each_1_anchor;
     	let current;
@@ -13018,14 +13319,14 @@ var app = (function () {
     		block,
     		id: create_then_block.name,
     		type: "then",
-    		source: "(149:6) {:then}",
+    		source: "(150:3) {:then}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (151:10) {#if habit && !$isObjectEmpty(habit)}
+    // (152:5) {#if habit && !$isObjectEmpty(habit)}
     function create_if_block_2$6(ctx) {
     	let historycard;
     	let current;
@@ -13066,14 +13367,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$6.name,
     		type: "if",
-    		source: "(151:10) {#if habit && !$isObjectEmpty(habit)}",
+    		source: "(152:5) {#if habit && !$isObjectEmpty(habit)}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (150:8) {#each $userHabitsHistory as habit}
+    // (151:4) {#each $userHabitsHistory as habit}
     function create_each_block$3(ctx) {
     	let show_if = /*habit*/ ctx[18] && !/*$isObjectEmpty*/ ctx[3](/*habit*/ ctx[18]);
     	let if_block_anchor;
@@ -13135,14 +13436,14 @@ var app = (function () {
     		block,
     		id: create_each_block$3.name,
     		type: "each",
-    		source: "(150:8) {#each $userHabitsHistory as habit}",
+    		source: "(151:4) {#each $userHabitsHistory as habit}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (147:37)          Loading...       {:then}
+    // (148:34)      Loading...    {:then}
     function create_pending_block(ctx) {
     	let t;
 
@@ -13165,7 +13466,34 @@ var app = (function () {
     		block,
     		id: create_pending_block.name,
     		type: "pending",
-    		source: "(147:37)          Loading...       {:then}",
+    		source: "(148:34)      Loading...    {:then}",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (158:2) <AppButton handleFun={handleTriggerSocial}>
+    function create_default_slot_4(ctx) {
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text("Share Habit History");
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_4.name,
+    		type: "slot",
+    		source: "(158:2) <AppButton handleFun={handleTriggerSocial}>",
     		ctx
     	});
 
@@ -13173,7 +13501,7 @@ var app = (function () {
     }
 
     // (135:0) <ContentWrapper>
-    function create_default_slot_2$1(ctx) {
+    function create_default_slot_3$2(ctx) {
     	let div9;
     	let appheaderlocalscore;
     	let t0;
@@ -13242,7 +13570,8 @@ var app = (function () {
     	appbutton = new AppButton({
     			props: {
     				handleFun: /*handleTriggerSocial*/ ctx[10],
-    				text: "Share Habit History"
+    				$$slots: { default: [create_default_slot_4] },
+    				$$scope: { ctx }
     			},
     			$$inline: true
     		});
@@ -13285,32 +13614,32 @@ var app = (function () {
     			span2 = element("span");
     			span2.textContent = "Delete All";
     			attr_dev(div0, "class", "my-6 space-y-6");
-    			add_location(div0, file$q, 140, 4, 3571);
+    			add_location(div0, file$q, 141, 2, 3308);
     			attr_dev(div1, "class", "w-full border-t border-gray-300");
-    			add_location(div1, file$q, 160, 10, 4202);
+    			add_location(div1, file$q, 161, 5, 3867);
     			attr_dev(div2, "class", "absolute inset-0 flex items-center");
-    			add_location(div2, file$q, 159, 8, 4143);
+    			add_location(div2, file$q, 160, 4, 3813);
     			attr_dev(span0, "class", "px-2 bg-white text-gray-900");
-    			add_location(span0, file$q, 163, 10, 4334);
+    			add_location(span0, file$q, 164, 5, 3986);
     			attr_dev(div3, "class", "relative flex justify-center text-sm");
-    			add_location(div3, file$q, 162, 8, 4273);
+    			add_location(div3, file$q, 163, 4, 3930);
     			attr_dev(div4, "class", "relative");
-    			add_location(div4, file$q, 158, 6, 4112);
+    			add_location(div4, file$q, 159, 3, 3786);
     			attr_dev(span1, "class", "");
-    			add_location(span1, file$q, 174, 12, 4739);
+    			add_location(span1, file$q, 176, 6, 4360);
     			attr_dev(button0, "class", "w-full inline-flex justify-center py-2 px-4 border\n            border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n            text-gray-900 hover:bg-gray-50");
-    			add_location(button0, file$q, 169, 10, 4487);
-    			add_location(div5, file$q, 168, 8, 4471);
+    			add_location(button0, file$q, 170, 5, 4120);
+    			add_location(div5, file$q, 169, 4, 4109);
     			attr_dev(span2, "class", "");
-    			add_location(span2, file$q, 183, 12, 5077);
+    			add_location(span2, file$q, 186, 6, 4668);
     			attr_dev(button1, "class", "w-full inline-flex justify-center py-2 px-4 border\n            border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n            text-gray-900 hover:bg-gray-50");
-    			add_location(button1, file$q, 178, 10, 4825);
-    			add_location(div6, file$q, 177, 8, 4809);
+    			add_location(button1, file$q, 180, 5, 4428);
+    			add_location(div6, file$q, 179, 4, 4417);
     			attr_dev(div7, "class", "mt-6 grid grid-cols-2 gap-3");
-    			add_location(div7, file$q, 167, 6, 4421);
+    			add_location(div7, file$q, 168, 3, 4063);
     			attr_dev(div8, "class", "mt-6");
-    			add_location(div8, file$q, 157, 4, 4087);
-    			add_location(div9, file$q, 135, 2, 3426);
+    			add_location(div8, file$q, 158, 2, 3764);
+    			add_location(div9, file$q, 135, 1, 3173);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div9, anchor);
@@ -13395,6 +13724,14 @@ var app = (function () {
     				const child_ctx = ctx.slice();
     				info.block.p(child_ctx, dirty);
     			}
+
+    			const appbutton_changes = {};
+
+    			if (dirty & /*$$scope*/ 8388608) {
+    				appbutton_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton.$set(appbutton_changes);
     		},
     		i: function intro(local) {
     			if (current) return;
@@ -13442,7 +13779,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_2$1.name,
+    		id: create_default_slot_3$2.name,
     		type: "slot",
     		source: "(135:0) <ContentWrapper>",
     		ctx
@@ -13451,7 +13788,7 @@ var app = (function () {
     	return block;
     }
 
-    // (192:0) {#if $isNewSocialModal}
+    // (195:0) {#if $isNewSocialModal}
     function create_if_block_1$6(ctx) {
     	let appmodal;
     	let current;
@@ -13460,7 +13797,7 @@ var app = (function () {
     			props: {
     				contentModal: /*contentModalSocial*/ ctx[7],
     				modalDualButton: false,
-    				$$slots: { default: [create_default_slot_1$7] },
+    				$$slots: { default: [create_default_slot_1$9] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -13501,22 +13838,52 @@ var app = (function () {
     		block,
     		id: create_if_block_1$6.name,
     		type: "if",
-    		source: "(192:0) {#if $isNewSocialModal}",
+    		source: "(195:0) {#if $isNewSocialModal}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (193:2) <AppModal contentModal={contentModalSocial} modalDualButton={false}>
-    function create_default_slot_1$7(ctx) {
+    // (197:2) <AppButton handleFun={handleModalSocialAction}    >
+    function create_default_slot_2$4(ctx) {
+    	let t_value = /*contentModalSocial*/ ctx[7].button + "";
+    	let t;
+
+    	const block = {
+    		c: function create() {
+    			t = text(t_value);
+    		},
+    		m: function mount(target, anchor) {
+    			insert_dev(target, t, anchor);
+    		},
+    		p: noop,
+    		d: function destroy(detaching) {
+    			if (detaching) detach_dev(t);
+    		}
+    	};
+
+    	dispatch_dev("SvelteRegisterBlock", {
+    		block,
+    		id: create_default_slot_2$4.name,
+    		type: "slot",
+    		source: "(197:2) <AppButton handleFun={handleModalSocialAction}    >",
+    		ctx
+    	});
+
+    	return block;
+    }
+
+    // (196:1) <AppModal contentModal={contentModalSocial} modalDualButton={false}>
+    function create_default_slot_1$9(ctx) {
     	let appbutton;
     	let current;
 
     	appbutton = new AppButton({
     			props: {
     				handleFun: /*handleModalSocialAction*/ ctx[9],
-    				text: /*contentModalSocial*/ ctx[7].button
+    				$$slots: { default: [create_default_slot_2$4] },
+    				$$scope: { ctx }
     			},
     			$$inline: true
     		});
@@ -13529,7 +13896,15 @@ var app = (function () {
     			mount_component(appbutton, target, anchor);
     			current = true;
     		},
-    		p: noop,
+    		p: function update(ctx, dirty) {
+    			const appbutton_changes = {};
+
+    			if (dirty & /*$$scope*/ 8388608) {
+    				appbutton_changes.$$scope = { dirty, ctx };
+    			}
+
+    			appbutton.$set(appbutton_changes);
+    		},
     		i: function intro(local) {
     			if (current) return;
     			transition_in(appbutton.$$.fragment, local);
@@ -13546,16 +13921,16 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1$7.name,
+    		id: create_default_slot_1$9.name,
     		type: "slot",
-    		source: "(193:2) <AppModal contentModal={contentModalSocial} modalDualButton={false}>",
+    		source: "(196:1) <AppModal contentModal={contentModalSocial} modalDualButton={false}>",
     		ctx
     	});
 
     	return block;
     }
 
-    // (200:0) {#if habitDeleteWarning}
+    // (203:0) {#if habitDeleteWarning}
     function create_if_block$b(ctx) {
     	let appmodal;
     	let current;
@@ -13604,14 +13979,14 @@ var app = (function () {
     		block,
     		id: create_if_block$b.name,
     		type: "if",
-    		source: "(200:0) {#if habitDeleteWarning}",
+    		source: "(203:0) {#if habitDeleteWarning}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (201:2) <AppModal contentModal={contentModalDeleteAll}>
+    // (204:1) <AppModal contentModal={contentModalDeleteAll}>
     function create_default_slot$c(ctx) {
     	let button0;
     	let t1;
@@ -13649,25 +14024,25 @@ var app = (function () {
     			span1.textContent = "Back";
     			attr_dev(button0, "type", "button");
     			attr_dev(button0, "class", "inline-flex justify-center w-full rounded-md border\n      border-transparent shadow-sm px-4 py-2 bg-blue-900 text-base font-medium\n      text-white hover:bg-blue-500 focus:outline-none focus:ring-2\n      focus:ring-offset-2 focus:ring-blue-700 sm:text-sm");
-    			add_location(button0, file$q, 202, 4, 5492);
+    			add_location(button0, file$q, 204, 2, 5059);
     			attr_dev(div0, "class", "w-full border-t border-gray-300");
-    			add_location(div0, file$q, 214, 10, 6004);
+    			add_location(div0, file$q, 217, 5, 5546);
     			attr_dev(div1, "class", "absolute inset-0 flex items-center");
-    			add_location(div1, file$q, 213, 8, 5945);
+    			add_location(div1, file$q, 216, 4, 5492);
     			attr_dev(span0, "class", "px-2 bg-white text-gray-900");
-    			add_location(span0, file$q, 217, 10, 6136);
+    			add_location(span0, file$q, 220, 5, 5665);
     			attr_dev(div2, "class", "relative flex justify-center text-sm");
-    			add_location(div2, file$q, 216, 8, 6075);
+    			add_location(div2, file$q, 219, 4, 5609);
     			attr_dev(div3, "class", "relative");
-    			add_location(div3, file$q, 212, 6, 5914);
+    			add_location(div3, file$q, 215, 3, 5465);
     			attr_dev(span1, "class", "");
-    			add_location(span1, file$q, 228, 10, 6493);
+    			add_location(span1, file$q, 231, 5, 5997);
     			attr_dev(button1, "class", "w-full inline-flex justify-center py-2 px-4 border\n          border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium\n          text-gray-900 hover:bg-gray-50");
-    			add_location(button1, file$q, 223, 8, 6251);
+    			add_location(button1, file$q, 225, 4, 5765);
     			attr_dev(div4, "class", "mt-6");
-    			add_location(div4, file$q, 221, 6, 6223);
+    			add_location(div4, file$q, 224, 3, 5742);
     			attr_dev(div5, "class", "mt-6");
-    			add_location(div5, file$q, 211, 4, 5889);
+    			add_location(div5, file$q, 214, 2, 5443);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, button0, anchor);
@@ -13707,7 +14082,7 @@ var app = (function () {
     		block,
     		id: create_default_slot$c.name,
     		type: "slot",
-    		source: "(201:2) <AppModal contentModal={contentModalDeleteAll}>",
+    		source: "(204:1) <AppModal contentModal={contentModalDeleteAll}>",
     		ctx
     	});
 
@@ -13723,7 +14098,7 @@ var app = (function () {
 
     	contentwrapper = new ContentWrapper({
     			props: {
-    				$$slots: { default: [create_default_slot_2$1] },
+    				$$slots: { default: [create_default_slot_3$2] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -13972,7 +14347,7 @@ var app = (function () {
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$6.warn(`<ScreenHabitHistory> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$4.warn(`<ScreenHabitHistory> was created with unknown prop '${key}'`);
     	});
 
     	const click_handler = () => push("/");
@@ -14619,11 +14994,11 @@ var app = (function () {
 
     /* src/routes/ScreenProfileEdit.svelte generated by Svelte v3.32.3 */
 
-    const { console: console_1$7 } = globals;
+    const { console: console_1$5 } = globals;
     const file$s = "src/routes/ScreenProfileEdit.svelte";
 
     // (120:0) <ContentWrapper>
-    function create_default_slot_1$8(ctx) {
+    function create_default_slot_1$a(ctx) {
     	let div1;
     	let appheaderlocalscore;
     	let t0;
@@ -14700,7 +15075,7 @@ var app = (function () {
 
     	dispatch_dev("SvelteRegisterBlock", {
     		block,
-    		id: create_default_slot_1$8.name,
+    		id: create_default_slot_1$a.name,
     		type: "slot",
     		source: "(120:0) <ContentWrapper>",
     		ctx
@@ -14876,7 +15251,7 @@ var app = (function () {
 
     	contentwrapper = new ContentWrapper({
     			props: {
-    				$$slots: { default: [create_default_slot_1$8] },
+    				$$slots: { default: [create_default_slot_1$a] },
     				$$scope: { ctx }
     			},
     			$$inline: true
@@ -15061,7 +15436,7 @@ var app = (function () {
     	const writable_props = [];
 
     	Object.keys($$props).forEach(key => {
-    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$7.warn(`<ScreenProfileEdit> was created with unknown prop '${key}'`);
+    		if (!~writable_props.indexOf(key) && key.slice(0, 2) !== "$$") console_1$5.warn(`<ScreenProfileEdit> was created with unknown prop '${key}'`);
     	});
 
     	$$self.$capture_state = () => ({

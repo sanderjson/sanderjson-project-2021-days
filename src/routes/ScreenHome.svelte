@@ -218,16 +218,12 @@
 
 {#if $isNewHabitCheckModal}
 	<AppModal contentModal={contentModalHabitCheck} modalDualButton={true}>
-		<AppButton
-			handleFun={() => handleModalHabitCheck(true)}
-			text="On Track"
-			success={true}
-		/>
-		<AppButton
-			handleFun={() => handleModalHabitCheck(false)}
-			text="Having Trouble"
-			danger={true}
-		/>
+		<AppButton handleFun={() => handleModalHabitCheck(true)} success={true}
+			>On Track</AppButton
+		>
+		<AppButton handleFun={() => handleModalHabitCheck(false)} danger={true}
+			>Having Trouble</AppButton
+		>
 	</AppModal>
 {/if}
 

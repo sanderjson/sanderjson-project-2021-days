@@ -47,7 +47,7 @@
 	};
 
 	const handleComplete = () => {
-		console.log("habit complete", habit);
+		// console.log("habit complete", habit);
 		isTimeUpdating = false;
 	};
 
@@ -100,7 +100,7 @@
 			timeUpdateFormatCheckin = formatTimeRemaining(
 				timeRemainingUntilNewCheckin
 			);
-			console.log("timeRemainingUntilNewCheckin", timeRemainingUntilNewCheckin);
+			// console.log("timeRemainingUntilNewCheckin", timeRemainingUntilNewCheckin);
 			if (
 				timeSinceLastCheckin > habit.detailCheckinFrequency &&
 				!$isReadyToHabitCheck
@@ -146,14 +146,16 @@
 		{#if $indexActiveHabit === i}
 			<div class="sm:bg-white mt-2 sm:shadow sm:rounded-lg sm:px-6 sm:py-2">
 				{#if !habit.adminIsActive}
-					<AppButton handleFun={handleHabitReflect} text="Reflect" />
+					<AppButton handleFun={handleHabitReflect}>Reflect</AppButton>
 				{:else if $isReadyToHabitCheck || habit.checks.length == 0}
-					<AppButton handleFun={handleTriggerHabitCheck} text="Check In" />
+					<AppButton handleFun={handleTriggerHabitCheck}>Check In</AppButton>
 				{:else}
-					<div class="text-xs text-center w-full font-bold">
-						Check: {timeUpdateFormatCheckin}
-					</div>
-					<AppButton handleFun={null} text="On Track" />
+					<!-- <div class="text-xs text-center w-full font-bold">
+					
+					</div> -->
+					<AppButton handleFun={null}>
+						Check in: {timeUpdateFormatCheckin}</AppButton
+					>
 				{/if}
 			</div>
 		{/if}
