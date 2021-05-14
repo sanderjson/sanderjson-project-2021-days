@@ -8,14 +8,47 @@
 
 	const presentCheckinDate = (data) => {
 		const date = new Date(data);
-		const time = date.toLocaleString("en-US", {
-			hour: "numeric",
-			minute: "numeric",
-			hour12: true,
-		});
-		const dateString = `${date}`;
-		return `${dateString.slice(0, 11)} at ${time}`;
+
+		const time = date
+			.toLocaleString("en-US", {
+				hour: "numeric",
+				minute: "numeric",
+				hour12: true,
+			})
+			.toString();
+		// .slice(1, 5);
+
+		const day = new Intl.DateTimeFormat("en-CA", { weekday: "short" })
+			.format(date)
+			.toString()
+			.slice(0, -1);
+
+		const string = date.toLocaleDateString();
+
+		return time + " " + day + " " + string;
 	};
+
+	const presentCheckinSummary = (data) => {
+		let numOK = 0;
+		let numNotOK = 0;
+
+		for (const check of data) {
+			if (check.isOk) {
+				numOK++;
+			} else {
+				numNotOK++;
+			}
+		}
+
+		return {
+			total: numOK + numNotOK,
+			numOK: numOK,
+			numNotOK: numNotOK,
+		};
+	};
+
+	console.log(habit.checks);
+	const checkinSummary = presentCheckinSummary(habit.checks);
 </script>
 
 <div
@@ -31,37 +64,35 @@
 				code={habit.detailCode}
 				leaders={false}
 			>
-				{#if habit.reflectIsSuccessful}
-					<span class="bg-green-100 text-green-700 py-1 px-2 rounded-sm">
-						success
-					</span>
-				{:else if habit.reflectIsSuccessful == null}
-					<span class="bg-blue-100 text-blue-700 px-2 rounded-sm">active</span>
-				{:else}
-					<span class="bg-red-100 text-red-700 px-2 rounded-sm">fail</span>
-				{/if}
+				<div class="mt-1">
+					{#if habit.reflectIsSuccessful}
+						<span class="bg-green-100 text-green-700 py-1 px-2 rounded-sm">
+							success
+						</span>
+					{:else if habit.reflectIsSuccessful == null}
+						<span class="bg-blue-100 text-blue-700 px-2 rounded-sm">active</span
+						>
+					{:else}
+						<span class="bg-red-100 text-red-700 px-2 rounded-sm">fail</span>
+					{/if}
+				</div>
 			</HabitCard>
 		</div>
-		<div class="w-full">
-			<div
-				class="ml-2 pl-2 pt-3 text-xs font-extrabold text-gray-900 uppercase
-      text-left"
-			>
-				{habit.detailTitle}
-			</div>
-			<div
-				class="ml-2 pl-2 pt-0 text-xs font-extrabold text-gray-500 uppercase
-      text-left"
-			>
-				Start: {habit.adminDateEndUTCString.slice(0, 16)}
-			</div>
-			<div
-				class="ml-2 pl-2 text-xs font-extrabold text-gray-500 uppercase text-left"
-			>
-				End: {habit.adminDateStartUTCString.slice(0, 16)}
+
+		<section class="w-full">
+			<div class="ml-2 pl-2  text-xs font-extrabold uppercase">
+				<div class="pt-3 text-gray-900 text-base">
+					{habit.detailTitle}
+				</div>
+				<div class="text-gray-500">
+					Start: {habit.adminDateEndUTCString.slice(0, 16)}
+				</div>
+				<div class="text-gray-500 ">
+					End: {habit.adminDateStartUTCString.slice(0, 16)}
+				</div>
 			</div>
 			<ul
-				class="ml-2 pt-1 place-items-center grid grid-cols-8 w-4/5 leading-tight"
+				class="ml-2 pl-1 pt-1 place-items-center grid grid-cols-8 w-4/5 leading-tight"
 			>
 				{#each habit.checks as check, i}
 					{#if i < 15}
@@ -71,7 +102,7 @@
 									<FaSquareCheck />
 								</span>
 							{:else}
-								<span class="inline-block text-red-500 w-6 h-6 fill-current">
+								<span class="inline-block text-red-500 w-5 h-5 fill-current">
 									<FaSquareClose />
 								</span>
 							{/if}
@@ -87,30 +118,45 @@
 					{/if}
 				{/each}
 			</ul>
-		</div>
+		</section>
 	</div>
+
 	{#if showDetails}
-		<div>
-			<ul class="pl-4 grid grid-cols-2">
+		<section class="mt-2 sm:mt-4">
+			<div
+				class="bg-blue-100 p-4 text-gray-900 text-lg font-extrabold uppercase text-center underline"
+			>
+				{checkinSummary.total} Habit Checks ({checkinSummary.numOK} OK)
+			</div>
+		</section>
+		<section class="mt-2 sm:mt-4">
+			<ul class="pl-2 grid grid-cols-2 sm:pl-4">
 				{#each habit.checks as check, i}
-					<li in:fade={{ delay: 50 * i }} class="mt-1 flex space-x-2">
+					<li
+						in:fade={{ delay: 50 * i }}
+						class="mt-1 flex space-x-1 sm:space-x-2"
+					>
 						{#if check.isOk}
-							<span class="inline-block text-green-500 w-5 h-5 fill-current">
+							<span
+								class="inline-block text-green-500 w-4 h-4 sm:w-5 sm:h-5 fill-current"
+							>
 								<FaSquareCheck />
 							</span>
 						{:else}
-							<span class="inline-block text-red-500 w-6 h-6 fill-current">
+							<span
+								class="inline-block text-red-500 w-4 h-4 sm:w-5 sm:h-5 fill-current"
+							>
 								<FaSquareClose />
 							</span>
 						{/if}
 						<span
-							class="inline-block text-sm font-bold text-gray-700 uppercase"
+							class="inline-block text-xs sm:text-sm font-bold text-gray-700"
 						>
 							{presentCheckinDate(check.date)}
 						</span>
 					</li>
 				{/each}
 			</ul>
-		</div>
+		</section>
 	{/if}
 </div>
