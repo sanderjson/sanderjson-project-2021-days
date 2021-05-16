@@ -66,7 +66,6 @@
 
   $: $isLSDataOutdated == true ? updateLSAndRouteHome() : "";
   $: $isDataOutdatedHistory == true ? updateLocalStorage() : "";
-  $: $isDataOutdatedHistory == true ? updateLocalStorage() : "";
   $: $isDataOutdatedUserDelete == true ? updateLSAndRouteStart() : "";
 
   // $: console.log("$userId", $userId);

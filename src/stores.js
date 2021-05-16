@@ -135,6 +135,16 @@ const userAuthData = {
 	prop3: null,
 };
 
+//
+// NEW CONTROLS?
+//
+const habitCount = 3;
+const isReadyToHabitCheckArrData = new Array(habitCount).fill(false);
+export const isReadyToHabitCheckArr = writable(isReadyToHabitCheckArrData);
+//
+//
+//
+
 const userProfileData = getUserProfileBlankFun();
 const userHabitsActiveData = [null, null, null];
 const userHabitsHistoryData = [];
@@ -157,7 +167,6 @@ export const indexActiveHabit = writable(0);
 
 export const isNewSocialModal = writable(false);
 export const isNewHabitCheckModal = writable(false);
-export const isReadyToHabitCheck = writable(false);
 
 export const isLSDataOutdated = writable(false);
 export const isDataOutdatedHistory = writable(false);

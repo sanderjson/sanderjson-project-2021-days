@@ -4,7 +4,7 @@
 		API_ENDPOINT,
 		indexActiveHabit,
 		isNewHabitCheckModal,
-		isReadyToHabitCheck,
+		isReadyToHabitCheckArr,
 		userProfile,
 		userHabitsActive,
 		userHabitsHistory,
@@ -93,7 +93,9 @@
 				tempHabitsActive[$indexActiveHabit] = res.updatedHabit;
 				userHabitsActive.set(tempHabitsActive);
 				isNewHabitCheckModal.set(false);
-				isReadyToHabitCheck.set(false);
+				let tempHabitCheckArr = $isReadyToHabitCheckArr;
+				tempHabitCheckArr[$indexActiveHabit] = false;
+				isReadyToHabitCheckArr.set(tempHabitCheckArr);
 				isLSDataOutdated.set(true);
 			})
 			.catch((err) => {

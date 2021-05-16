@@ -3,7 +3,7 @@
 		indexActiveHabit,
 		userHabitsActive,
 		isNewHabitCheckModal,
-		isReadyToHabitCheck,
+		isReadyToHabitCheckArr,
 	} from "../stores.js";
 	import { push } from "svelte-spa-router";
 	import HabitCard from "./HabitCard.svelte";
@@ -103,14 +103,19 @@
 			// console.log("timeRemainingUntilNewCheckin", timeRemainingUntilNewCheckin);
 			if (
 				timeSinceLastCheckin > habit.detailCheckinFrequency &&
-				!$isReadyToHabitCheck
+				!$isReadyToHabitCheckArr[$indexActiveHabit] &&
+				i == $indexActiveHabit
 			) {
 				// timeRemainingUntilNewCheckin = habit.detailCheckinFrequency;
-				isReadyToHabitCheck.set(true);
+				let tempHabitCheckArr = $isReadyToHabitCheckArr;
+				tempHabitCheckArr[$indexActiveHabit] = true;
+				isReadyToHabitCheckArr.set(tempHabitCheckArr);
 			}
 		} else {
 			dateCurrent = false;
-			isReadyToHabitCheck.set(false);
+			let tempHabitCheckArr = $isReadyToHabitCheckArr;
+			tempHabitCheckArr[indexActiveHabit] = false;
+			isReadyToHabitCheckArr.set(tempHabitCheckArr);
 			timeUpdateFormat = 0;
 			timeSinceLastCheckin = 0;
 			clearInterval(intervalUpdateTime);
@@ -122,6 +127,18 @@
 	$: timeRemaining && isTimeUpdating ? updateTime() : "";
 	$: habit.checks.length > numberChecks ? newCheckin() : "";
 	$: habit;
+
+	// $: console.log({
+	// 	change_i: i,
+	// 	change_$indexActiveHabit: $indexActiveHabit,
+	// 	change_$isReadyToHabitCheckArr: $isReadyToHabitCheckArr,
+	// });
+
+	// console.log({
+	// 	initial_i: i,
+	// 	initial_$indexActiveHabit: $indexActiveHabit,
+	// 	initial_$isReadyToHabitCheckArr: $isReadyToHabitCheckArr,
+	// });
 </script>
 
 <div class="flex flex-col">
@@ -147,12 +164,9 @@
 			<div class="sm:bg-white mt-2 sm:shadow sm:rounded-lg sm:px-6 sm:py-2">
 				{#if !habit.adminIsActive}
 					<AppButton handleFun={handleHabitReflect}>Reflect</AppButton>
-				{:else if $isReadyToHabitCheck || habit.checks.length == 0}
+				{:else if $isReadyToHabitCheckArr[$indexActiveHabit] || habit.checks.length == 0}
 					<AppButton handleFun={handleTriggerHabitCheck}>Check In</AppButton>
 				{:else}
-					<!-- <div class="text-xs text-center w-full font-bold">
-					
-					</div> -->
 					<AppButton handleFun={null}>
 						{timeUpdateFormatCheckin}</AppButton
 					>

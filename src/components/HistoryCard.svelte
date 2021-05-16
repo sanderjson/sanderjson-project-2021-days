@@ -47,13 +47,13 @@
 		};
 	};
 
-	console.log(habit.checks);
+	// console.log(habit.checks);
 	const checkinSummary = presentCheckinSummary(habit.checks);
 </script>
 
 <div
 	on:click={() => (showDetails = !showDetails)}
-	class="mx-auto  py-1 border-2 border-blue-100 shadow rounded-sm bg-white
+	class="history-card mx-auto py-1 border-2 border-blue-100 shadow rounded-sm bg-white
   hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-900
   focus:outline-none transition-colors duration-75 cursor-pointer"
 >
@@ -84,11 +84,10 @@
 				<div class="pt-3 text-gray-900 text-base">
 					{habit.detailTitle}
 				</div>
-				<div class="text-gray-500">
-					Start: {habit.adminDateEndUTCString.slice(0, 16)}
-				</div>
 				<div class="text-gray-500 ">
-					End: {habit.adminDateStartUTCString.slice(0, 16)}
+					Start: {habit.adminDateStartUTCString.slice(0, 16)}
+					<div class="text-gray-500" />
+					End: {habit.adminDateEndUTCString.slice(0, 16)}
 				</div>
 			</div>
 			<ul
@@ -160,3 +159,9 @@
 		</section>
 	{/if}
 </div>
+
+<style>
+	.history-card {
+		overscroll-behavior-y: contain;
+	}
+</style>
