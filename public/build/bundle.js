@@ -12073,7 +12073,7 @@ var app = (function () {
     	return child_ctx;
     }
 
-    // (75:5) {:else}
+    // (76:5) {:else}
     function create_else_block_2$2(ctx) {
     	let span;
 
@@ -12081,8 +12081,8 @@ var app = (function () {
     		c: function create() {
     			span = element("span");
     			span.textContent = "fail";
-    			attr_dev(span, "class", "bg-red-100 text-red-700 px-2 rounded-sm");
-    			add_location(span, file$p, 75, 6, 1828);
+    			attr_dev(span, "class", "bg-red-100 text-red-700 py-1 px-2 rounded-sm");
+    			add_location(span, file$p, 76, 6, 1841);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12096,7 +12096,7 @@ var app = (function () {
     		block,
     		id: create_else_block_2$2.name,
     		type: "else",
-    		source: "(75:5) {:else}",
+    		source: "(76:5) {:else}",
     		ctx
     	});
 
@@ -12111,7 +12111,7 @@ var app = (function () {
     		c: function create() {
     			span = element("span");
     			span.textContent = "active";
-    			attr_dev(span, "class", "bg-blue-100 text-blue-700 px-2 rounded-sm");
+    			attr_dev(span, "class", "bg-blue-100 text-blue-700 py-1 px-2 rounded-sm");
     			add_location(span, file$p, 72, 6, 1732);
     		},
     		m: function mount(target, anchor) {
@@ -12215,7 +12215,7 @@ var app = (function () {
     	return block;
     }
 
-    // (97:5) {#if i < 15}
+    // (100:5) {#if i < 15}
     function create_if_block_3$3(ctx) {
     	let li;
     	let current_block_type_index;
@@ -12238,7 +12238,7 @@ var app = (function () {
     			li = element("li");
     			if_block.c();
     			attr_dev(li, "title", li_title_value = /*check*/ ctx[6].date.slice(0, 16));
-    			add_location(li, file$p, 97, 6, 2468);
+    			add_location(li, file$p, 100, 6, 2501);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -12291,14 +12291,14 @@ var app = (function () {
     		block,
     		id: create_if_block_3$3.name,
     		type: "if",
-    		source: "(97:5) {#if i < 15}",
+    		source: "(100:5) {#if i < 15}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (103:7) {:else}
+    // (106:7) {:else}
     function create_else_block_1$5(ctx) {
     	let span;
     	let fasquareclose;
@@ -12310,7 +12310,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquareclose.$$.fragment);
     			attr_dev(span, "class", "inline-block text-red-500 w-5 h-5 fill-current");
-    			add_location(span, file$p, 103, 8, 2667);
+    			add_location(span, file$p, 106, 8, 2700);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12336,14 +12336,14 @@ var app = (function () {
     		block,
     		id: create_else_block_1$5.name,
     		type: "else",
-    		source: "(103:7) {:else}",
+    		source: "(106:7) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (99:7) {#if check.isOk}
+    // (102:7) {#if check.isOk}
     function create_if_block_4$2(ctx) {
     	let span;
     	let fasquarecheck;
@@ -12355,7 +12355,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquarecheck.$$.fragment);
     			attr_dev(span, "class", "inline-block text-green-500 w-5 h-5 fill-current");
-    			add_location(span, file$p, 99, 8, 2537);
+    			add_location(span, file$p, 102, 8, 2570);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12381,14 +12381,14 @@ var app = (function () {
     		block,
     		id: create_if_block_4$2.name,
     		type: "if",
-    		source: "(99:7) {#if check.isOk}",
+    		source: "(102:7) {#if check.isOk}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (110:5) {#if i === 15}
+    // (113:5) {#if i === 15}
     function create_if_block_2$5(ctx) {
     	let div;
 
@@ -12397,7 +12397,7 @@ var app = (function () {
     			div = element("div");
     			div.textContent = "...\n\t\t\t\t\t\t";
     			attr_dev(div, "class", "w-full text-xs font-extrabold text-gray-900 uppercase\n            text-center");
-    			add_location(div, file$p, 110, 6, 2834);
+    			add_location(div, file$p, 113, 6, 2867);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, div, anchor);
@@ -12411,14 +12411,14 @@ var app = (function () {
     		block,
     		id: create_if_block_2$5.name,
     		type: "if",
-    		source: "(110:5) {#if i === 15}",
+    		source: "(113:5) {#if i === 15}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (96:4) {#each habit.checks as check, i}
+    // (99:4) {#each habit.checks as check, i}
     function create_each_block_1$1(ctx) {
     	let t;
     	let if_block1_anchor;
@@ -12464,14 +12464,14 @@ var app = (function () {
     		block,
     		id: create_each_block_1$1.name,
     		type: "each",
-    		source: "(96:4) {#each habit.checks as check, i}",
+    		source: "(99:4) {#each habit.checks as check, i}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (123:1) {#if showDetails}
+    // (126:1) {#if showDetails}
     function create_if_block$a(ctx) {
     	let section0;
     	let div;
@@ -12505,13 +12505,13 @@ var app = (function () {
     			}
 
     			attr_dev(div, "class", "bg-blue-100 p-4 text-gray-900 text-lg font-extrabold uppercase text-center underline");
-    			add_location(div, file$p, 124, 3, 3073);
+    			add_location(div, file$p, 127, 3, 3106);
     			attr_dev(section0, "class", "mt-2 sm:mt-4");
-    			add_location(section0, file$p, 123, 2, 3039);
+    			add_location(section0, file$p, 126, 2, 3072);
     			attr_dev(ul, "class", "pl-2 grid grid-cols-2 sm:pl-4");
-    			add_location(ul, file$p, 131, 3, 3307);
+    			add_location(ul, file$p, 134, 3, 3340);
     			attr_dev(section1, "class", "mt-2 sm:mt-4");
-    			add_location(section1, file$p, 130, 2, 3273);
+    			add_location(section1, file$p, 133, 2, 3306);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, section0, anchor);
@@ -12585,14 +12585,14 @@ var app = (function () {
     		block,
     		id: create_if_block$a.name,
     		type: "if",
-    		source: "(123:1) {#if showDetails}",
+    		source: "(126:1) {#if showDetails}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (144:6) {:else}
+    // (147:6) {:else}
     function create_else_block$8(ctx) {
     	let span;
     	let fasquareclose;
@@ -12604,7 +12604,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquareclose.$$.fragment);
     			attr_dev(span, "class", "inline-block text-red-500 w-4 h-4 sm:w-5 sm:h-5 fill-current");
-    			add_location(span, file$p, 144, 7, 3670);
+    			add_location(span, file$p, 147, 7, 3703);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12630,14 +12630,14 @@ var app = (function () {
     		block,
     		id: create_else_block$8.name,
     		type: "else",
-    		source: "(144:6) {:else}",
+    		source: "(147:6) {:else}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (138:6) {#if check.isOk}
+    // (141:6) {#if check.isOk}
     function create_if_block_1$5(ctx) {
     	let span;
     	let fasquarecheck;
@@ -12649,7 +12649,7 @@ var app = (function () {
     			span = element("span");
     			create_component(fasquarecheck.$$.fragment);
     			attr_dev(span, "class", "inline-block text-green-500 w-4 h-4 sm:w-5 sm:h-5 fill-current");
-    			add_location(span, file$p, 138, 7, 3514);
+    			add_location(span, file$p, 141, 7, 3547);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, span, anchor);
@@ -12675,14 +12675,14 @@ var app = (function () {
     		block,
     		id: create_if_block_1$5.name,
     		type: "if",
-    		source: "(138:6) {#if check.isOk}",
+    		source: "(141:6) {#if check.isOk}",
     		ctx
     	});
 
     	return block;
     }
 
-    // (133:4) {#each habit.checks as check, i}
+    // (136:4) {#each habit.checks as check, i}
     function create_each_block$2(ctx) {
     	let li;
     	let current_block_type_index;
@@ -12714,9 +12714,9 @@ var app = (function () {
     			t1 = text(t1_value);
     			t2 = space();
     			attr_dev(span, "class", "inline-block text-xs sm:text-sm font-bold text-gray-700");
-    			add_location(span, file$p, 150, 6, 3821);
+    			add_location(span, file$p, 153, 6, 3854);
     			attr_dev(li, "class", "mt-1 flex space-x-1 sm:space-x-2");
-    			add_location(li, file$p, 133, 5, 3392);
+    			add_location(li, file$p, 136, 5, 3425);
     		},
     		m: function mount(target, anchor) {
     			insert_dev(target, li, anchor);
@@ -12779,7 +12779,7 @@ var app = (function () {
     		block,
     		id: create_each_block$2.name,
     		type: "each",
-    		source: "(133:4) {#each habit.checks as check, i}",
+    		source: "(136:4) {#each habit.checks as check, i}",
     		ctx
     	});
 
@@ -12870,17 +12870,17 @@ var app = (function () {
     			attr_dev(div0, "class", "w-1/3 py-1 px-2 ");
     			add_location(div0, file$p, 60, 2, 1383);
     			attr_dev(div1, "class", "pt-3 text-gray-900 text-base");
-    			add_location(div1, file$p, 83, 4, 2034);
+    			add_location(div1, file$p, 86, 4, 2067);
     			attr_dev(div2, "class", "text-gray-500");
-    			add_location(div2, file$p, 88, 5, 2208);
+    			add_location(div2, file$p, 91, 5, 2241);
     			attr_dev(div3, "class", "text-gray-500 ");
-    			add_location(div3, file$p, 86, 4, 2117);
+    			add_location(div3, file$p, 89, 4, 2150);
     			attr_dev(div4, "class", "ml-2 pl-2  text-xs font-extrabold uppercase");
-    			add_location(div4, file$p, 82, 3, 1972);
+    			add_location(div4, file$p, 85, 3, 2005);
     			attr_dev(ul, "class", "ml-2 pl-1 pt-1 place-items-center grid grid-cols-8 w-4/5 leading-tight");
-    			add_location(ul, file$p, 92, 3, 2315);
+    			add_location(ul, file$p, 95, 3, 2348);
     			attr_dev(section, "class", "w-full");
-    			add_location(section, file$p, 81, 2, 1944);
+    			add_location(section, file$p, 84, 2, 1977);
     			attr_dev(div5, "class", "flex");
     			add_location(div5, file$p, 59, 1, 1362);
     			attr_dev(div6, "class", "history-card mx-auto py-1 border-2 border-blue-100 shadow rounded-sm bg-white\n  hover:bg-blue-200 focus:ring-2 focus:ring-offset-2 focus:ring-blue-900\n  focus:outline-none transition-colors duration-75 cursor-pointer svelte-14f617f");

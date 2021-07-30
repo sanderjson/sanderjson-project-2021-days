@@ -70,10 +70,13 @@
 							success
 						</span>
 					{:else if habit.reflectIsSuccessful == null}
-						<span class="bg-blue-100 text-blue-700 px-2 rounded-sm">active</span
+						<span class="bg-blue-100 text-blue-700 py-1 px-2 rounded-sm"
+							>active</span
 						>
 					{:else}
-						<span class="bg-red-100 text-red-700 px-2 rounded-sm">fail</span>
+						<span class="bg-red-100 text-red-700 py-1 px-2 rounded-sm"
+							>fail</span
+						>
 					{/if}
 				</div>
 			</HabitCard>

@@ -25,6 +25,8 @@ const contentHabitDurationData = [
 	{ disabled: false, value: 60, text: `1 min` },
 	{ disabled: false, value: 300, text: `5 min` },
 	{ disabled: false, value: 60 * 15, text: "15 min" },
+	{ disabled: false, value: 60 * 30, text: "30 min" },
+	{ disabled: false, value: 60 * 45, text: "45 min" },
 	{ disabled: false, value: 3600 * 1, text: "1 hour" },
 	{ disabled: false, value: 3600 * 8, text: "8 hours" },
 	{ disabled: false, value: 3600 * 24, text: "24 hours" },
