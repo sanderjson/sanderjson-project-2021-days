@@ -30,9 +30,10 @@ const contentHabitDurationData = [
 	{ disabled: false, value: 3600 * 24, text: "24 hours" },
 	{ disabled: false, value: 3600 * 24 * 3, text: "3 days" },
 	{ disabled: false, value: 3600 * 24 * 7, text: "7 days" },
-	{ disabled: true, value: 3600 * 24 * 21, text: "21 days" },
-	{ disabled: true, value: 3600 * 24 * 100, text: "100 days" },
-	{ disabled: true, value: 3600 * 24 * 365, text: "1 year" },
+	{ disabled: false, value: 3600 * 24 * 21, text: "21 days" },
+	{ disabled: false, value: 3600 * 24 * 28, text: "28 days" },
+	{ disabled: false, value: 3600 * 24 * 100, text: "100 days" },
+	{ disabled: false, value: 3600 * 24 * 365, text: "1 year" },
 ];
 
 const contentHabitCheckinFrequencyData = [
@@ -46,11 +47,12 @@ const contentHabitCheckinFrequencyData = [
 	{ disabled: false, value: 3600 * 8, text: "8 hours" },
 	{ disabled: false, value: 3600 * 12, text: "12 hours" },
 	{ disabled: false, value: 3600 * 24, text: "1 day" },
-	{ disabled: true, value: 3600 * 24 * 3, text: "3 days" },
-	{ disabled: true, value: 3600 * 24 * 7, text: "7 days" },
-	{ disabled: true, value: 3600 * 24 * 21, text: "21 days" },
-	{ disabled: true, value: 3600 * 24 * 100, text: "100 days" },
-	{ disabled: true, value: 3600 * 24 * 365, text: "1 year" },
+	{ disabled: false, value: 3600 * 24 * 3, text: "3 days" },
+	{ disabled: false, value: 3600 * 24 * 7, text: "7 days" },
+	{ disabled: false, value: 3600 * 24 * 21, text: "21 days" },
+	{ disabled: false, value: 3600 * 24 * 28, text: "28 days" },
+	{ disabled: false, value: 3600 * 24 * 100, text: "100 days" },
+	{ disabled: false, value: 3600 * 24 * 365, text: "1 year" },
 ];
 
 const isLocalStorageFun = () => {
